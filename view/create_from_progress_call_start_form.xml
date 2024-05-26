@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form>
+    <label string="From the call between the extension" id="yeastar_progress_call01"/>
+    <field name='extension' colspan="3"/>
+    <label string="and the contact" id="yeastar_progress_call02"/>
+    <field name='name' colspan="3"/>
+    <label string="of party" id="yeastar_progress_call03"/>
+    <field name='party' colspan="3"/>
+    <label name='party_call'/>
+    <field name='party_call' colspan="3"/>
+    <field name='call_id'/>
+    <field name='employee'/>
+    <newline/>
+    <label string="What you wnat to do?" id="yeastar_progress_call_ask"/>
+</form>

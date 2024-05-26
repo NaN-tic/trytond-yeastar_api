@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tree>
+    <field name="yeastar_pbx"/>
+    <field name="time"/>
+    <field name="call_from"/>
+    <field name="call_to"/>
+    <field name="duratin"/>
+    <field name="disposition"/>
+    <field name="call_type"/>
+    <field name="reason" optional="1"/>
+</tree>

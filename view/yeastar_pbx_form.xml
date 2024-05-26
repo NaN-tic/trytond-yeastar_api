@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form>
+    <group id="pbx_header" colspan="4" col="5">
+        <label name="name"/>
+        <field name="name"/>
+        <label name="serial_number"/>
+        <field name="serial_number"/>
+        <button name="get_pbx_information"/>
+    </group>
+    <label name="time_format"/>
+    <field name="time_format"/>
+    <label name="company"/>
+    <field name="company"/>
+    <notebook colspan="4">
+        <page string="Connection informtion" id="pbx_info">
+            <label name="base_url"/>
+            <field name="base_url"/>
+            <label name="api_path"/>
+            <field name="api_path"/>
+            <label name="username"/>
+            <field name="username"/>
+            <label name="password"/>
+            <field name="password" widget="password"/>
+            <field name="endpoints" colspan="4"/>
+        </page>
+        <page string="Contacts" id="pbx_contacts">
+            <field name="contacts" colspan="4"/>
+            <group col="-1" colspan="4" id="buttons">
+                <button name="load_contacts" icon="tryton-refresh"/>
+                <button name="sync_contacts"/>
+                <button name="delete_token"/>
+            </group>
+        </page>
+        <page string="Token" id="pbx_token">
+            <label name="token"/>
+            <field name="token" widget="password"/>
+            <label name="token_expire"/>
+            <field name="token_expire"/>
+            <label name="refresh_token"/>
+            <field name="refresh_token" widget="password"/>
+            <label name="refresh_token_expire"/>
+            <field name="refresh_token_expire"/>
+            <button name="delete_token" colspan="4"/>
+        </page>
+    </notebook>
+</form>

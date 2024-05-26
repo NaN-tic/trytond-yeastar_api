@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form>
+    <label name="prompt"/>
+    <field name="prompt"/>
+    <label name="main_language"/>
+    <field name="main_language"/>
+    <label name="language_code"/>
+    <field name="language_code"/>
+    <label name="voice"/>
+    <field name="voice"/>
+    <separator id="voice_prompt_text" string="Prompt Text" colspan="4"/>
+    <field name="text" colspan="4"/>
+</form>

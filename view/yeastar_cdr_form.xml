@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form>
+    <label name="yeastar_pbx"/>
+    <field name="yeastar_pbx"/>
+    <label name="uid"/>
+    <field name="uid"/>
+    <label name="time"/>
+    <field name="time"/>
+    <label name="call_from"/>
+    <field name="call_from"/>
+    <label name="call_to"/>
+    <field name="call_to"/>
+    <label name="ring_duration"/>
+    <field name="ring_duration"/>
+    <label name="talk_duration"/>
+    <field name="talk_duration"/>
+    <label name="duratin"/>
+    <field name="duratin"/>
+    <label name="disposition"/>
+    <field name="disposition"/>
+    <label name="call_type"/>
+    <field name="call_type"/>
+    <label name="did_number"/>
+    <field name="did_number"/>
+    <label name="dod_number"/>
+    <field name="dod_number"/>
+    <label name="record_file"/>
+    <field name="record_file"/>
+    <label name="reason"/>
+    <field name="reason"/>
+</form>

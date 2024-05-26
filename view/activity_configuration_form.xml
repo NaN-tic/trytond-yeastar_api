@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license types. -->
+<data>
+    <xpath expr="/form" position="inside">
+        <newline/>
+        <label name="default_yeastar_activity_type"/>
+        <field name="default_yeastar_activity_type"/>
+        <newline/>
+    </xpath>
+</data>

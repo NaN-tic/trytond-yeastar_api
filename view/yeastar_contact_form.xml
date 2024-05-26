@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form>
+    <label name="sync"/>
+    <field name="sync"/>
+    <label name="yeastar_pbx"/>
+    <field name="yeastar_pbx"/>
+    <label name="yeastar_contact_id"/>
+    <field name="yeastar_contact_id"/>
+    <label name="contact_mechanism"/>
+    <field name="contact_mechanism"/>
+    <label name="first_name"/>
+    <field name="first_name"/>
+    <label name="company"/>
+    <field name="company"/>
+    <label name="num_type"/>
+    <field name="num_type"/>
+    <label name="number"/>
+    <field name="number"/>
+    <group col="-1" colspan="4" id="buttons">
+        <button name="sync_contact"/>
+        <button name="delete_contact"/>
+    </group>
+</form>

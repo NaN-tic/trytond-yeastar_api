@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tree>
+    <field name="name"/>
+    <field name="yeastar_pbx"/>
+    <field name="yeastar_phonebook_id" optional="0"/>
+    <field name="member_select" optional="0"/>
+    <field name="contacts" optional="1"/>
+    <button name="sync_phonebook" tree_invisible="1"/>
+    <button name="delete_phonebook" tree_invisible="1"/>
+</tree>

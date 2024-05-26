@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tree>
+    <field name="name"/>
+    <button name="translate_prompt_text" tree_invisible="1"/>
+    <button name="create_voice_files" tree_invisible="1"/>
+</tree>

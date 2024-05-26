@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--The COPYRIGHT file at the top level of this repository
+contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="activity_activity_form_view">
+            <field name="model">activity.activity</field>
+            <field name="inherit" ref="activity.activity_activity_form_view"/>
+            <field name="name">activity_activity_form</field>
+        </record>
+
+        <record model="ir.model.button" id="activity_get_call_transcription_button">
+            <field name="name">get_call_transcription</field>
+            <field name="string">Get Call Transcription</field>
+            <field name="model" search="[('model', '=', 'activity.activity')]"/>
+        </record>
+        <record model="ir.model.button-res.group" id="activity_get_call_transcription_button_group_yeastar">
+            <field name="button" ref="activity_get_call_transcription_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+    </data>
+</tryton>

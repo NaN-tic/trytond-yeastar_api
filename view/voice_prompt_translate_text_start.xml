@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<form>
+    <label string="This will translate the main language text to the selected languages, unless the languege selected exist." id="warning_voice_prompt_translate_text"/>
+    <field name="prompt" colspan="4"/>
+    <field name="language_codes" colspan="4" height="400"/>
+</form>

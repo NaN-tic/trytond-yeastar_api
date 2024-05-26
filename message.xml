@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+  <data grouped="1">
+    <record model="ir.message" id="msg_not_yeastar_endpoint">
+      <field name="text">The Yeastar "%(pbx)s" has not the endpoint with the action "%(action)s".</field>
+    </record>
+    <record model="ir.message" id="msg_query_pbx_information_not_possible">
+      <field name="text">The Yeastar "%(pbx)s" fails getting its information.</field>
+    </record>
+    <record model="ir.message" id="msg_get_post_fail">
+      <field name="text">The Yeastar "%(pbx)s" with the URL "%(url)s" fail in get/post action with the mesage:\n"%(status)s".</field>
+    </record>
+    <record model="ir.message" id="msg_not_employee">
+      <field name="text">The user "%(user)s" has not employee.</field>
+    </record>
+    <record model="ir.message" id="msg_different_employee_pbx">
+      <field name="text">The employee "%(employee)s" has a different pbx deffined. Need "%(pbx)s".</field>
+    </record>
+    <record model="ir.message" id="msg_make_call_not_possible">
+      <field name="text">Not possible to make call through Yeastar "%(pbx)s" with messages:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_query_call_by_extension_not_possible">
+      <field name="text">Not possible to query call from Yeastar "%(pbx)s" with messages:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_revoke_token_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails revoking token with message:
+        "%(errmsg)s".
+        Force delete?</field>
+    </record>
+    <record model="ir.message" id="msg_sync_phonebook_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails adding or editing the Phonebook "%(phonebook)s" with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_query_phonebook_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails quering information of the Phonebook "%(phonebook)s" with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_delete_phonebook_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails deleting Phonebook "%(phonebook)s" with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_sync_contact_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails adding or editing the Contact "%(contact)s" with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_query_contact_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails quering information of the Contact "%(contact)s" with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_delete_contact_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails deleting Contact "%(contact)s" with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_download_record_call_not_possible">
+      <field name="text">The Yeastar "%(pbx)s" fails getting call information with message:
+      "%(errmsg)s".</field>
+    </record>
+    <record model="ir.message" id="msg_not_possible_delete_phonebook_with_contacts">
+      <field name="text">Is not possible to delete the Phonebook "%(phonebook)s" beacsue it have contactes relate yet. Remove them before delete.</field>
+    </record>
+    <record model="ir.message" id="msg_empty_contact_list">
+      <field name="text">The contacts of the Phonebook "%(phonebook)s" will be remove. Are you sure?</field>
+    </record>
+    <record model="ir.message" id="msg_missing_library">
+      <field name="text">Could not be possibel translate Because is missing the Google library.</field>
+    </record>
+    <record model="ir.message" id="msg_prompt_not_translated">
+      <field name="text">Could not be possibel translate the "%(name)s" prompt from "%(source]s" to "%(target)s".</field>
+    </record>
+    <record model="ir.message" id="msg_not_user_defined">
+      <field name="text">You don't have a user defined or active.</field>
+    </record>
+    <record model="ir.message" id="msg_not_employee_defined">
+      <field name="text">You don't have an employee defined or active.</field>
+    </record>
+    <record model="ir.message" id="msg_prompt_text_missing_voice">
+      <field name="text">Missing 'voice' in the language "%(lang)s" of prompt "%(prompt)s."</field>
+    </record>
+    <record model="ir.message" id="msg_not_extension_pbx_employee">
+      <field name="text">Your employee "%(employee)s" has not deffined the extension and/or the PBX.</field>
+    </record>
+    <record model="ir.message" id="msg_not_pbx_employee">
+      <field name="text">Your employee "%(employee)s" has not deffined the PBX.</field>
+    </record>
+    <record model="ir.message" id="msg_not_call_in_progress">
+      <field name="text">There is not a call in progress for the employee "%(employee)s" with the extension "%(extension)s" on the PBX "%(pbx)s".</field>
+    </record>
+  </data>
+</tryton>

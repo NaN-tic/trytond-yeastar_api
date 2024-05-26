@@ -1,0 +1,391 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.icon" id="yeastar_icon">
+            <field name="name">yeastar-icon</field>
+            <field name="path">icons/yeastar.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="yeastar_call_icon">
+            <field name="name">yeastar-call-icon</field>
+            <field name="path">icons/call.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="yeastar_call_recording_icon">
+            <field name="name">yeastar-call-recording-icon</field>
+            <field name="path">icons/call-recording.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="yeastar_to_tryton_icon">
+            <field name="name">yeastar-to-tryton-icon</field>
+            <field name="path">icons/yeastar-to-tryton.svg</field>
+        </record>
+
+        <record model="res.group" id="group_yeastar">
+            <field name="name">Yeastar</field>
+        </record>
+        <record model="res.group" id="group_yeastar_admin">
+            <field name="name">Yeastar Administration</field>
+            <field name="parent" ref="group_yeastar"/>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_yeastar">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_yeastar_admin">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_yeastar_admin"/>
+        </record>
+
+        <menuitem
+            id="menu_yeastar_admin"
+            name="Yeastar"
+            parent="ir.menu_administration"
+            icon="yeastar-icon"/>
+        <record model="ir.ui.menu-res.group" id="menu_yeastar_admin_group_yeastar_admin">
+            <field name="menu" ref="menu_yeastar_admin"/>
+            <field name="group" ref="group_yeastar_admin"/>
+        </record>
+
+        <!-- yeastar.pbx -->
+        <record model="ir.ui.view" id="yeastar_pbx_view_form">
+            <field name="model">yeastar.pbx</field>
+            <field name="type">form</field>
+            <field name="name">yeastar_pbx_form</field>
+        </record>
+        <record model="ir.ui.view" id="yeastar_pbx_view_tree">
+            <field name="model">yeastar.pbx</field>
+            <field name="type">tree</field>
+            <field name="name">yeastar_pbx_tree</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_yeastar_pbx_form">
+            <field name="name">Yeastar PBX</field>
+            <field name="res_model">yeastar.pbx</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_pbx_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="yeastar_pbx_view_tree"/>
+            <field name="act_window" ref="act_yeastar_pbx_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_pbx_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="yeastar_pbx_view_form"/>
+            <field name="act_window" ref="act_yeastar_pbx_form"/>
+        </record>
+        <menuitem
+            parent="menu_yeastar_admin"
+            action="act_yeastar_pbx_form"
+            sequence="10"
+            id="menu_yeastar_pbx"
+            icon="tryton-list"/>
+
+        <record model="ir.model.button" id="yeastar_pbx_get_information_button">
+            <field name="name">get_pbx_information</field>
+            <field name="string">Get PBX Infomration</field>
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+        </record>
+        <record model="ir.model.button" id="yeastar_pbx_delete_token_button">
+            <field name="name">delete_token</field>
+            <field name="string">Delete Token</field>
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+        </record>
+        <record model="ir.model.button" id="yeastar_pbx_load_contacts_button">
+            <field name="name">load_contacts</field>
+            <field name="string">Load Contacts</field>
+            <field name="confirm">This will load all new contacts and update exitents if it's necessary.</field>
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+        </record>
+        <record model="ir.model.button" id="yeastar_pbx_sync_contacts_button">
+            <field name="name">sync_contacts</field>
+            <field name="string">Sync Contacts</field>
+            <field name="confirm">This will sync all new contacts and update exitents if it's necessary.</field>
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+        </record>
+
+        <record model="ir.model.access" id="access_yeastar_pbx">
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_yeastar_pbx_admin">
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <record model="ir.rule.group" id="rule_group_yeastar_pbx_companies">
+            <field name="name">User in companies</field>
+            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_yeastar_pbx_companies">
+            <field name="domain"
+                eval="[('company', 'in', Eval('companies', []))]"
+                pyson="1"/>
+            <field name="rule_group" ref="rule_group_yeastar_pbx_companies"/>
+        </record>
+
+        <!-- yeastar.endpoint -->
+        <record model="ir.ui.view" id="yeastar_endpoint_view_form">
+            <field name="model">yeastar.endpoint</field>
+            <field name="type">form</field>
+            <field name="name">yeastar_endpoint_form</field>
+        </record>
+        <record model="ir.ui.view" id="yeastar_endpoint_view_tree">
+            <field name="model">yeastar.endpoint</field>
+            <field name="type">tree</field>
+            <field name="name">yeastar_endpoint_tree</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_yeastar_endpoint_form">
+            <field name="name">Yeastar Endpoint</field>
+            <field name="res_model">yeastar.endpoint</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_endpoint_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="yeastar_endpoint_view_tree"/>
+            <field name="act_window" ref="act_yeastar_endpoint_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_endpoint_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="yeastar_endpoint_view_form"/>
+            <field name="act_window" ref="act_yeastar_endpoint_form"/>
+        </record>
+
+        <menuitem
+            id="menu_yeastar_endpoint"
+            parent="menu_yeastar_pbx"
+            sequence="10"
+            action="act_yeastar_endpoint_form"
+            icon="tryton-list"/>
+
+        <record model="ir.model.access" id="access_yeastar_endpoint">
+            <field name="model" search="[('model', '=', 'yeastar.endpoint')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_yeastar_endpoint_admin">
+            <field name="model" search="[('model', '=', 'yeastar.endpoint')]"/>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- yeastar.phonebook -->
+        <record model="ir.ui.view" id="yeastar_phonebook_view_form">
+            <field name="model">yeastar.phonebook</field>
+            <field name="type">form</field>
+            <field name="name">yeastar_phonebook_form</field>
+        </record>
+        <record model="ir.ui.view" id="yeastar_phonebook_view_tree">
+            <field name="model">yeastar.phonebook</field>
+            <field name="type">tree</field>
+            <field name="name">yeastar_phonebook_tree</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_yeastar_phonebook_form">
+            <field name="name">Yeastar Phonebook</field>
+            <field name="res_model">yeastar.phonebook</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_phonebook_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="yeastar_phonebook_view_tree"/>
+            <field name="act_window" ref="act_yeastar_phonebook_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_phonebook_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="yeastar_phonebook_view_form"/>
+            <field name="act_window" ref="act_yeastar_phonebook_form"/>
+        </record>
+
+        <menuitem
+            id="menu_yeastar_phonebook"
+            parent="menu_yeastar_admin"
+            sequence="20"
+            action="act_yeastar_phonebook_form"
+            icon="tryton-list"/>
+
+        <record model="ir.model.button" id="yeastar_phonebook_sync_phonebook_button">
+            <field name="name">sync_phonebook</field>
+            <field name="string">Sync Phonebook</field>
+            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+        </record>
+        <record model="ir.model.button" id="yeastar_phonebook_delete_phonebook_button">
+            <field name="name">delete_phonebook</field>
+            <field name="string">Delete Phonebook</field>
+            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+        </record>
+
+        <record model="ir.model.access" id="access_yeastar_phonebook">
+            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_yeastar_phonebook_admin">
+            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- yeastar.contact -->
+        <record model="ir.ui.view" id="yeastar_contact_view_form">
+            <field name="model">yeastar.contact</field>
+            <field name="type">form</field>
+            <field name="name">yeastar_contact_form</field>
+        </record>
+        <record model="ir.ui.view" id="yeastar_contact_view_tree">
+            <field name="model">yeastar.contact</field>
+            <field name="type">tree</field>
+            <field name="name">yeastar_contact_tree</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_yeastar_contact_form">
+            <field name="name">Yeastar Contact</field>
+            <field name="res_model">yeastar.contact</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_contact_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="yeastar_contact_view_tree"/>
+            <field name="act_window" ref="act_yeastar_contact_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_contact_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="yeastar_contact_view_form"/>
+            <field name="act_window" ref="act_yeastar_contact_form"/>
+        </record>
+
+        <menuitem
+            id="menu_yeastar_contact"
+            parent="menu_yeastar_admin"
+            sequence="30"
+            action="act_yeastar_contact_form"
+            icon="tryton-list"/>
+
+        <record model="ir.model.button" id="yeastar_contact_sync_contact_button">
+            <field name="name">sync_contact</field>
+            <field name="string">Sync Contact</field>
+            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+        </record>
+        <record model="ir.model.button" id="yeastar_contact_delete_contact_button">
+            <field name="name">delete_contact</field>
+            <field name="string">Delete Contact</field>
+            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+        </record>
+
+        <record model="ir.model.access" id="access_yeastar_contact">
+            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_yeastar_contact_admin">
+            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- yeastar crete from progress call-->
+        <record model="ir.ui.view" id="create_from_progress_call_start_view_form">
+            <field name="model">yeastar.create.from_progress_call.start</field>
+            <field name="type">form</field>
+            <field name="name">create_from_progress_call_start_form</field>
+        </record>
+        <record model="ir.action.wizard" id="act_create_from_progress_call">
+            <field name="name">Yestar Progress Call</field>
+            <field name="wiz_name">yeastar.create.from_progress_call</field>
+        </record>
+        <menuitem
+            id="menu_yeastar_progress_call"
+            sequence="1000"
+	    action="act_create_from_progress_call"
+            icon="yeastar-to-tryton-icon"/>
+        <record model="ir.ui.menu-res.group" id="menu_yeastar_progress_call_group_yeastar">
+            <field name="menu" ref="menu_yeastar_progress_call"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+
+        <!-- yeastar.cdr -->
+        <record model="ir.ui.view" id="yeastar_cdr_view_form">
+            <field name="model">yeastar.cdr</field>
+            <field name="type">form</field>
+            <field name="name">yeastar_cdr_form</field>
+        </record>
+        <record model="ir.ui.view" id="yeastar_cdr_view_tree">
+            <field name="model">yeastar.cdr</field>
+            <field name="type">tree</field>
+            <field name="name">yeastar_cdr_tree</field>
+        </record>
+
+        <record model="ir.action.wizard" id="act_get_yeastar_cdr">
+            <field name="name">Get Yestar CDR</field>
+            <field name="wiz_name">yeastar.cdr.get</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_yeastar_cdr_form">
+            <field name="name">Yeastar CDR</field>
+            <field name="res_model">yeastar.cdr</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_cdr_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="yeastar_cdr_view_tree"/>
+            <field name="act_window" ref="act_yeastar_cdr_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_yeastar_cdr_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="yeastar_cdr_view_form"/>
+            <field name="act_window" ref="act_yeastar_cdr_form"/>
+        </record>
+
+        <menuitem
+            id="menu_yeastar_cdr"
+            parent="menu_yeastar_admin"
+            sequence="40"
+            action="act_yeastar_cdr_form"
+            icon="tryton-list"/>
+
+        <record model="ir.action.wizard" id="act_get_calls_details">
+            <field name="name">Get CDR</field>
+            <field name="wiz_name">yeastar.cdr.get_calls_details</field>
+            <field name="model"></field>
+        </record>
+        <record model="ir.action.keyword" id="act_get_calls_details_keyword">
+            <field name="keyword">form_action</field>
+            <field name="model">yeastar.cdr,-1</field>
+            <field name="action" ref="act_get_calls_details"/>
+        </record>
+
+        <record model="ir.model.access" id="access_yeastar_cdr">
+            <field name="model" search="[('model', '=', 'yeastar.cdr')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_yeastar_cdr_admin">
+            <field name="model" search="[('model', '=', 'yeastar.cdr')]"/>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+    </data>
+</tryton>

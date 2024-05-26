@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/notebook" position="inside">
+        <page name="call_transcription">
+            <field name="call_transcription" colspan="4" height="400" widget="block"/>
+        </page>
+    </xpath>
+
+    <xpath expr="/form/group[@id='buttons']" position="inside">
+        <button name="get_call_transcription"/>
+    </xpath>
+</data>
