@@ -16,8 +16,8 @@ this repository contains the full copyright notices and license terms. -->
     <field name="ring_duration"/>
     <label name="talk_duration"/>
     <field name="talk_duration"/>
-    <label name="duratin"/>
-    <field name="duratin"/>
+    <label name="duration"/>
+    <field name="duration"/>
     <label name="disposition"/>
     <field name="disposition"/>
     <label name="call_type"/>

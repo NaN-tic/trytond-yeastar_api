@@ -3,10 +3,11 @@
 this repository contains the full copyright notices and license terms. -->
 <tree>
     <field name="yeastar_pbx"/>
-    <field name="time"/>
+    <field name="time" widget="date" optional="0"/>
+    <field name="time" widget="time" string="Start Time" optional="0"/>
     <field name="call_from"/>
     <field name="call_to"/>
-    <field name="duratin"/>
+    <field name="duration"/>
     <field name="disposition"/>
     <field name="call_type"/>
     <field name="reason" optional="1"/>

@@ -41,10 +41,10 @@ class YeastarEndpoint(ModelSQL, ModelView):
     def get_actions(cls):
         return [
             (None, ''),
-            ('query_pbx_information', 'Query PBX Information'),
             ('get_token', 'Get Token'),
             ('refresh_token', 'Refresh Token'),
             ('revoke_token', 'Revoke Token'),
+            ('query_pbx_information', 'Query PBX Information'),
             ('add_phonebook', 'Add a Phonebook'),
             ('update_phonebook', 'Edit a Phonebook'),
             ('query_phonebook', 'Query information of a Phonebook'),
@@ -490,10 +490,9 @@ class YeastarPBX(ModelSQL, ModelView):
         ''' 
         args = {}
         if start_time and isinstance(start_time, datetime):
-            args['start_time'] = datetime.strptime(start_time,
-                self.time_format)
+            args['start_time'] = start_time.strftime(self.time_format)
         if end_time and isinstance(end_time, datetime):
-            args['end_time'] = datetime.strptime(end_time, self.time_format)
+            args['end_time'] = end_time.strftime(self.time_format)
         if call_from:
             args['call_from'] = call_from
         if call_to:
@@ -1021,13 +1020,13 @@ class YeastarCDR(ModelSQL, ModelView):
     call_to = fields.Char('Callee')
     ring_duration = fields.TimeDelta('Ring Duration')
     talk_duration = fields.TimeDelta('Talk Duration')
-    duratin = fields.TimeDelta('Total Duration')
+    duration = fields.TimeDelta('Total Duration')
     disposition = fields.Selection('get_dispostion', 'Call Status')
     call_type = fields.Selection('get_call_type', 'Call Type')
-    did_number = fields.Char('First')
-    dod_number = fields.Char('First')
-    record_file = fields.Char('First')
-    reason = fields.Char('First')
+    did_number = fields.Char('DID Number')
+    dod_number = fields.Char('DOD Number')
+    record_file = fields.Char('Record File')
+    reason = fields.Char('Reason')
 
     @classmethod
     def get_dispostion(cls):
@@ -1041,26 +1040,18 @@ class YeastarCDR(ModelSQL, ModelView):
             ('internal', 'Internal'),
             ]
 
-    def get_yeastar_cdr_details(self):
-        pool = Pool()
-        Cdr = pool.get('yeastar.cdr')
-
-        cdrs = Cdr.search([
-                ('yeastar_pbx', '=', self),
-                ], orderby=[('time', 'DESC')], limit=1)
+    @classmethod
+    def get_yeastar_cdr_details(cls, pbx):
+        cdrs = cls.search([
+                ('yeastar_pbx', '=', pbx),
+                ], order=[('time', 'DESC')], limit=1)
         if cdrs:
             cdr, = cdrs
             start_time = cdr.time
         else:
             start_time = None
         end_time = datetime.now()
-
-
-        # Only for test
-        start_time = end_time -timedelta(days=2)
-
-
-        cdr_details = self.get_cdr_details(start_time, end_time)
+        cdr_details = pbx.get_cdr_details(start_time, end_time)
         if not cdr_details:
             return None
         details = cdr_details.get('data', None)
@@ -1073,9 +1064,9 @@ class YeastarCDR(ModelSQL, ModelView):
             talk_duration = detail.get('talk_duration', None)
             duration = detail.get('duration', None)
             to_create.append({
-                    'yeastar_pbx': self.id,
+                    'yeastar_pbx': pbx.id,
                     'uid': detail.get('uid', None),
-                    'time': (datetime.strptime(time, self.time_format)
+                    'time': (datetime.strptime(time, pbx.time_format)
                         if time else None),
                     'call_from': detail.get('call_from', None),
                     'call_to': detail.get('call_to', None),
@@ -1093,7 +1084,7 @@ class YeastarCDR(ModelSQL, ModelView):
                     'reason': detail.get('reason', None),
                     })
         if to_create:
-            Cdr.create(to_create)
+            cls.create(to_create)
 
     @classmethod
     def get_calls_details(cls):
@@ -1107,7 +1098,7 @@ class YeastarCDR(ModelSQL, ModelView):
                 ('company.id', '=', company_id),
                 ])
         for pbx in pbxs:
-            pbx.get_yeastar_cdr_details()
+            cls.get_yeastar_cdr_details(pbx)
 
 
 class YeastarGetCallsDetails(Wizard):
@@ -1130,6 +1121,6 @@ class Cron(metaclass=PoolMeta):
     def __setup__(cls):
         super().__setup__()
         cls.method.selection.extend([
-            ('yeastar.cdr|get_yeastar_cdr_details',
+            ('yeastar.cdr|get_calls_details',
                 "Get Yeastar CDR Details"),
             ])
