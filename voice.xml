@@ -36,7 +36,7 @@ The COPYRIGHT file at the top level of this repository contains the full copyrig
         </record>
 
         <record model="ir.model.access" id="access_voice_prompt_text">
-            <field name="model" search="[('model', '=', 'voice.prompt.text')]"/>
+            <field name="model">voice.prompt.text</field>
             <field name="group" ref="group_yeastar"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -44,7 +44,7 @@ The COPYRIGHT file at the top level of this repository contains the full copyrig
             <field name="perm_delete" eval="True"/>
         </record>
         <record model="ir.model.access" id="access_voice_prompt_text_user">
-            <field name="model" search="[('model', '=', 'voice.prompt.text')]"/>
+            <field name="model">voice.prompt.text</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -88,12 +88,12 @@ The COPYRIGHT file at the top level of this repository contains the full copyrig
         <record model="ir.model.button" id="voice_prompt_translate_text_button">
             <field name="name">translate_prompt_text</field>
             <field name="string">Translate</field>
-            <field name="model" search="[('model', '=', 'voice.prompt')]"/>
+            <field name="model">voice.prompt</field>
         </record>
         <record model="ir.model.button" id="voice_prompt_create_voice_files_button">
             <field name="name">create_voice_files</field>
             <field name="string">Create Voice Files</field>
-            <field name="model" search="[('model', '=', 'voice.prompt')]"/>
+            <field name="model">voice.prompt</field>
         </record>
 
         <record model="ir.action.wizard" id="wizard_voice_prompt_translate_text">
@@ -108,14 +108,14 @@ The COPYRIGHT file at the top level of this repository contains the full copyrig
         </record>
 
         <record model="ir.model.access" id="access_voice_prompt">
-            <field name="model" search="[('model', '=', 'voice.prompt')]"/>
+            <field name="model">voice.prompt</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_voice_prompt_admin">
-            <field name="model" search="[('model', '=', 'voice.prompt')]"/>
+            <field name="model">voice.prompt</field>
             <field name="group" ref="group_yeastar"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
