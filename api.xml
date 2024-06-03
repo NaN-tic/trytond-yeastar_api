@@ -3,6 +3,7 @@
 this repository contains the full copyright notices and license terms. -->
 <tryton>
     <data>
+        <!-- icons -->
         <record model="ir.ui.icon" id="yeastar_icon">
             <field name="name">yeastar-icon</field>
             <field name="path">icons/yeastar.svg</field>
@@ -20,6 +21,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="path">icons/yeastar-to-tryton.svg</field>
         </record>
 
+        <!-- base: groups and main menu -->
         <record model="res.group" id="group_yeastar">
             <field name="name">Yeastar</field>
         </record>
@@ -92,13 +94,13 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.model.button" id="yeastar_pbx_load_contacts_button">
             <field name="name">load_contacts</field>
             <field name="string">Load Contacts</field>
-            <field name="confirm">This will load all new contacts and update exitents if it's necessary.</field>
+            <field name="confirm">This will load all new contacts and update existents if it's necessary.</field>
             <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
         </record>
         <record model="ir.model.button" id="yeastar_pbx_sync_contacts_button">
             <field name="name">sync_contacts</field>
             <field name="string">Sync Contacts</field>
-            <field name="confirm">This will sync all new contacts and update exitents if it's necessary.</field>
+            <field name="confirm">This will sync all new contacts and update existents if it's necessary.</field>
             <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
         </record>
 
@@ -302,7 +304,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="perm_delete" eval="True"/>
         </record>
 
-        <!-- yeastar crete from progress call-->
+        <!-- yeastar create from progress call-->
         <record model="ir.ui.view" id="create_from_progress_call_start_view_form">
             <field name="model">yeastar.create.from_progress_call.start</field>
             <field name="type">form</field>
@@ -334,11 +336,6 @@ this repository contains the full copyright notices and license terms. -->
             <field name="name">yeastar_cdr_tree</field>
         </record>
 
-        <record model="ir.action.wizard" id="act_get_yeastar_cdr">
-            <field name="name">Get Yestar CDR</field>
-            <field name="wiz_name">yeastar.cdr.get</field>
-        </record>
-
         <record model="ir.action.act_window" id="act_yeastar_cdr_form">
             <field name="name">Yeastar CDR</field>
             <field name="res_model">yeastar.cdr</field>
@@ -361,17 +358,6 @@ this repository contains the full copyright notices and license terms. -->
             action="act_yeastar_cdr_form"
             icon="tryton-list"/>
 
-        <record model="ir.action.wizard" id="act_get_calls_details">
-            <field name="name">Get CDR</field>
-            <field name="wiz_name">yeastar.cdr.get_calls_details</field>
-            <field name="model"></field>
-        </record>
-        <record model="ir.action.keyword" id="act_get_calls_details_keyword">
-            <field name="keyword">form_action</field>
-            <field name="model">yeastar.cdr,-1</field>
-            <field name="action" ref="act_get_calls_details"/>
-        </record>
-
         <record model="ir.model.access" id="access_yeastar_cdr">
             <field name="model" search="[('model', '=', 'yeastar.cdr')]"/>
             <field name="perm_read" eval="True"/>
@@ -386,6 +372,24 @@ this repository contains the full copyright notices and license terms. -->
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!--
+        <record model="ir.action.wizard" id="act_get_yeastar_cdr">
+            <field name="name">Get Yestar CDR</field>
+            <field name="wiz_name">yeastar.cdr.get</field>
+        </record>
+        -->
+
+        <record model="ir.action.wizard" id="act_get_calls_details">
+            <field name="name">Get CDR</field>
+            <field name="wiz_name">yeastar.cdr.get_calls_details</field>
+            <field name="model"></field>
+        </record>
+        <record model="ir.action.keyword" id="act_get_calls_details_keyword">
+            <field name="keyword">form_action</field>
+            <field name="model">yeastar.cdr,-1</field>
+            <field name="action" ref="act_get_calls_details"/>
         </record>
     </data>
 </tryton>

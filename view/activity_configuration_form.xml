@@ -6,6 +6,10 @@ copyright notices and license types. -->
         <newline/>
         <label name="default_yeastar_activity_type"/>
         <field name="default_yeastar_activity_type"/>
+        <label name="yeastar_record_list_page"/>
+        <field name="yeastar_record_list_page"/>
+        <label name="yeastar_record_list_page_size"/>
+        <field name="yeastar_record_list_page_size"/>
         <newline/>
     </xpath>
 </data>
