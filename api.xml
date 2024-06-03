@@ -84,35 +84,35 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.model.button" id="yeastar_pbx_get_information_button">
             <field name="name">get_pbx_information</field>
             <field name="string">Get PBX Infomration</field>
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
         </record>
         <record model="ir.model.button" id="yeastar_pbx_delete_token_button">
             <field name="name">delete_token</field>
             <field name="string">Delete Token</field>
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
         </record>
         <record model="ir.model.button" id="yeastar_pbx_load_contacts_button">
             <field name="name">load_contacts</field>
             <field name="string">Load Contacts</field>
             <field name="confirm">This will load all new contacts and update existents if it's necessary.</field>
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
         </record>
         <record model="ir.model.button" id="yeastar_pbx_sync_contacts_button">
             <field name="name">sync_contacts</field>
             <field name="string">Sync Contacts</field>
             <field name="confirm">This will sync all new contacts and update existents if it's necessary.</field>
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
         </record>
 
         <record model="ir.model.access" id="access_yeastar_pbx">
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_yeastar_pbx_admin">
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
             <field name="group" ref="group_yeastar_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -122,13 +122,11 @@ this repository contains the full copyright notices and license terms. -->
 
         <record model="ir.rule.group" id="rule_group_yeastar_pbx_companies">
             <field name="name">User in companies</field>
-            <field name="model" search="[('model', '=', 'yeastar.pbx')]"/>
+            <field name="model">yeastar.pbx</field>
             <field name="global_p" eval="True"/>
         </record>
         <record model="ir.rule" id="rule_yeastar_pbx_companies">
-            <field name="domain"
-                eval="[('company', 'in', Eval('companies', []))]"
-                pyson="1"/>
+            <field name="domain" eval="[('company', 'in', Eval('companies', []))]" pyson="1"/>
             <field name="rule_group" ref="rule_group_yeastar_pbx_companies"/>
         </record>
 
@@ -167,14 +165,14 @@ this repository contains the full copyright notices and license terms. -->
             icon="tryton-list"/>
 
         <record model="ir.model.access" id="access_yeastar_endpoint">
-            <field name="model" search="[('model', '=', 'yeastar.endpoint')]"/>
+            <field name="model">yeastar.endpoint</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_yeastar_endpoint_admin">
-            <field name="model" search="[('model', '=', 'yeastar.endpoint')]"/>
+            <field name="model">yeastar.endpoint</field>
             <field name="group" ref="group_yeastar_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -219,23 +217,23 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.model.button" id="yeastar_phonebook_sync_phonebook_button">
             <field name="name">sync_phonebook</field>
             <field name="string">Sync Phonebook</field>
-            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+            <field name="model">yeastar.phonebook</field>
         </record>
         <record model="ir.model.button" id="yeastar_phonebook_delete_phonebook_button">
             <field name="name">delete_phonebook</field>
             <field name="string">Delete Phonebook</field>
-            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+            <field name="model">yeastar.phonebook</field>
         </record>
 
         <record model="ir.model.access" id="access_yeastar_phonebook">
-            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+            <field name="model">yeastar.phonebook</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_yeastar_phonebook_admin">
-            <field name="model" search="[('model', '=', 'yeastar.phonebook')]"/>
+            <field name="model">yeastar.phonebook</field>
             <field name="group" ref="group_yeastar_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -280,23 +278,23 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.model.button" id="yeastar_contact_sync_contact_button">
             <field name="name">sync_contact</field>
             <field name="string">Sync Contact</field>
-            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+            <field name="model">yeastar.contact</field>
         </record>
         <record model="ir.model.button" id="yeastar_contact_delete_contact_button">
             <field name="name">delete_contact</field>
             <field name="string">Delete Contact</field>
-            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+            <field name="model">yeastar.contact</field>
         </record>
 
         <record model="ir.model.access" id="access_yeastar_contact">
-            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+            <field name="model">yeastar.contact</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_yeastar_contact_admin">
-            <field name="model" search="[('model', '=', 'yeastar.contact')]"/>
+            <field name="model">yeastar.contact</field>
             <field name="group" ref="group_yeastar_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -359,14 +357,14 @@ this repository contains the full copyright notices and license terms. -->
             icon="tryton-list"/>
 
         <record model="ir.model.access" id="access_yeastar_cdr">
-            <field name="model" search="[('model', '=', 'yeastar.cdr')]"/>
+            <field name="model">yeastar.cdr</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_yeastar_cdr_admin">
-            <field name="model" search="[('model', '=', 'yeastar.cdr')]"/>
+            <field name="model">yeastar.cdr</field>
             <field name="group" ref="group_yeastar_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>

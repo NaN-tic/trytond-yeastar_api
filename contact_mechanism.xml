@@ -16,7 +16,7 @@ The COPYRIGHT file at the top level of this repository contains the full copyrig
         <record model="ir.model.button" id="dial_button">
             <field name="name">dial</field>
             <field name="string">Dial</field>
-            <field name="model" search="[('model', '=', 'party.contact_mechanism')]"/>
+            <field name="model">party.contact_mechanism</field>
         </record>
     </data>
 </tryton>

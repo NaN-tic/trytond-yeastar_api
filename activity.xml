@@ -12,7 +12,7 @@ contains the full copyright notices and license terms. -->
         <record model="ir.model.button" id="activity_get_call_transcription_button">
             <field name="name">get_call_transcription</field>
             <field name="string">Get Call Transcription</field>
-            <field name="model" search="[('model', '=', 'activity.activity')]"/>
+            <field name="model">activity.activity</field>
         </record>
         <record model="ir.model.button-res.group" id="activity_get_call_transcription_button_group_yeastar">
             <field name="button" ref="activity_get_call_transcription_button"/>
