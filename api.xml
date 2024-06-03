@@ -374,13 +374,6 @@ this repository contains the full copyright notices and license terms. -->
             <field name="perm_delete" eval="True"/>
         </record>
 
-        <!--
-        <record model="ir.action.wizard" id="act_get_yeastar_cdr">
-            <field name="name">Get Yestar CDR</field>
-            <field name="wiz_name">yeastar.cdr.get</field>
-        </record>
-        -->
-
         <record model="ir.action.wizard" id="act_get_calls_details">
             <field name="name">Get CDR</field>
             <field name="wiz_name">yeastar.cdr.get_calls_details</field>
