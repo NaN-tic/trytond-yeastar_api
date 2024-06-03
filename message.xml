@@ -22,6 +22,9 @@ this repository contains the full copyright notices and license terms. -->
       <field name="text">Not possible to make call through Yeastar "%(pbx)s" with messages:
       "%(errmsg)s".</field>
     </record>
+    <record model="ir.message" id="msg_get_token_fail">
+      <field name="text">The Yeastar "%(pbx)s" fails getting token:\n"%(errmsg)s".</field>
+    </record>
     <record model="ir.message" id="msg_query_call_by_extension_not_possible">
       <field name="text">Not possible to query call from Yeastar "%(pbx)s" with messages:
       "%(errmsg)s".</field>

@@ -12,11 +12,16 @@ class ActivityConfiguration(metaclass=PoolMeta):
 
     default_yeastar_activity_type = fields.MultiValue(
         fields.Many2One('activity.type', 'Yeastar Type', required=True))
+    yeastar_record_list_page = fields.MultiValue(
+        fields.Char('Yeastar Record List Page'))
+    yeastar_record_list_page_size = fields.MultiValue(
+        fields.Char('Yeastar Record List Page Size'))
 
     @classmethod
     def multivalue_model(cls, field):
         pool = Pool()
-        if field == 'default_yeastar_activity_type':
+        if field in('default_yeastar_activity_type',
+                'yeastar_record_list_page', 'yeastar_record_list_page_size'):
             return pool.get('activity.configuration.yeastar')
         return super().multivalue_model(field)
 
@@ -25,5 +30,8 @@ class ActivityConfigurationYeastar(ModelSQL, CompanyValueMixin):
     'Yeastar Activity Configuration'
     __name__ = 'activity.configuration.yeastar'
 
-    default_yeastar_activity_type = fields.Many2One('activity.type', 'Yeastar Type',
-        required=True)
+    default_yeastar_activity_type = fields.Many2One('activity.type',
+        'Yeastar Type', required=True)
+    yeastar_record_list_page = fields.Char('Yeastar Record List Page')
+    yeastar_record_list_page_size = fields.Char(
+        'Yeastar Record List Page Size')

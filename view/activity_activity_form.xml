@@ -4,11 +4,10 @@
 <data>
     <xpath expr="/form/notebook" position="inside">
         <page name="call_transcription">
+            <label name="language"/>
+            <field name="language"/>
             <field name="call_transcription" colspan="4" height="400" widget="block"/>
+            <button name="get_call_transcription" colspan="4"/>
         </page>
-    </xpath>
-
-    <xpath expr="/form/group[@id='buttons']" position="inside">
-        <button name="get_call_transcription"/>
     </xpath>
 </data>
