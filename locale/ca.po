@@ -1,0 +1,765 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:activity.activity,call_id:"
+msgid "Call ID"
+msgstr "Identificador de trucada"
+
+msgctxt "field:activity.activity,call_transcription:"
+msgid "Call Transcription"
+msgstr "Transcripció de trucades"
+
+msgctxt "field:activity.activity,language:"
+msgid "Language Call"
+msgstr "Idioma trucada"
+
+msgctxt "field:activity.configuration,default_yeastar_activity_type:"
+msgid "Yeastar Type"
+msgstr "Tipus Yeastar"
+
+msgctxt "field:activity.configuration,yeastar_record_list_page:"
+msgid "Yeastar Record List Page"
+msgstr "Pàgina de llista de registres de Yeastar"
+
+msgctxt "field:activity.configuration,yeastar_record_list_page_size:"
+msgid "Yeastar Record List Page Size"
+msgstr "Mida de la pàgina de la llista de registres de Yeastar"
+
+msgctxt "field:activity.configuration.yeastar,company:"
+msgid "Company"
+msgstr "Companyia"
+
+msgctxt "field:activity.configuration.yeastar,default_yeastar_activity_type:"
+msgid "Yeastar Type"
+msgstr "Tipus Yeastar"
+
+msgctxt "field:activity.configuration.yeastar,yeastar_record_list_page:"
+msgid "Yeastar Record List Page"
+msgstr "Pàgina de llista de registres de Yeastar"
+
+msgctxt "field:activity.configuration.yeastar,yeastar_record_list_page_size:"
+msgid "Yeastar Record List Page Size"
+msgstr "Mida de la pàgina de la llista de registres de Yeastar"
+
+msgctxt "field:company.employee,yeastar_extension:"
+msgid "Yeastar Extension"
+msgstr "Extensió Yeastar"
+
+msgctxt "field:company.employee,yeastar_pbx:"
+msgid "Yeastar PBX"
+msgstr "PBX Yeastar"
+
+msgctxt "field:voice.prompt,main_language:"
+msgid "Main Language"
+msgstr "Idioma principal"
+
+msgctxt "field:voice.prompt,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:voice.prompt,prompts_text:"
+msgid "Prompts Text"
+msgstr "Text Avisos"
+
+msgctxt "field:voice.prompt.text,language_code:"
+msgid "Language"
+msgstr "Llenguatge"
+
+msgctxt "field:voice.prompt.text,main_language:"
+msgid "Main Language"
+msgstr "Idioma principal"
+
+msgctxt "field:voice.prompt.text,prompt:"
+msgid "Prompt"
+msgstr "Avís"
+
+msgctxt "field:voice.prompt.text,text:"
+msgid "Text"
+msgstr "Text"
+
+msgctxt "field:voice.prompt.text,voice:"
+msgid "Voice"
+msgstr "veu"
+
+msgctxt "field:voice.prompt.translate_text.start,language_codes:"
+msgid "Language"
+msgstr "Llenguatge"
+
+msgctxt "field:voice.prompt.translate_text.start,prompt:"
+msgid "Prompt"
+msgstr "Avís"
+
+msgctxt "field:yeastar.cdr,call_from:"
+msgid "Caller"
+msgstr "Orígen trucada"
+
+msgctxt "field:yeastar.cdr,call_to:"
+msgid "Callee"
+msgstr "Destí trucada"
+
+msgctxt "field:yeastar.cdr,call_type:"
+msgid "Call Type"
+msgstr "Tipus de trucada"
+
+msgctxt "field:yeastar.cdr,did_number:"
+msgid "DID Number"
+msgstr "Número DID"
+
+msgctxt "field:yeastar.cdr,disposition:"
+msgid "Call Status"
+msgstr "Estat trucada"
+
+msgctxt "field:yeastar.cdr,dod_number:"
+msgid "DOD Number"
+msgstr "Número DOD"
+
+msgctxt "field:yeastar.cdr,duration:"
+msgid "Total Duration"
+msgstr "Durada total"
+
+msgctxt "field:yeastar.cdr,reason:"
+msgid "Reason"
+msgstr "Raó"
+
+msgctxt "field:yeastar.cdr,record_file:"
+msgid "Record File"
+msgstr "Fitxer de registre"
+
+msgctxt "field:yeastar.cdr,ring_duration:"
+msgid "Ring Duration"
+msgstr "Durada del timbre"
+
+msgctxt "field:yeastar.cdr,talk_duration:"
+msgid "Talk Duration"
+msgstr "Durada de la conversa"
+
+msgctxt "field:yeastar.cdr,time:"
+msgid "Call Time"
+msgstr "Hora de trucada"
+
+msgctxt "field:yeastar.cdr,uid:"
+msgid "CDR ID"
+msgstr "ID del CDR"
+
+msgctxt "field:yeastar.cdr,yeastar_pbx:"
+msgid "Yeastar"
+msgstr "Yeastar"
+
+msgctxt "field:yeastar.contact,company:"
+msgid "Yeastar Company"
+msgstr "Companyia Yeastar"
+
+msgctxt "field:yeastar.contact,contact_mechanism:"
+msgid "Contact"
+msgstr "Contacte"
+
+msgctxt "field:yeastar.contact,first_name:"
+msgid "First Name"
+msgstr "Nom"
+
+msgctxt "field:yeastar.contact,num_type:"
+msgid "Number Type"
+msgstr "Tipus de nombre"
+
+msgctxt "field:yeastar.contact,number:"
+msgid "Number"
+msgstr "Número"
+
+msgctxt "field:yeastar.contact,sync:"
+msgid "Synch with Yeatar PBXs"
+msgstr "Sincronitza amb Yeatar PBX"
+
+msgctxt "field:yeastar.contact,yeastar_contact_id:"
+msgid "Yeastar Contact ID"
+msgstr "Identificador de contacte Yeastar"
+
+msgctxt "field:yeastar.contact,yeastar_pbx:"
+msgid "Yeastar"
+msgstr "Yeastar"
+
+msgctxt "field:yeastar.create.from_progress_call.start,call_id:"
+msgid "Call ID"
+msgstr "Identificador de trucada"
+
+msgctxt "field:yeastar.create.from_progress_call.start,employee:"
+msgid "Employee"
+msgstr "Empleat"
+
+msgctxt "field:yeastar.create.from_progress_call.start,extension:"
+msgid "Extension"
+msgstr "Extensió"
+
+msgctxt "field:yeastar.create.from_progress_call.start,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:yeastar.create.from_progress_call.start,party:"
+msgid "Party"
+msgstr "Tercer"
+
+msgctxt "field:yeastar.create.from_progress_call.start,party_call:"
+msgid "Party On The Call"
+msgstr "Tercer en la trucada"
+
+msgctxt "field:yeastar.endpoint,action:"
+msgid "Action"
+msgstr "Acció"
+
+msgctxt "field:yeastar.endpoint,endpoint:"
+msgid "Endpoint"
+msgstr "Endpoint"
+
+msgctxt "field:yeastar.endpoint,yeastar:"
+msgid "Yeastar PBX"
+msgstr "PBX Yeastar"
+
+msgctxt "field:yeastar.pbx,api_path:"
+msgid "API path"
+msgstr "Ruta API"
+
+msgctxt "field:yeastar.pbx,base_url:"
+msgid "Yeastar base addr"
+msgstr "Adreça base Yeastar"
+
+msgctxt "field:yeastar.pbx,company:"
+msgid "Company"
+msgstr "Companyia"
+
+msgctxt "field:yeastar.pbx,contacts:"
+msgid "Yeastar Contacts"
+msgstr "Contactes de Yeastar"
+
+msgctxt "field:yeastar.pbx,endpoints:"
+msgid "Endpoints"
+msgstr "Endpoints"
+
+msgctxt "field:yeastar.pbx,name:"
+msgid "Server Name"
+msgstr "Nom del servidor"
+
+msgctxt "field:yeastar.pbx,password:"
+msgid "Client secret"
+msgstr "Contrasenya"
+
+msgctxt "field:yeastar.pbx,refresh_token:"
+msgid "Refresh Token"
+msgstr "Token actualització"
+
+msgctxt "field:yeastar.pbx,refresh_token_expire:"
+msgid "Refresh Token Expire"
+msgstr "Caducitat Token actualització"
+
+msgctxt "field:yeastar.pbx,serial_number:"
+msgid "Serial Number"
+msgstr "Número de sèrie"
+
+msgctxt "field:yeastar.pbx,time_format:"
+msgid "Time Format"
+msgstr "Format horari"
+
+msgctxt "field:yeastar.pbx,token:"
+msgid "Token"
+msgstr "Token"
+
+msgctxt "field:yeastar.pbx,token_expire:"
+msgid "Token Expire"
+msgstr "Caducitat Token"
+
+msgctxt "field:yeastar.pbx,username:"
+msgid "Client ID"
+msgstr "ID de client"
+
+msgctxt "field:yeastar.phonebook,contacts:"
+msgid "Contacts"
+msgstr "Contactes"
+
+msgctxt "field:yeastar.phonebook,member_select:"
+msgid "Member Selection Method"
+msgstr "Mètode de selecció de membres"
+
+msgctxt "field:yeastar.phonebook,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:yeastar.phonebook,yeastar_pbx:"
+msgid "Yeastar"
+msgstr "Yeastar"
+
+msgctxt "field:yeastar.phonebook,yeastar_phonebook_id:"
+msgid "Yeastar Phonebook ID"
+msgstr "Identificador guia telefònica de Yeastar"
+
+msgctxt "field:yeastar.phonebook-yeastar.contact,contact:"
+msgid "Contact"
+msgstr "Contacte"
+
+msgctxt "field:yeastar.phonebook-yeastar.contact,phonebook:"
+msgid "Phonebook"
+msgstr "Guia telefònica"
+
+msgctxt "help:yeastar.pbx,api_path:"
+msgid ""
+"The format of API path is openapi/{version}; the {version} indicates the API"
+" version."
+msgstr ""
+"El format de la ruta de l'API és openapi/{versió}; la {versió} indica la "
+"versió de l'API."
+
+msgctxt "help:yeastar.pbx,base_url:"
+msgid "IPv4 address or DNS name of the Yeastar server."
+msgstr "Adreça IPv4 o nom DNS del servidor Yeastar."
+
+msgctxt "help:yeastar.pbx,endpoints:"
+msgid "Endpoint indicates the specific address of API request."
+msgstr "Endpoint indica l'adreça específica de la sol·licitud de l'API."
+
+msgctxt "help:yeastar.pbx,password:"
+msgid "Password that Tryton will use to login to Yeastar API."
+msgstr ""
+"Contrasenya que utilitzarà Tryton per iniciar sessió a l'API de Yeastar."
+
+msgctxt "help:yeastar.pbx,time_format:"
+msgid ""
+"The time format depends on the date and time display format of PBX (set in "
+"System > Date and Time > Display Format on PBX)"
+msgstr ""
+"El format de l'hora depèn del format de visualització de la data i l'hora de"
+" la central (establert a Sistema > Data i hora > Format de visualització de "
+"la central)"
+
+msgctxt "help:yeastar.pbx,username:"
+msgid "Username that Tryton will use to login to Yeastar API."
+msgstr ""
+"Nom d'usuari que utilitzarà Tryton per iniciar sessió a l'API de Yeastar."
+
+msgctxt "model:activity.configuration.yeastar,name:"
+msgid "Yeastar Activity Configuration"
+msgstr "Configuració de l'activitat de Yeastar"
+
+msgctxt "model:ir.action,name:act_create_from_progress_call"
+msgid "Yestar Progress Call"
+msgstr "Trucada en curs"
+
+msgctxt "model:ir.action,name:act_get_calls_details"
+msgid "Get CDR"
+msgstr "Obteniu CDR"
+
+msgctxt "model:ir.action,name:act_voice_prompt_form"
+msgid "Voice Prompt"
+msgstr "Avís de veu"
+
+msgctxt "model:ir.action,name:act_voice_prompt_text_form"
+msgid "Voice Prompt Text"
+msgstr "Text d'avís de veu"
+
+msgctxt "model:ir.action,name:act_yeastar_cdr_form"
+msgid "Yeastar CDR"
+msgstr "Yeastar CDR"
+
+msgctxt "model:ir.action,name:act_yeastar_contact_form"
+msgid "Yeastar Contact"
+msgstr "Contacte Yeastar"
+
+msgctxt "model:ir.action,name:act_yeastar_endpoint_form"
+msgid "Yeastar Endpoint"
+msgstr "Yeastar Endpoint"
+
+msgctxt "model:ir.action,name:act_yeastar_pbx_form"
+msgid "Yeastar PBX"
+msgstr "PBX Yeastar"
+
+msgctxt "model:ir.action,name:act_yeastar_phonebook_form"
+msgid "Yeastar Phonebook"
+msgstr "Guia telefònica de Yeastar"
+
+msgctxt "model:ir.action,name:wizard_voice_prompt_translate_text"
+msgid "Translate"
+msgstr "Traduir"
+
+msgctxt "model:ir.message,text:msg_delete_contact_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails deleting Contact \"%(contact)s\" with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" falla en suprimir el contacte \"%(contact)s\" amb el "
+"missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_delete_phonebook_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails deleting Phonebook \"%(phonebook)s\" with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" falla en suprimir l'agenda \"%(phonebook)s\" amb el "
+"missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_different_employee_pbx"
+msgid "The employee \"%(employee)s\" has a different pbx deffined. Need \"%(pbx)s\"."
+msgstr ""
+"L'empleat \"%(empleat)s\" té una PBX diferent definida. Necessita "
+"\"%(pbx)s\"."
+
+msgctxt "model:ir.message,text:msg_download_record_call_not_possible"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails getting call information with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" no aconsegueix la informació de la trucada amb el "
+"missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_empty_contact_list"
+msgid ""
+"The contacts of the Phonebook \"%(phonebook)s\" will be remove. Are you "
+"sure?"
+msgstr "S'eliminaran els contactes de la guia \"%(phonebook)s\". Estàs segur?"
+
+msgctxt "model:ir.message,text:msg_get_post_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" with the URL \"%(url)s\" fail in get/post action "
+"with the mesage:\\n\"%(status)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" amb l'URL \"%(url)s\" falla en l'acció "
+"d'obtenció/publicació amb el missatge:\\n\"%(status)s\"."
+
+msgctxt "model:ir.message,text:msg_get_token_fail"
+msgid "The Yeastar \"%(pbx)s\" fails getting token:\\n\"%(errmsg)s\"."
+msgstr "El Yeastar \"%(pbx)s\" no aconsegueix el Token:\\n\"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_make_call_not_possible"
+msgid ""
+"Not possible to make call through Yeastar \"%(pbx)s\" with messages:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"No és possible fer trucades a través de Yeastar \"%(pbx)s\" amb missatges: "
+"\"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_missing_library"
+msgid "Could not be possibel translate Because is missing the Google library."
+msgstr "No es pot traduir perquè falta la llibraria de Google."
+
+msgctxt "model:ir.message,text:msg_not_call_in_progress"
+msgid ""
+"There is not a call in progress for the employee \"%(employee)s\" with the "
+"extension \"%(extension)s\" on the PBX \"%(pbx)s\"."
+msgstr ""
+"No hi ha cap trucada en curs per a l'empleat \"%(empleat)s\" amb l'extensió "
+"\"%(extension)s\" a la PBX \"%(pbx)s\"."
+
+msgctxt "model:ir.message,text:msg_not_employee"
+msgid "The user \"%(user)s\" has not employee."
+msgstr "L'usuari \"%(user)s\" no té empleat."
+
+msgctxt "model:ir.message,text:msg_not_employee_defined"
+msgid "You don't have an employee defined or active."
+msgstr "No teniu cap empleat definit o actiu."
+
+msgctxt "model:ir.message,text:msg_not_extension_pbx_employee"
+msgid ""
+"Your employee \"%(employee)s\" has not deffined the extension and/or the "
+"PBX."
+msgstr ""
+"El vostre empleat \"%(empleat)s\" no té definida l'extensió i/o la central."
+
+msgctxt "model:ir.message,text:msg_not_pbx_employee"
+msgid "Your employee \"%(employee)s\" has not deffined the PBX."
+msgstr "El vostre empleat \"%(empleat)s\" no té definida la central."
+
+msgctxt ""
+"model:ir.message,text:msg_not_possible_delete_phonebook_with_contacts"
+msgid ""
+"Is not possible to delete the Phonebook \"%(phonebook)s\" beacsue it have "
+"contactes relate yet. Remove them before delete."
+msgstr ""
+"No és possible suprimir la guia \"%(phonebook)s\" perquè encara té contactes"
+" relacionats. Elimineu-los abans de suprimir-los."
+
+msgctxt "model:ir.message,text:msg_not_user_defined"
+msgid "You don't have a user defined or active."
+msgstr "No teniu cap usuari definit o actiu."
+
+msgctxt "model:ir.message,text:msg_not_yeastar_endpoint"
+msgid "The Yeastar \"%(pbx)s\" has not the endpoint with the action \"%(action)s\"."
+msgstr "El Yeastar \"%(pbx)s\" no té l'endpoint amb l'acció \"%(action)s\"."
+
+msgctxt "model:ir.message,text:msg_prompt_not_translated"
+msgid ""
+"Could not be possibel translate the \"%(name)s\" prompt from \"%(source]s\" "
+"to \"%(target)s\"."
+msgstr "No es pot traduir el missatge \"%(name)s\" de \"%(source]s\" a \"%(target)s\"."
+
+msgctxt "model:ir.message,text:msg_prompt_text_missing_voice"
+msgid "Missing 'voice' in the language \"%(lang)s\" of prompt \"%(prompt)s.\""
+msgstr "Falta 'veu' a l'idioma \"%(lang)s\" de l'avís \"%(prompt)s\"."
+
+msgctxt "model:ir.message,text:msg_query_call_by_extension_not_possible"
+msgid ""
+"Not possible to query call from Yeastar \"%(pbx)s\" with messages:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"No es pot consultar la trucada de Yeastar \"%(pbx)s\" amb missatges: "
+"\"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_query_contact_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails quering information of the Contact \"%(contact)s\" with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" falla en consultar la informació del contacte "
+"\"%(contact)s\" amb el missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_query_pbx_information_not_possible"
+msgid "The Yeastar \"%(pbx)s\" fails getting its information."
+msgstr "El Yeastar \"%(pbx)s\" no aconsegueix la seva informació."
+
+msgctxt "model:ir.message,text:msg_query_phonebook_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails quering information of the Phonebook \"%(phonebook)s\" with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" falla en consultar la informació de la guia "
+"\"%(phonebook)s\" amb el missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_revoke_token_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails revoking token with message:\n"
+"        \"%(errmsg)s\".\n"
+"        Force delete?"
+msgstr ""
+"El Yeastar \"%(pbx)s\" falla en revocar el testimoni amb el missatge: "
+"\"%(errmsg)s\". Forçar la supressió?"
+
+msgctxt "model:ir.message,text:msg_sync_contact_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails adding or editing the Contact \"%(contact)s\" with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" no pot afegir o editar el contacte \"%(contact)s\" "
+"amb el missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_sync_phonebook_fail"
+msgid ""
+"The Yeastar \"%(pbx)s\" fails adding or editing the Phonebook \"%(phonebook)s\" with message:\n"
+"      \"%(errmsg)s\"."
+msgstr ""
+"El Yeastar \"%(pbx)s\" no pot afegir o editar la guia \"%(phonebook)s\" amb "
+"el missatge: \"%(errmsg)s\"."
+
+msgctxt "model:ir.model.button,confirm:yeastar_pbx_load_contacts_button"
+msgid ""
+"This will load all new contacts and update existents if it's necessary."
+msgstr ""
+"Això carregarà tots els contactes nous i actualitzarà els existents si és "
+"necessari."
+
+msgctxt "model:ir.model.button,confirm:yeastar_pbx_sync_contacts_button"
+msgid ""
+"This will sync all new contacts and update existents if it's necessary."
+msgstr ""
+"Això sincronitzarà tots els contactes nous i actualitzarà els existents si "
+"és necessari."
+
+msgctxt "model:ir.model.button,string:activity_get_call_transcription_button"
+msgid "Get Call Transcription"
+msgstr "Obteniu la transcripció de trucades"
+
+msgctxt "model:ir.model.button,string:dial_button"
+msgid "Dial"
+msgstr "Trucar"
+
+msgctxt "model:ir.model.button,string:voice_prompt_create_voice_files_button"
+msgid "Create Voice Files"
+msgstr "Crea fitxers de veu"
+
+msgctxt "model:ir.model.button,string:voice_prompt_translate_text_button"
+msgid "Translate"
+msgstr "Traduir"
+
+msgctxt "model:ir.model.button,string:yeastar_contact_delete_contact_button"
+msgid "Delete Contact"
+msgstr "Suprimeix contacte"
+
+msgctxt "model:ir.model.button,string:yeastar_contact_sync_contact_button"
+msgid "Sync Contact"
+msgstr "Sincronitza contacte"
+
+msgctxt "model:ir.model.button,string:yeastar_pbx_delete_token_button"
+msgid "Delete Token"
+msgstr "Suprimeix Token"
+
+msgctxt "model:ir.model.button,string:yeastar_pbx_get_information_button"
+msgid "Get PBX Infomration"
+msgstr "Obteniu informació de la PBX"
+
+msgctxt "model:ir.model.button,string:yeastar_pbx_load_contacts_button"
+msgid "Load Contacts"
+msgstr "Carregar contactes"
+
+msgctxt "model:ir.model.button,string:yeastar_pbx_sync_contacts_button"
+msgid "Sync Contacts"
+msgstr "Sincronitza contactes"
+
+msgctxt ""
+"model:ir.model.button,string:yeastar_phonebook_delete_phonebook_button"
+msgid "Delete Phonebook"
+msgstr "Esborra guia telefònica"
+
+msgctxt "model:ir.model.button,string:yeastar_phonebook_sync_phonebook_button"
+msgid "Sync Phonebook"
+msgstr "Sincronitza guia telefònica"
+
+msgctxt "model:ir.rule.group,name:rule_group_yeastar_pbx_companies"
+msgid "User in companies"
+msgstr "Usuari a les empreses"
+
+msgctxt "model:ir.ui.menu,name:menu_voice_prompt"
+msgid "Voice Prompt"
+msgstr "Avís de veu"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_admin"
+msgid "Yeastar"
+msgstr "Yeastar"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_cdr"
+msgid "Yeastar CDR"
+msgstr "Yeastar CDR"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_contact"
+msgid "Yeastar Contact"
+msgstr "Contacte Yeastar"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_endpoint"
+msgid "Yeastar Endpoint"
+msgstr "Yeastar Endpoint"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_pbx"
+msgid "Yeastar PBX"
+msgstr "PBX Yeastar"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_phonebook"
+msgid "Yeastar Phonebook"
+msgstr "Guia telefònica de Yeastar"
+
+msgctxt "model:ir.ui.menu,name:menu_yeastar_progress_call"
+msgid "Yestar Progress Call"
+msgstr "Trucada en curs Yestar"
+
+msgctxt "model:res.group,name:group_yeastar"
+msgid "Yeastar"
+msgstr "Yeastar"
+
+msgctxt "model:res.group,name:group_yeastar_admin"
+msgid "Yeastar Administration"
+msgstr "Administració Yeastar"
+
+msgctxt "model:voice.prompt,name:"
+msgid "Voice Prompt"
+msgstr "Avís de veu"
+
+msgctxt "model:voice.prompt.text,name:"
+msgid "Voice Prompt Text"
+msgstr "Text d'avís de veu"
+
+msgctxt "model:voice.prompt.translate_text.start,name:"
+msgid "Voice Prompt Translate Text Start"
+msgstr "Tradueix l'avís de veu Inici"
+
+msgctxt "model:yeastar.cdr,name:"
+msgid "Yeastar CDR"
+msgstr "Yeastar CDR"
+
+msgctxt "model:yeastar.contact,name:"
+msgid "Yeastar Contact"
+msgstr "Contacte Yeastar"
+
+msgctxt "model:yeastar.create.from_progress_call.start,name:"
+msgid "Create From Progress Call Start"
+msgstr "Crea des de trucada en curs Inici"
+
+msgctxt "model:yeastar.endpoint,name:"
+msgid "Yeastar Endpoint"
+msgstr "Yeastar Endpoint"
+
+msgctxt "model:yeastar.pbx,name:"
+msgid "Yeastar PBX"
+msgstr "PBX Yeastar"
+
+msgctxt "model:yeastar.phonebook,name:"
+msgid "Yeastar Phonebook"
+msgstr "Guia telefònica de Yeastar"
+
+msgctxt "model:yeastar.phonebook-yeastar.contact,name:"
+msgid "Yeastar Phonebook Contact"
+msgstr "Contacte de la guia telefònica de Yeastar"
+
+msgctxt "selection:ir.cron,method:"
+msgid "Get Yeastar CDR Details"
+msgstr "Obteniu els detalls del CDR de Yeastar"
+
+msgctxt "selection:yeastar.phonebook,member_select:"
+msgid "Select all company contacts"
+msgstr "Seleccioneu tots els contactes de l'empresa"
+
+msgctxt "selection:yeastar.phonebook,member_select:"
+msgid "Select specific company contacts"
+msgstr "Seleccioneu contactes específics de l'empresa"
+
+msgctxt "view:voice.prompt.text:"
+msgid "Prompt Text"
+msgstr "Text avís"
+
+msgctxt "view:voice.prompt.translate_text.start:"
+msgid ""
+"This will translate the main language text to the selected languages, unless"
+" the languege selected exist."
+msgstr ""
+"Això traduirà el text de l'idioma principal als idiomes seleccionats, tret "
+"que existeixi la traducció a l'idioma seleccionat."
+
+msgctxt "view:yeastar.cdr:"
+msgid "Start Time"
+msgstr "L'hora d'inici"
+
+msgctxt "view:yeastar.create.from_progress_call.start:"
+msgid "From the call between the extension"
+msgstr "De la trucada entre l'extensió"
+
+msgctxt "view:yeastar.create.from_progress_call.start:"
+msgid "What you wnat to do?"
+msgstr "Què vols fer?"
+
+msgctxt "view:yeastar.create.from_progress_call.start:"
+msgid "and the contact"
+msgstr "i el contacte"
+
+msgctxt "view:yeastar.create.from_progress_call.start:"
+msgid "of party"
+msgstr "del tercer"
+
+msgctxt "view:yeastar.pbx:"
+msgid "Connection informtion"
+msgstr "Informació de connexió"
+
+msgctxt "view:yeastar.pbx:"
+msgid "Contacts"
+msgstr "Contactes"
+
+msgctxt "view:yeastar.pbx:"
+msgid "Token"
+msgstr "Token"
+
+msgctxt "wizard_button:voice.prompt.translate_text,start,end:"
+msgid "Cancel"
+msgstr "Cancel·lar"
+
+msgctxt "wizard_button:voice.prompt.translate_text,start,translate_text:"
+msgid "Translate"
+msgstr "Traduir"
+
+msgctxt ""
+"wizard_button:yeastar.create.from_progress_call,start,create_activity:"
+msgid "Create Activity"
+msgstr "Crea una activitat"
+
+msgctxt "wizard_button:yeastar.create.from_progress_call,start,end:"
+msgid "Cancel"
+msgstr "Cancel·lar"
