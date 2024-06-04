@@ -967,7 +967,7 @@ class CreateFromProgressCall(Wizard):
                 gettext('yeastar_api.msg_not_call_in_progress',
                     employee=employee.rec_name,
                     extension=extension,
-                    pbx=pbx))
+                    pbx=pbx.rec_name))
         callee = call.get('callee', '')
         contact = call.get('yeastar_contact', None)
         party = None
