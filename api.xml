@@ -375,7 +375,6 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.action.wizard" id="act_get_calls_details">
             <field name="name">Get CDR</field>
             <field name="wiz_name">yeastar.cdr.get_calls_details</field>
-            <field name="model"></field>
         </record>
         <record model="ir.action.keyword" id="act_get_calls_details_keyword">
             <field name="keyword">form_action</field>
