@@ -338,7 +338,7 @@ msgid "Yeastar Activity Configuration"
 msgstr "Configuració de l'activitat de Yeastar"
 
 msgctxt "model:ir.action,name:act_create_from_progress_call"
-msgid "Yestar Progress Call"
+msgid "Yeastar Progress Call"
 msgstr "Trucada en curs"
 
 msgctxt "model:ir.action,name:act_get_calls_details"
@@ -640,8 +640,8 @@ msgid "Yeastar Phonebook"
 msgstr "Guia telefònica de Yeastar"
 
 msgctxt "model:ir.ui.menu,name:menu_yeastar_progress_call"
-msgid "Yestar Progress Call"
-msgstr "Trucada en curs Yestar"
+msgid "Yeastar Progress Call"
+msgstr "Trucada en curs Yeastar"
 
 msgctxt "model:res.group,name:group_yeastar"
 msgid "Yeastar"

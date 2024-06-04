@@ -309,7 +309,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="name">create_from_progress_call_start_form</field>
         </record>
         <record model="ir.action.wizard" id="act_create_from_progress_call">
-            <field name="name">Yestar Progress Call</field>
+            <field name="name">Yeastar Progress Call</field>
             <field name="wiz_name">yeastar.create.from_progress_call</field>
         </record>
         <menuitem
