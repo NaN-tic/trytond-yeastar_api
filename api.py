@@ -771,7 +771,7 @@ class YeastarContact(ModelSQL, ModelView):
         required=True, domain=[
             ('type', 'in', ('phone', 'mobile')),
             ])
-    first_name = fields.Char('First Name', required=True)
+    first_name = fields.Char('First Name', size=63, required=True)
     company = fields.Function(fields.Char('Yeastar Company'), 'get_company')
     num_type = fields.Selection('get_num_types', 'Number Type')
     number = fields.Char('Number', required=True)
@@ -805,8 +805,8 @@ class YeastarContact(ModelSQL, ModelView):
             ]
 
     def get_company(self, name=None):
-        return (self.contact_mechanism.party.name
-            if self.contact_mechanism.party else '')
+        return (self.contact_mechanism.party.name[:127]
+            if self.contact_mechanism.party[:127] else '')
 
     @staticmethod
     def default_num_type():
