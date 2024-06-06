@@ -846,6 +846,8 @@ class YeastarContact(ModelSQL, ModelView):
         '''
         to_save = []
         for contact in contacts:
+            if not contact.sync:
+                continue
             data = {
                 'first_name': contact.first_name, 
                 'company': contact.company,
