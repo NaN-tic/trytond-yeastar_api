@@ -807,7 +807,8 @@ class YeastarContact(ModelSQL, ModelView):
 
     def get_company(self, name=None):
         return (self.contact_mechanism.party.name[:127]
-            if self.contact_mechanism.party[:127] else '')
+            if self.contact_mechanism and self.contact_mechanism.party
+            and self.contact_mechanism.party.name else '')
 
     @staticmethod
     def default_num_type():
