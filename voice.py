@@ -163,16 +163,21 @@ class VoicePrompt(ModelSQL, ModelView):
         attachments = []
         for prompt in prompts:
             for prompt_text in prompt.prompts_text:
-                voice_name = prompt_text.voice
-                if not voice_name:
+                voice = prompt_text.voice
+                if not voice:
                     raise UserError(
                         gettext('yeastar_api.msg_prompt_text_missing_voice',
                             prompt=prompt.name,
                             lang=prompt_text.language_code))
-                language_code = "-".join(voice_name.split("-")[:2])
+                # Encode to ASCII and ignore errors, Convert bytes back to
+                # string and Replace blank spaces with a slash
+                prompt_name = prompt.name.encode('ascii', 'ignore').decode(
+                    'ascii').replace(' ', '')
+                voice_name = "%s-%s" % (prompt_name, voice)
+                language_code = "-".join(voice.split("-")[:2])
                 text_input = tts.SynthesisInput(text=prompt_text.text)
                 voice_params = tts.VoiceSelectionParams(
-                    language_code=language_code, name=voice_name)
+                    language_code=language_code, name=voice)
                 # Format requirement for Yeastar prompts:
                 #PCM, 8K, 16bit, 128kbps
                 #A-law (g.711), 8k, 8bit, 64kbps
