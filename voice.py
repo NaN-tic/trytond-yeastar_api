@@ -167,7 +167,7 @@ class VoicePrompt(ModelSQL, ModelView):
                 if not voice_name:
                     raise UserError(
                         gettext('yeastar_api.msg_prompt_text_missing_voice',
-                            prompt=prompt,
+                            prompt=prompt.name,
                             lang=prompt_text.language_code))
                 language_code = "-".join(voice_name.split("-")[:2])
                 text_input = tts.SynthesisInput(text=prompt_text.text)
