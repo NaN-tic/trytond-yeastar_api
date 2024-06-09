@@ -579,6 +579,7 @@ class YeastarPBX(ModelSQL, ModelView):
                 first_name = mechanism.name
             elif mechanism.address and mechanism.address.party_name:
                 first_name = mechanism.address.party_name
+            first_name = first_name[:63]
             add_contact = False
             if mechanism in yeastar_contacts:
                 contact = yeastar_contacts[mechanism]
@@ -826,7 +827,7 @@ class YeastarContact(ModelSQL, ModelView):
             elif mechanism.address and mechanism.address.party_name:
                 first_name = mechanism.address.party_name
             if not self.first_name:
-                self.first_name = first_name
+                self.first_name = first_name[:63]
             if not self.number:
                 self.number = self.__class__.valid_number(mechanism.value)
 
