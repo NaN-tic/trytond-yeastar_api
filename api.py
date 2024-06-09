@@ -846,7 +846,6 @@ class YeastarContact(ModelSQL, ModelView):
         '''
         Add or edit the Contacts to Yeastar P-Serie Cloud Edition PBX
         '''
-        to_save = []
         for contact in contacts:
             if not contact.sync:
                 continue
@@ -878,9 +877,13 @@ class YeastarContact(ModelSQL, ModelView):
                             if response_json else '')))
             if not contact.yeastar_contact_id:
                 contact.yeastar_contact_id = response_json.get('id', None)
-                to_save.append(contact)
-        if to_save:
-            cls.save(to_save)
+                # As the Yeastar API only allow to upload the contacts one by
+                # one, we need to commit the yeatar_contact_id each time the
+                # contat is upload becasue if ther is a fail, not lost the
+                # contact ID upload and not duplicate the next time we upload
+                # the contacts.
+                contact.save()
+                Transaction().commit()
 
     @classmethod
     @ModelView.button
