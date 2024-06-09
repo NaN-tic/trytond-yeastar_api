@@ -579,7 +579,7 @@ class YeastarPBX(ModelSQL, ModelView):
                 first_name = mechanism.name
             elif mechanism.address and mechanism.address.party_name:
                 first_name = mechanism.address.party_name
-            first_name = first_name[:63]
+            first_name = first_name[:60]
             add_contact = False
             if mechanism in yeastar_contacts:
                 contact = yeastar_contacts[mechanism]
@@ -772,7 +772,7 @@ class YeastarContact(ModelSQL, ModelView):
         required=True, domain=[
             ('type', 'in', ('phone', 'mobile')),
             ])
-    first_name = fields.Char('First Name', size=63, required=True)
+    first_name = fields.Char('First Name', size=60, required=True)
     company = fields.Function(fields.Char('Yeastar Company'), 'get_company')
     num_type = fields.Selection('get_num_types', 'Number Type')
     number = fields.Char('Number', required=True)
@@ -806,7 +806,7 @@ class YeastarContact(ModelSQL, ModelView):
             ]
 
     def get_company(self, name=None):
-        return (self.contact_mechanism.party.name[:127]
+        return (self.contact_mechanism.party.name[:120]
             if self.contact_mechanism and self.contact_mechanism.party
             and self.contact_mechanism.party.name else '')
 
@@ -828,7 +828,7 @@ class YeastarContact(ModelSQL, ModelView):
             elif mechanism.address and mechanism.address.party_name:
                 first_name = mechanism.address.party_name
             if not self.first_name:
-                self.first_name = first_name[:63]
+                self.first_name = first_name[:60]
             if not self.number:
                 self.number = self.__class__.valid_number(mechanism.value)
 
