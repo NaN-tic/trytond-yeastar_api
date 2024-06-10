@@ -442,7 +442,7 @@ msgid ""
 "There is not a call in progress for the employee \"%(employee)s\" with the "
 "extension \"%(extension)s\" on the PBX \"%(pbx)s\"."
 msgstr ""
-"No hi ha cap trucada en curs per a l'empleat \"%(empleat)s\" amb l'extensió "
+"No hi ha cap trucada en curs per a l'empleat \"%(employee)s\" amb l'extensió "
 "\"%(extension)s\" a la PBX \"%(pbx)s\"."
 
 msgctxt "model:ir.message,text:msg_not_employee"
