@@ -15,3 +15,10 @@ class Employee(metaclass=PoolMeta):
             ('company', '=', Eval('company')),
             ])
     yeastar_extension = fields.Integer('Yeastar Extension')
+
+    @classmethod
+    def copy(cls, employees, default=None):
+        default = default.copy() if default is not None else {}
+        default.setdefault('yeastar_pbx', None)
+        default.setdefault('yeastar_extension', None)
+        return super().copy(employees, default=default)
