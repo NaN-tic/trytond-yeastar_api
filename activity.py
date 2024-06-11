@@ -133,3 +133,11 @@ class Activity(metaclass=PoolMeta):
         transcription = client.audio.transcriptions.create(model="whisper-1",
             file=audio, language=language)
         return transcription.text
+
+    @classmethod
+    def copy(cls, activities, default=None):
+        default = default.copy() if default is not None else {}
+        default.setdefault('call_id', None)
+        default.setdefault('language', None)
+        default.setdefault('call_transcription', None)
+        return super().copy(activities, default=default)
