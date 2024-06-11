@@ -609,6 +609,17 @@ class YeastarPBX(ModelSQL, ModelView):
         if contact_to_save:
             Contact.save(contact_to_save)
 
+    @classmethod
+    def copy(cls, pbxs, default=None):
+        default = default.copy() if default is not None else {}
+        default.setdefault('serial_number', None)
+        default.setdefault('conacts', None)
+        default.setdefault('token', None)
+        default.setdefault('token_expire', None)
+        default.setdefault('refresh_token', None)
+        default.setdefault('refresh_token_expire', None)
+        return super().copy(pbxs, default=default)
+
 
 class YeastarPhonebook(ModelSQL, ModelView):
     'Yeastar Phonebook'
@@ -755,6 +766,13 @@ class YeastarPhonebook(ModelSQL, ModelView):
         if phonebooks:
             cls.save(phonebooks)
 
+    @classmethod
+    def copy(cls, phonebooks, default=None):
+        default = default.copy() if default is not None else {}
+        default.setdefault('yeastar_phonebook_id', None)
+        default.setdefault('contacts', None)
+        return super().copy(phonebooks, default=default)
+
 
 class YeastarContact(ModelSQL, ModelView):
     'Yeastar Contact'
@@ -769,13 +787,13 @@ class YeastarContact(ModelSQL, ModelView):
             })
     yeastar_contact_id = fields.Integer('Yeastar Contact ID', readonly=True)
     contact_mechanism = fields.Many2One('party.contact_mechanism', 'Contact',
-        required=True, domain=[
+        domain=[
             ('type', 'in', ('phone', 'mobile')),
             ])
-    first_name = fields.Char('First Name', size=60, required=True)
+    first_name = fields.Char('First Name', size=60)
     company = fields.Function(fields.Char('Yeastar Company'), 'get_company')
     num_type = fields.Selection('get_num_types', 'Number Type')
-    number = fields.Char('Number', required=True)
+    number = fields.Char('Number')
 
     @classmethod
     def __setup__(cls):
@@ -846,8 +864,13 @@ class YeastarContact(ModelSQL, ModelView):
         '''
         Add or edit the Contacts to Yeastar P-Serie Cloud Edition PBX
         '''
+        delete_contacts = []
         for contact in contacts:
-            if not contact.sync:
+            if not contact.contact_mechanism:
+                delete_contacts.append(contact)
+                continue
+            if (not contact.sync or not contact.first_name
+                    or not contact.number):
                 continue
             data = {
                 'first_name': contact.first_name, 
@@ -884,6 +907,9 @@ class YeastarContact(ModelSQL, ModelView):
                 # the contacts.
                 contact.save()
                 Transaction().commit()
+        if delete_contacts:
+            cls.delete_contact(delete_contacts)
+            cls.delete(delete_contacts)
 
     @classmethod
     @ModelView.button
@@ -909,6 +935,15 @@ class YeastarContact(ModelSQL, ModelView):
             contact.yeastar_contact_id = None
         if contacts:
             cls.save(contacts)
+
+    @classmethod
+    def copy(cls, contacts, default=None):
+        default = default.copy() if default is not None else {}
+        default.setdefault('yeastar_contact_id', None)
+        default.setdefault('contact_mechanism', None)
+        default.setdefault('first_name', None)
+        default.setdefault('number', None)
+        return super().copy(contacts, default=default)
 
 
 class YeastarPhonebookContact(ModelSQL):
