@@ -1040,7 +1040,7 @@ class CreateFromProgressCall(Wizard):
         activity.employee = self.start.employee
         if self.start.party:
             activity.party = self.start.party
-        if self.start.party_call:
+        if self.start.party_call and self.start.party_call != self.start.party:
             activity.contacts = [self.start.party_call]
         activity.call_id = self.start.call_id
         activity.save()
