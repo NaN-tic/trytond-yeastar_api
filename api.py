@@ -121,6 +121,17 @@ class YeastarPBX(ModelSQL, ModelView):
     def default_company():
         return Transaction().context.get('company')
 
+    @classmethod
+    def copy(cls, pbxs, default=None):
+        default = default.copy() if default is not None else {}
+        default.setdefault('serial_number', None)
+        default.setdefault('contacts', None)
+        default.setdefault('token', None)
+        default.setdefault('token_expire', None)
+        default.setdefault('refresh_token', None)
+        default.setdefault('refresh_token_expire', None)
+        return super().copy(pbxs, default=default)
+
     def get_endpoint(self, action):
         endpoint = None
         if action:
@@ -344,9 +355,9 @@ class YeastarPBX(ModelSQL, ModelView):
             yeastar_contact
             trunk_name
             }
-        ''' 
+        '''
         pool = Pool()
-        Contact = pool.get('yeastar.contact') 
+        Contact = pool.get('yeastar.contact')
 
         if not extension:
             return None
@@ -416,7 +427,7 @@ class YeastarPBX(ModelSQL, ModelView):
                 call_to_number
                 call_to_name
                 }
-        ''' 
+        '''
         token = self.get_token()
         response_json = None
         if token:
@@ -452,7 +463,7 @@ class YeastarPBX(ModelSQL, ModelView):
             file_name
             download_resource_url
             }
-        ''' 
+        '''
         if not id and not file:
             return None
         token = self.get_token()
@@ -487,7 +498,7 @@ class YeastarPBX(ModelSQL, ModelView):
             total_number: The total number of the searched CDR.
             data: A list of dicts with the detailed information of the CDR
             }
-        ''' 
+        '''
         args = {}
         if start_time and isinstance(start_time, datetime):
             args['start_time'] = start_time.strftime(self.time_format)
@@ -608,17 +619,6 @@ class YeastarPBX(ModelSQL, ModelView):
             contact_to_save.extend(contact_to_update)
         if contact_to_save:
             Contact.save(contact_to_save)
-
-    @classmethod
-    def copy(cls, pbxs, default=None):
-        default = default.copy() if default is not None else {}
-        default.setdefault('serial_number', None)
-        default.setdefault('conacts', None)
-        default.setdefault('token', None)
-        default.setdefault('token_expire', None)
-        default.setdefault('refresh_token', None)
-        default.setdefault('refresh_token_expire', None)
-        return super().copy(pbxs, default=default)
 
 
 class YeastarPhonebook(ModelSQL, ModelView):
@@ -873,7 +873,7 @@ class YeastarContact(ModelSQL, ModelView):
                     or not contact.number):
                 continue
             data = {
-                'first_name': contact.first_name, 
+                'first_name': contact.first_name,
                 'company': contact.company,
                 'number_list': [{
                         'num_type': contact.num_type,
