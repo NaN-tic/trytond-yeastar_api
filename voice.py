@@ -3,6 +3,7 @@
 #the full copyright notices and license terms.
 # https://help.yeastar.com/en/p-series-cloud-edition/index.html
 import html
+from google.auth.exceptions import DefaultCredentialsError
 try:
     import google.cloud.translate_v2 as translate
 except ImportError:
@@ -50,7 +51,12 @@ class VoicePromptText(ModelSQL, ModelView):
     def get_languages_code(cls):
         if not tts:
             return []
-        client = tts.TextToSpeechClient()
+
+        try:
+            client = tts.TextToSpeechClient()
+        except DefaultCredentialsError:
+            return []
+
         response = client.list_voices()
         languages = set()
         for voice in response.voices:
