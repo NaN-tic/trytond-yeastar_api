@@ -22,6 +22,8 @@ def register():
         api.CreateFromProgressCallStart,
         api.YeastarCDR,
         api.Cron,
+        activity.CallTranscription,
+        activity.CallTranscriptionLLMProcess,
         activity.Activity,
         contact_mechanism.ContactMechanism,
         company.Employee,

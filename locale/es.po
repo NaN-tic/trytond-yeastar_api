@@ -6,13 +6,33 @@ msgctxt "field:activity.activity,call_id:"
 msgid "Call ID"
 msgstr "Identificador de llamadas"
 
-msgctxt "field:activity.activity,call_transcription:"
-msgid "Call Transcription"
-msgstr "Transcripción de llamadas"
-
 msgctxt "field:activity.activity,language:"
 msgid "Language Call"
 msgstr "Idioma llamada"
+
+msgctxt "field:activity.activity,llm_process:"
+msgid "LLM Processing"
+msgstr "Procesado LLM"
+
+msgctxt "field:activity.activity,speakers:"
+msgid "Number of Speakers"
+msgstr "Número de personas"
+
+msgctxt "field:activity.activity,summarization:"
+msgid "Summarization"
+msgstr "Resumen"
+
+msgctxt "field:activity.activity,summarization_result:"
+msgid "Summarization Result"
+msgstr "Resultado resumen"
+
+msgctxt "field:activity.activity,transcriptions:"
+msgid "Call Transcriptions"
+msgstr "Transcripciones de llamadas"
+
+msgctxt "field:activity.activity,translation_languages:"
+msgid "Translation Languages"
+msgstr "Idiomas de traducción"
 
 msgctxt "field:activity.configuration,default_yeastar_activity_type:"
 msgid "Yeastar Type"
@@ -41,6 +61,30 @@ msgstr "Página de lista de registros de Yeastar"
 msgctxt "field:activity.configuration.yeastar,yeastar_record_list_page_size:"
 msgid "Yeastar Record List Page Size"
 msgstr "Tamaño de página de la lista de registros de Yeastar"
+
+msgctxt "field:call.transcription,activity:"
+msgid "Activity"
+msgstr "Actividad"
+
+msgctxt "field:call.transcription,name:"
+msgid "Name"
+msgstr "Nombre"
+
+msgctxt "field:call.transcription,transcription:"
+msgid "Transcription"
+msgstr "Transcripción"
+
+msgctxt "field:call.transcription.llm.process,activity:"
+msgid "Activity"
+msgstr "Actividad"
+
+msgctxt "field:call.transcription.llm.process,prompt:"
+msgid "Prompt"
+msgstr "Aviso"
+
+msgctxt "field:call.transcription.llm.process,response:"
+msgid "Response"
+msgstr "Respuesta"
 
 msgctxt "field:company.employee,yeastar_extension:"
 msgid "Yeastar Extension"
@@ -298,6 +342,10 @@ msgctxt "field:yeastar.phonebook-yeastar.contact,phonebook:"
 msgid "Phonebook"
 msgstr "Guía telefónica"
 
+msgctxt "help:activity.activity,speakers:"
+msgid "Leave it blank to let the AI try to figure it out."
+msgstr "Déjalo en blanco para que la IA intente resolverlo."
+
 msgctxt "help:yeastar.pbx,api_path:"
 msgid ""
 "The format of API path is openapi/{version}; the {version} indicates the API"
@@ -337,6 +385,14 @@ msgstr ""
 msgctxt "model:activity.configuration.yeastar,name:"
 msgid "Yeastar Activity Configuration"
 msgstr "Configuración de actividad de Yeastar"
+
+msgctxt "model:call.transcription,name:"
+msgid "Call Transcription"
+msgstr "Transcripción de llamadas"
+
+msgctxt "model:call.transcription.llm.process,name:"
+msgid "Call Transcription LLM Process"
+msgstr "Proceso de LLM de transcripción de llamadas"
 
 msgctxt "model:ir.action,name:act_create_from_progress_call"
 msgid "Yeastar Progress Call"
@@ -429,6 +485,23 @@ msgid ""
 msgstr ""
 "El Yeastar \"%(pbx)s\" no puede obtener el token:\n"
 "\"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_gladia_error_get_transcribe"
+msgid "The Gladia Get Transcribe fail with the error code \"%(code)s\"."
+msgstr "El Gladia Get Transcribe falla con el código de error \"%(code)s\"."
+
+msgctxt "model:ir.message,text:msg_gladia_fail_get_transcribe"
+msgid "Unknowed error."
+msgstr "Error desconocido."
+
+msgctxt "model:ir.message,text:msg_gladia_requests_fail"
+msgid ""
+"The Gladia request fail with the error code \"%(code)s\" message \"%(message)s\".\n"
+"        Possible extra information: \"%(validation_errors)s\"."
+msgstr ""
+"La solicitud de Gladia falla con el código de error \"%(code)s\" y el "
+"mensaje \"%(message)s\". Posible información adicional: "
+"\"%(validation_errors)s\"."
 
 msgctxt "model:ir.message,text:msg_make_call_not_possible"
 msgid ""
@@ -567,7 +640,7 @@ msgstr ""
 
 msgctxt "model:ir.model.button,string:activity_get_call_transcription_button"
 msgid "Get Call Transcription"
-msgstr "Obtener transcripción de llamadas"
+msgstr "Obtener transcripción de la llamada"
 
 msgctxt "model:ir.model.button,string:dial_button"
 msgid "Dial"
@@ -697,6 +770,18 @@ msgstr "Guía telefónica de Yeastar"
 msgctxt "model:yeastar.phonebook-yeastar.contact,name:"
 msgid "Yeastar Phonebook Contact"
 msgstr "Contacto de la guía telefónica de Yeastar"
+
+msgctxt "selection:activity.activity,summarization:"
+msgid "Bullet Points"
+msgstr "Puntos principales"
+
+msgctxt "selection:activity.activity,summarization:"
+msgid "Concise"
+msgstr "Conciso"
+
+msgctxt "selection:activity.activity,summarization:"
+msgid "General"
+msgstr "General"
 
 msgctxt "selection:ir.cron,method:"
 msgid "Get Yeastar CDR Details"

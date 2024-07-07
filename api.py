@@ -454,7 +454,7 @@ class YeastarPBX(ModelSQL, ModelView):
             'data': response_json.get('data', None),
             }
 
-    def download_record(self, id=None, file=None):
+    def download_record(self, id=None, file=None, token=None):
         '''
         https://help.yeastar.com/en/p-series-cloud-edition/developer-guide/download-a-recording-file.html
         It's only necessary one of the bothe vraibles, or 'id' or 'file'.
@@ -466,7 +466,8 @@ class YeastarPBX(ModelSQL, ModelView):
         '''
         if not id and not file:
             return None
-        token = self.get_token()
+        if not token:
+            token = self.get_token()
         response_json = None
         if token:
             endpoint = self.get_endpoint('download_record_call')
