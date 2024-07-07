@@ -6,13 +6,33 @@ msgctxt "field:activity.activity,call_id:"
 msgid "Call ID"
 msgstr "Identificador de trucada"
 
-msgctxt "field:activity.activity,call_transcription:"
-msgid "Call Transcription"
-msgstr "Transcripció de trucades"
-
 msgctxt "field:activity.activity,language:"
 msgid "Language Call"
 msgstr "Idioma trucada"
+
+msgctxt "field:activity.activity,llm_process:"
+msgid "LLM Processing"
+msgstr "Proceçat LLM"
+
+msgctxt "field:activity.activity,speakers:"
+msgid "Number of Speakers"
+msgstr "Número de persones"
+
+msgctxt "field:activity.activity,summarization:"
+msgid "Summarization"
+msgstr "Resum"
+
+msgctxt "field:activity.activity,summarization_result:"
+msgid "Summarization Result"
+msgstr "Resultat resum"
+
+msgctxt "field:activity.activity,transcriptions:"
+msgid "Call Transcriptions"
+msgstr "Transcripcions de trucades"
+
+msgctxt "field:activity.activity,translation_languages:"
+msgid "Translation Languages"
+msgstr "Idiomes de traducció"
 
 msgctxt "field:activity.configuration,default_yeastar_activity_type:"
 msgid "Yeastar Type"
@@ -41,6 +61,30 @@ msgstr "Pàgina de llista de registres de Yeastar"
 msgctxt "field:activity.configuration.yeastar,yeastar_record_list_page_size:"
 msgid "Yeastar Record List Page Size"
 msgstr "Mida de la pàgina de la llista de registres de Yeastar"
+
+msgctxt "field:call.transcription,activity:"
+msgid "Activity"
+msgstr "Activitat"
+
+msgctxt "field:call.transcription,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:call.transcription,transcription:"
+msgid "Transcription"
+msgstr "Transcripció"
+
+msgctxt "field:call.transcription.llm.process,activity:"
+msgid "Activity"
+msgstr "Activitat"
+
+msgctxt "field:call.transcription.llm.process,prompt:"
+msgid "Prompt"
+msgstr "Avís"
+
+msgctxt "field:call.transcription.llm.process,response:"
+msgid "Response"
+msgstr "Resposta"
 
 msgctxt "field:company.employee,yeastar_extension:"
 msgid "Yeastar Extension"
@@ -298,6 +342,10 @@ msgctxt "field:yeastar.phonebook-yeastar.contact,phonebook:"
 msgid "Phonebook"
 msgstr "Guia telefònica"
 
+msgctxt "help:activity.activity,speakers:"
+msgid "Leave it blank to let the AI try to figure it out."
+msgstr "Deixeu-lo en blanc perquè la IA ho intenti esbrinar."
+
 msgctxt "help:yeastar.pbx,api_path:"
 msgid ""
 "The format of API path is openapi/{version}; the {version} indicates the API"
@@ -336,6 +384,14 @@ msgstr ""
 msgctxt "model:activity.configuration.yeastar,name:"
 msgid "Yeastar Activity Configuration"
 msgstr "Configuració de l'activitat de Yeastar"
+
+msgctxt "model:call.transcription,name:"
+msgid "Call Transcription"
+msgstr "Transcripció de trucades"
+
+msgctxt "model:call.transcription.llm.process,name:"
+msgid "Call Transcription LLM Process"
+msgstr "Procés LLM de transcripció de trucades"
 
 msgctxt "model:ir.action,name:act_create_from_progress_call"
 msgid "Yeastar Progress Call"
@@ -428,6 +484,22 @@ msgid ""
 msgstr ""
 "El Yeastar \"%(pbx)s\" no aconsegueix el Token:\n"
 "\"%(errmsg)s\"."
+
+msgctxt "model:ir.message,text:msg_gladia_error_get_transcribe"
+msgid "The Gladia Get Transcribe fail with the error code \"%(code)s\"."
+msgstr "El Gladia Get Transcribe falla amb el codi d'error \"%(code)s\"."
+
+msgctxt "model:ir.message,text:msg_gladia_fail_get_transcribe"
+msgid "Unknowed error."
+msgstr "Error desconegut."
+
+msgctxt "model:ir.message,text:msg_gladia_requests_fail"
+msgid ""
+"The Gladia request fail with the error code \"%(code)s\" message \"%(message)s\".\n"
+"        Possible extra information: \"%(validation_errors)s\"."
+msgstr ""
+"La sol·licitud de Gladia ha fallat amb el codi d'error \"%(code)s\" missatge"
+" \"%(message)s\". Possible informació addicional: \"%(validation_errors)s\"."
 
 msgctxt "model:ir.message,text:msg_make_call_not_possible"
 msgid ""
@@ -565,7 +637,7 @@ msgstr ""
 
 msgctxt "model:ir.model.button,string:activity_get_call_transcription_button"
 msgid "Get Call Transcription"
-msgstr "Obteniu la transcripció de trucades"
+msgstr "Obteniu la transcripció de la trucada"
 
 msgctxt "model:ir.model.button,string:dial_button"
 msgid "Dial"
@@ -695,6 +767,18 @@ msgstr "Guia telefònica de Yeastar"
 msgctxt "model:yeastar.phonebook-yeastar.contact,name:"
 msgid "Yeastar Phonebook Contact"
 msgstr "Contacte de la guia telefònica de Yeastar"
+
+msgctxt "selection:activity.activity,summarization:"
+msgid "Bullet Points"
+msgstr "Punts principals"
+
+msgctxt "selection:activity.activity,summarization:"
+msgid "Concise"
+msgstr "Concís"
+
+msgctxt "selection:activity.activity,summarization:"
+msgid "General"
+msgstr "General"
 
 msgctxt "selection:ir.cron,method:"
 msgid "Get Yeastar CDR Details"

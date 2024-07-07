@@ -3,6 +3,7 @@
 contains the full copyright notices and license terms. -->
 <tryton>
     <data>
+        <!-- activity.activity -->
         <record model="ir.ui.view" id="activity_activity_form_view">
             <field name="model">activity.activity</field>
             <field name="inherit" ref="activity.activity_activity_form_view"/>
@@ -17,6 +18,30 @@ contains the full copyright notices and license terms. -->
         <record model="ir.model.button-res.group" id="activity_get_call_transcription_button_group_yeastar">
             <field name="button" ref="activity_get_call_transcription_button"/>
             <field name="group" ref="group_yeastar"/>
+        </record>
+
+        <!-- call.transcription -->
+        <record model="ir.ui.view" id="call_transcription_view_form">
+            <field name="model">call.transcription</field>
+            <field name="type">form</field>
+            <field name="name">call_transcription_form</field>
+        </record>
+        <record model="ir.ui.view" id="call_transcription_view_tree">
+            <field name="model">call.transcription</field>
+            <field name="type">tree</field>
+            <field name="name">call_transcription_tree</field>
+        </record>
+
+        <!-- call.transcription.llm.process -->
+        <record model="ir.ui.view" id="call_transcription_llm_proce_view_form">
+            <field name="model">call.transcription.llm.process</field>
+            <field name="type">form</field>
+            <field name="name">call_transcription_llm_process_form</field>
+        </record>
+        <record model="ir.ui.view" id="call_transcription_llm_process_view_tree">
+            <field name="model">call.transcription.llm.process</field>
+            <field name="type">tree</field>
+            <field name="name">call_transcription_llm_process_tree</field>
         </record>
     </data>
 </tryton>

@@ -2,17 +2,43 @@
 #The COPYRIGHT file at the top level of this repository contains
 #the full copyright notices and license terms.
 from datetime import timedelta
-from io import BytesIO
-from openai import OpenAI
 
-from trytond.model import ModelView, fields
+from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.pyson import Eval, Bool
-from trytond.config import config
 from trytond.modules.widgets import tools
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from .openai_api import (API_KEY as openai_api_key,
+    transcribe as openai_transcribe)
+from .gladia_api import (API_KEY as gladia_api_key,
+    upload_file as gladia_upload_file,
+    create_transcribe as gladia_create_transcribe,
+    get_transcribe as gladia_get_transcribe)
+
+
+class CallTranscription(ModelSQL, ModelView):
+    'Call Transcription'
+    __name__ = 'call.transcription'
+
+    name = fields.Char('Name', readonly=True)
+    activity = fields.Many2One('activity.activity', 'Activity')
+    transcription = fields.Text('Transcription')
+
+
+class CallTranscriptionLLMProcess(ModelSQL, ModelView):
+    'Call Transcription LLM Process'
+    __name__ = 'call.transcription.llm.process'
+
+    activity = fields.Many2One('activity.activity', 'Activity')
+    prompt = fields.Char('Prompt')
+    response = fields.Text('Response', readonly=True)
+
+
+STATE = {
+    'invisible': ~Bool(Eval('call_id')),
+    }
 
 
 class Activity(metaclass=PoolMeta):
@@ -20,11 +46,23 @@ class Activity(metaclass=PoolMeta):
     __name__ = 'activity.activity'
 
     call_id = fields.Char('Call ID', readonly=True)
-    language = fields.Many2One('ir.lang', 'Language Call')
-    call_transcription = fields.Text('Call Transcription',
-        states={
-            'invisible': ~Bool(Eval('call_id')),
-            })
+    language = fields.Many2One('ir.lang', 'Language Call', states=STATE)
+    speakers = fields.Integer('Number of Speakers', states=STATE,
+        help="Leave it blank to let the AI try to figure it out.")
+    translation_languages = fields.MultiSelection('get_translation_languages',
+        "Translation Languages", states=STATE)
+    transcriptions = fields.One2Many('call.transcription', 'activity',
+        'Call Transcriptions', states=STATE)
+    summarization = fields.Selection([
+            (None, ""),
+            ('general', "General"),
+            ('bullet_points', "Bullet Points"),
+            ('concise', "Concise"),
+            ], "Summarization", states=STATE)
+    summarization_result = fields.Text('Summarization Result', readonly=True)
+    llm_process = fields.One2Many('call.transcription.llm.process', 'activity',
+        'LLM Processing', states=STATE)
+
 
     @classmethod
     def __setup__(cls):
@@ -32,6 +70,26 @@ class Activity(metaclass=PoolMeta):
         cls._buttons.update({
                 'get_call_transcription': {},
                 })
+
+    @classmethod
+    def get_translation_languages(cls):
+        pool = Pool()
+        Language = pool.get('ir.lang')
+
+        langs = Language.search([])
+        return [(x.code, x.name) for x in langs]
+
+    @staticmethod
+    def default_speakers():
+        return 2
+
+    @staticmethod
+    def default_translation_languages():
+        return None
+
+    @staticmethod
+    def default_summarization():
+        return 'bullet_points'
 
     @classmethod
     @ModelView.button
@@ -45,8 +103,9 @@ class Activity(metaclass=PoolMeta):
         Configuration = pool.get('activity.configuration')
         User = pool.get('res.user')
         Attachment = pool.get('ir.attachment')
+        CallTranscription = pool.get('call.transcription')
 
-        config = Configuration(1)
+        configuration = Configuration(1)
         user = User(Transaction().user)
         employee = user.employee if user else None
         if not employee:
@@ -64,8 +123,8 @@ class Activity(metaclass=PoolMeta):
         for activity in activities:
             if not activity.call_id:
                 continue
-            page = config.yeastar_record_list_page or '1'
-            page_size = config.yeastar_record_list_page_size or '5'
+            page = configuration.yeastar_record_list_page or '1'
+            page_size = configuration.yeastar_record_list_page_size or '5'
             records_list = pbx.get_records_list(page=page, page_size=page_size,
                 sort_by='id', order_by='desc')
             if not records_list or not records_list.get('data', None):
@@ -83,30 +142,89 @@ class Activity(metaclass=PoolMeta):
                     break
 
             record_info = None
-            if id:
-                record_info = pbx.download_record(id)
-            if (not record_info or not record_info.get('file_name', None)
-                    or not record_info.get('download_resource_url', None)):
-                continue
-
-            # Download file
             token = pbx.get_token()
             if not token:
                 return
-            response = pbx._requests('GET',
-                args=record_info['download_resource_url'], token=token)
+            if id:
+                record_info = pbx.download_record(id, token=token)
+            file_name = (record_info.get('file_name', None)
+                if record_info else None)
+            audio_url = (record_info.get('download_resource_url', None)
+                if record_info else None)
+            if (not file_name or not audio_url):
+                continue
+            response = pbx._requests('GET', args=audio_url, token=token)
 
+            transcription = None
             lang = activity.language.code if activity.language else None
-            transcription = cls.speech_to_text(response, language=lang)
+            if gladia_api_key:
+                audio_to_llm = []
+                for llm in activity.llm_process:
+                    audio_to_llm.append(llm.prompt)
+                file = gladia_upload_file(response)
+                audio_url = file.get('audio_url', None)
+                transcription = gladia_create_transcribe(audio_url, lang=lang,
+                    number_speakers=activity.speakers,
+                    translation_lang=activity.translation_languages,
+                    summarization=activity.summarization,
+                    audio_to_llm=audio_to_llm, metadata={})
+                if transcription:
+                    transcription = gladia_get_transcribe(
+                        transcription.get('id', None))
+            elif openai_api_key:
+                if not lang:
+                    lang = Transaction().context.get('language')
+                transcription = openai_transcribe(response, language=lang)
+            else:
+                transcription = None
+            if not transcription:
+                return None
 
             activity.duration = (timedelta(seconds=duration)
                 if duration else timedelta(seconds=0))
-            activity.call_transcription = (tools.text_to_js(transcription)
-                if transcription else None)
+            for key, value in transcription.items():
+                if key == 'transcript':
+                    call_transcription = CallTranscription()
+                    call_transcription.name = value.get('language', lang)
+                    call_transcription.activity = activity
+                    call_transcription.transcription = tools.text_to_js(
+                        value.get('result', ''))
+                    call_transcription.save()
+                if key == 'sentences':
+                    sentences = []
+                    sentence_lang = (value[0].get('language', lang)
+                        if value and len(value) > 0 else lang)
+                    for res in value:
+                        sentences.append(
+                            "(%s) %s" % (res.get('speaker', ''),
+                                res.get('sentence', '')))
+                    call_transcription = CallTranscription()
+                    call_transcription.name = sentence_lang
+                    call_transcription.activity = activity
+                    call_transcription.transcription = tools.text_to_js(
+                        "\n".join(sentences))
+                    call_transcription.save()
+                if key == 'translations':
+                    for res in value:
+                        call_transcription = CallTranscription()
+                        call_transcription.name = res.get('language', lang)
+                        call_transcription.activity = activity
+                        call_transcription.transcription = tools.text_to_js(
+                            res.get('result', ''))
+                        call_transcription.save()
+                if key == 'summarization':
+                    activity.summarization_result = tools.text_to_js(value)
+                if key == 'llm':
+                    for llm in activity.llm_process:
+                        for res in value:
+                            if res.get('prompt', '') == llm.prompt:
+                                llm.response = tools.text_to_js(
+                                    res.get('result', ''))
+                        llm.save()
             to_save.append(activity)
 
             attach = Attachment(
-                name=record_info['file_name'],
+                name=file_name,
                 type='data',
                 #data=audio_content,
                 data=response,
@@ -117,22 +235,6 @@ class Activity(metaclass=PoolMeta):
             cls.save(to_save)
         if attachments:
             Attachment.save(attachments)
-
-    @classmethod
-    def speech_to_text(cls, audio_file, language=None):
-        if not audio_file:
-            return None
-        client = OpenAI(api_key=config.get('openai', 'api_key'),
-            organization=config.get('openai', 'organization'))
-        audio = BytesIO(audio_file)
-        # It is important to set the filename otherwise the API will not
-        # recognize the audio
-        audio.name = 'file.wav'
-        if not language:
-            language = Transaction().context.get('language')
-        transcription = client.audio.transcriptions.create(model="whisper-1",
-            file=audio, language=language)
-        return transcription.text
 
     @classmethod
     def copy(cls, activities, default=None):

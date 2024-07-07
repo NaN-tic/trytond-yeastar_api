@@ -2,12 +2,29 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/notebook" position="inside">
-        <page name="call_transcription">
-            <label name="language"/>
-            <field name="language"/>
-            <field name="call_transcription" colspan="4" height="400" widget="block"/>
-            <button name="get_call_transcription" colspan="4"/>
-        </page>
-    </xpath>
+  <xpath expr="/form/notebook" position="inside">
+    <page name="transcriptions">
+      <group id="call_header" colspan="4" col="6">
+        <label name="language"/>
+        <field name="language"/>
+        <label name="speakers"/>
+        <field name="speakers"/>
+        <label name="call_id"/>
+        <field name="call_id"/>
+      </group>
+
+      <separator name="translation_languages" colspan="4"/>
+      <field name="translation_languages" colspan="4" height="200"/>
+
+      <field name="transcriptions" colspan="4"/>
+
+      <label name="summarization"/>
+      <field name="summarization"/>
+      <field name="summarization_result" colspan="4" height="400" widget="block"/>
+
+      <field name="llm_process" colspan="4"/>
+
+      <button name="get_call_transcription" colspan="4"/>
+    </page>
+  </xpath>
 </data>
