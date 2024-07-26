@@ -48,7 +48,7 @@ def _requests(type_, endpoint, data=None, files=None, args=None, headers=None,
                 validation_errors=response_vals.get('validation_errors', '')))
 
 
-def upload_file(audio):
+def upload_file(audio, filename='conversation.wav', mime='audio/wav'):
     '''
     Example response:
     {
@@ -70,9 +70,13 @@ def upload_file(audio):
     if isinstance(audio, bytes):
         audio_io = BytesIO(audio)
         buffered_file = BufferedReader(audio_io)
+    elif isinstance(audio, BytesIO):
+        buffered_file = BufferedReader(audio)
+    elif isinstance(audio, BufferedReader):
+        buffered_file = audio
     else:
         buffered_file = open(audio, 'rb')
-    files = {"audio": ("conversation.wav", buffered_file, 'audio/wav')}
+    files = {"audio": (filename, buffered_file, mime)}
 
     return _requests('POST', 'upload', files=files, headers=headers)
 
