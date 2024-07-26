@@ -2,6 +2,11 @@
 #The COPYRIGHT file at the top level of this repository contains
 #the full copyright notices and license terms.
 from datetime import timedelta
+try:
+    from pydub import AudioSegment
+except Exception:
+    AudioSegment = None
+from io import BytesIO
 
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
@@ -16,6 +21,30 @@ from .gladia_api import (API_KEY as gladia_api_key,
     upload_file as gladia_upload_file,
     create_transcribe as gladia_create_transcribe,
     get_transcribe as gladia_get_transcribe)
+
+
+def convert_wav_to_mp3(wav_file):
+    '''
+    Convert the wave_file to MP3 format.
+    The wave_fil could be byte type object or a BytesIO object.
+    The MP3 returned will be the same type as the wav_file.
+    '''
+    if not AudioSegment:
+        raise Exception("pydub is not installed")
+    if isinstance(wav_file, bytes):
+        input = BytesIO(wav_file)
+    elif isinstance(wav_file, BytesIO):
+        input = wav_file
+    else:
+        raise Exception("Invalid wav_file type")
+    buffer = BytesIO()
+    audio = AudioSegment.from_wav(input)
+    audio.export(buffer, format="mp3")
+    if isinstance(wav_file, bytes):
+        mp3_file = buffer.getvalue()
+    else:
+        mp3_file = buffer
+    return mp3_file
 
 
 class CallTranscription(ModelSQL, ModelView):
@@ -62,7 +91,6 @@ class Activity(metaclass=PoolMeta):
     summarization_result = fields.Text('Summarization Result', readonly=True)
     llm_process = fields.One2Many('call.transcription.llm.process', 'activity',
         'LLM Processing', states=STATE)
-
 
     @classmethod
     def __setup__(cls):
@@ -153,7 +181,22 @@ class Activity(metaclass=PoolMeta):
                 if record_info else None)
             if (not file_name or not audio_url):
                 continue
-            response = pbx._requests('GET', args=audio_url, token=token)
+            wav_response = pbx._requests('GET', args=audio_url, token=token)
+
+            # Convert the WAV file donwlaod from Yeastar to MP3 to take up
+            # less space.
+            mp3_response = None
+            try:
+                mp3_response = convert_wav_to_mp3(wav_response)
+            except Exception:
+                pass
+            if mp3_response:
+                response = mp3_response
+                file_name = file_name.replace('.wav', '.mp3')
+                mime = 'audio/mp3'
+            else:
+                response = wav_response
+                mime = 'audio/wav'
 
             transcription = None
             lang = activity.language.code if activity.language else None
@@ -161,7 +204,8 @@ class Activity(metaclass=PoolMeta):
                 audio_to_llm = []
                 for llm in activity.llm_process:
                     audio_to_llm.append(llm.prompt)
-                file = gladia_upload_file(response)
+                file = gladia_upload_file(response, filename=file_name,
+                    mime=mime)
                 audio_url = file.get('audio_url', None)
                 transcription = gladia_create_transcribe(audio_url, lang=lang,
                     number_speakers=activity.speakers,

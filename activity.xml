@@ -9,6 +9,11 @@ contains the full copyright notices and license terms. -->
             <field name="inherit" ref="activity.activity_activity_form_view"/>
             <field name="name">activity_activity_form</field>
         </record>
+        <record model="ir.ui.view" id="activity_activity_tree_view">
+            <field name="model">activity.activity</field>
+            <field name="inherit" ref="activity.activity_activity_tree_view"/>
+            <field name="name">activity_activity_tree</field>
+        </record>
 
         <record model="ir.model.button" id="activity_get_call_transcription_button">
             <field name="name">get_call_transcription</field>
