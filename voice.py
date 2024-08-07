@@ -16,6 +16,7 @@ except ImportError:
 from trytond.pool import Pool
 from trytond.model import ModelView, ModelSQL, fields, Unique
 from trytond.pyson import Eval, Bool
+from trytond.modules.widgets import tools
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.wizard import Button, StateTransition, StateView, Wizard
@@ -181,7 +182,8 @@ class VoicePrompt(ModelSQL, ModelView):
                     'ascii').replace(' ', '')
                 voice_name = "%s-%s" % (prompt_name, voice)
                 language_code = "-".join(voice.split("-")[:2])
-                text_input = tts.SynthesisInput(text=prompt_text.text)
+                text_input = tts.SynthesisInput(text=tools.js_to_text(
+                        prompt_text.text))
                 voice_params = tts.VoiceSelectionParams(
                     language_code=language_code, name=voice)
                 # Format requirement for Yeastar prompts:
@@ -264,7 +266,8 @@ class VoicePromptTranslateText(Wizard):
                 new_prompt, = PromptText.copy([source])
                 new_prompt.language_code = target
                 new_prompt.text = prompt.translate_google(
-                    source.text, source.language_code, target)
+                    tools.js_to_text(source.text),
+                    source.language_code, target)
                 prompts_to_save.append(new_prompt)
         if prompts_to_save:
             PromptText.save(prompts_to_save)
