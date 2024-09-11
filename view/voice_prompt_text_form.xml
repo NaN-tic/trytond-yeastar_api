@@ -11,5 +11,5 @@ this repository contains the full copyright notices and license terms. -->
   <label name="voice"/>
   <field name="voice"/>
   <separator id="voice_prompt_text" string="Prompt Text" colspan="4"/>
-  <field name="text" colspan="4" height="400" widget="block"/>
+  <field name="text" colspan="4" height="400"/>
 </form>
