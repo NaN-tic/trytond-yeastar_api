@@ -82,7 +82,7 @@ def upload_file(audio, filename='conversation.wav', mime='audio/wav'):
 
 
 def create_transcribe(audio_url, lang=None, number_speakers=None,
-        translation_lang=None, summarization='bullet_points', audio_to_llm=[], 
+        translation_lang=None, summarization='bullet_points', audio_to_llm=[],
         metadata={}):
     '''
     Since Gladia /v2/transcription endpoint only accept audio URLs, if You
@@ -150,14 +150,14 @@ def create_transcribe(audio_url, lang=None, number_speakers=None,
         # Available options: general, bullet_points, concise
         data.update({
                 "summarization": True,
-                "summarization_config": {"type": summarization},  
+                "summarization_config": {"type": summarization},
             })
     if translation_lang:
         data.update({
                 "translation": True,
                 "translation_config": {
                     "target_languages": translation_lang, # Target language in iso639-1 format you want the transcription translated to
-                    "model": "base", # Model you want the translation model to use to translate. Available options: base, enhanced 
+                    "model": "base", # Model you want the translation model to use to translate. Available options: base, enhanced
                     }})
     if audio_to_llm and isinstance(audio_to_llm, list):
         data.update({
