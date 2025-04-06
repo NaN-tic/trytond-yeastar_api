@@ -3,6 +3,8 @@
 #the full copyright notices and license terms.
 # https://help.yeastar.com/en/p-series-cloud-edition/index.html
 import html
+import subprocess
+import io
 from google.auth.exceptions import DefaultCredentialsError
 try:
     import google.cloud.translate_v2 as translate
@@ -184,23 +186,43 @@ class VoicePrompt(ModelSQL, ModelView):
                 text_input = tts.SynthesisInput(text=prompt_text.text)
                 voice_params = tts.VoiceSelectionParams(
                     language_code=language_code, name=voice)
-                # Format requirement for Yeastar prompts:
-                #PCM, 8K, 16bit, 128kbps
-                #A-law (g.711), 8k, 8bit, 64kbps
-                #u-law (g.711), 8k, 8bit, 64kbps
-                # https://cloud.google.com/text-to-speech/docs/reference/rest/v1/AudioConfig
                 audio_config = tts.AudioConfig(
-                    audio_encoding=tts.AudioEncoding.MULAW)
+                    audio_encoding=tts.AudioEncoding.LINEAR16)
 
                 client = tts.TextToSpeechClient()
                 response = client.synthesize_speech(
                     input=text_input,
                     voice=voice_params,
                     audio_config=audio_config)
+
+                # Format requirement for Yeastar prompts:
+                #PCM, 8K, 16bit, 128kbps
+                #A-law (g.711), 8k, 8bit, 64kbps
+                #u-law (g.711), 8k, 8bit, 64kbps
+                # https://cloud.google.com/text-to-speech/docs/reference/rest/v1/AudioConfig
+                # Ensure the files is format correctly in the PCM value
+                # required
+                command = [
+                    "ffmpeg",
+                    "-i", "-",              # input from stdin (pipe)
+                    "-acodec", "pcm_s16le", # PCM signed 16-bit lottle-endian
+                    "-ar", "8000",          # Sample rate 8KHz
+                    "-ab", "128k",          # Bitrate 128Kbps
+                    "-f", "wav",            # Force output format to WAV
+                    "-",                    # output to stdout (pipe)
+                    "-y"                    # Overwrite output file if exists
+                    ]
+                process = subprocess.run(
+                    command,
+                    input=response.audio_content,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True)
+
                 attach = Attachment(
                     name="%s.wav" % voice_name,
                     type='data',
-                    data=response.audio_content,
+                    data=process.stdout,
                     resource=prompt)
                 attachments.append(attach)
         if attachments:
