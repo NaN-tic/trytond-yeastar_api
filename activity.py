@@ -285,5 +285,4 @@ class Activity(metaclass=PoolMeta):
         default = default.copy() if default is not None else {}
         default.setdefault('call_id', None)
         default.setdefault('language', None)
-        default.setdefault('call_transcription', None)
         return super().copy(activities, default=default)
