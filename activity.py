@@ -12,7 +12,6 @@ from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 from trytond.pyson import Eval, Bool
-from trytond.modules.widgets import tools
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from .openai_api import (API_KEY as openai_api_key,
@@ -231,8 +230,7 @@ class Activity(metaclass=PoolMeta):
                     call_transcription = CallTranscription()
                     call_transcription.name = value.get('language', lang)
                     call_transcription.activity = activity
-                    call_transcription.transcription = tools.text_to_js(
-                        value.get('result', ''))
+                    call_transcription.transcription = value.get('result', '')
                     call_transcription.save()
                 if key == 'sentences':
                     sentences = []
@@ -245,25 +243,22 @@ class Activity(metaclass=PoolMeta):
                     call_transcription = CallTranscription()
                     call_transcription.name = sentence_lang
                     call_transcription.activity = activity
-                    call_transcription.transcription = tools.text_to_js(
-                        "\n".join(sentences))
+                    call_transcription.transcription = "\n".join(sentences)
                     call_transcription.save()
                 if key == 'translations':
                     for res in value:
                         call_transcription = CallTranscription()
                         call_transcription.name = res.get('language', lang)
                         call_transcription.activity = activity
-                        call_transcription.transcription = tools.text_to_js(
-                            res.get('result', ''))
+                        call_transcription.transcription = res.get('result', '')
                         call_transcription.save()
                 if key == 'summarization':
-                    activity.summarization_result = tools.text_to_js(value)
+                    activity.summarization_result = value
                 if key == 'llm':
                     for llm in activity.llm_process:
                         for res in value:
                             if res.get('prompt', '') == llm.prompt:
-                                llm.response = tools.text_to_js(
-                                    res.get('result', ''))
+                                llm.response = res.get('result', '')
                         llm.save()
             to_save.append(activity)
 

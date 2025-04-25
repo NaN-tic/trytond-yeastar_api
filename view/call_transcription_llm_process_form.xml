@@ -5,5 +5,5 @@ this repository contains the full copyright notices and license terms. -->
   <separator name="prompt" colspan="4"/>
   <field name="prompt" colspan="4"/>
   <separator name="response" colspan="4"/>
-  <field name="response" colspan="4" height="400" widget="block"/>
+  <field name="response" colspan="4" height="400"/>
 </form>

@@ -20,7 +20,7 @@
 
       <label name="summarization"/>
       <field name="summarization"/>
-      <field name="summarization_result" colspan="4" height="400" widget="block"/>
+      <field name="summarization_result" colspan="4" height="400"/>
 
       <field name="llm_process" colspan="4"/>
 
