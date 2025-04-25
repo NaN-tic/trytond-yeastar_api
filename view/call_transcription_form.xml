@@ -4,5 +4,5 @@ this repository contains the full copyright notices and license terms. -->
 <form>
   <field name="name"/>
   <field name="activity"/>
-  <field name="transcription" colspan="4" height="400" widget="block"/>
+  <field name="transcription" colspan="4" height="400"/>
 </form>
