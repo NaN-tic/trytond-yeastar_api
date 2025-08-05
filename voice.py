@@ -4,7 +4,6 @@
 # https://help.yeastar.com/en/p-series-cloud-edition/index.html
 import html
 import subprocess
-import io
 from google.auth.exceptions import DefaultCredentialsError
 try:
     import google.cloud.translate_v2 as translate
