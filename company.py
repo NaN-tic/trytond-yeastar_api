@@ -12,7 +12,7 @@ class Employee(metaclass=PoolMeta):
 
     yeastar_pbx = fields.Many2One('yeastar.pbx', 'Yeastar PBX',
         domain=[
-            ('company.id', '=', Eval('company')),
+            ('company', '=', Eval('company')),
             ])
     yeastar_extension = fields.Integer('Yeastar Extension')
 
