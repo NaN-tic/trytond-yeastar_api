@@ -217,20 +217,6 @@ class YeastarPBX(ModelSQL, ModelView):
         You could obtain new one wiht the refresh token.
         You could revoke if it's needed.
         '''
-        pool = Pool()
-        User = pool.get('res.user')
-
-        user = User(Transaction().user)
-        employee = user.employee if user else None
-        if not employee:
-            raise UserError(
-                gettext('yeastar_api.msg_not_employee',
-                    user=user.name))
-        if employee.yeastar_pbx != self:
-            raise UserError(
-                gettext('yeastar_api.msg_different_employee_pbx',
-                    employtee=employee.rec_name,
-                    pbx=self.rec_name))
         token = self.token or None
         token_expire = self.token_expire or None
         refresh_token = self.refresh_token or None
@@ -1002,7 +988,7 @@ class CreateFromProgressCall(Wizard):
         if not extension or not pbx:
             raise UserError(
                 gettext('yeastar_api.msg_not_extension_pbx_employee',
-                    employee=employee))
+                    employee=employee.rec_name))
         call = pbx.query_call_by_extension(str(extension))
 
         if not call:
