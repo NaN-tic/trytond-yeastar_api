@@ -221,16 +221,18 @@ class YeastarPBX(ModelSQL, ModelView):
         User = pool.get('res.user')
 
         user = User(Transaction().user)
-        employee = user.employee if user else None
-        if not employee:
-            raise UserError(
-                gettext('yeastar_api.msg_not_employee',
-                    user=user.name))
-        if employee.yeastar_pbx != self:
-            raise UserError(
-                gettext('yeastar_api.msg_different_employee_pbx',
-                    employtee=employee.rec_name,
-                    pbx=self.rec_name))
+        wo_employee = Transaction().context.get('yeastar_wo_employee', False)
+        if not wo_employee:
+            employee = user.employee if user else None
+            if not employee:
+                raise UserError(
+                    gettext('yeastar_api.msg_not_employee',
+                        user=user.name))
+            if employee.yeastar_pbx != self:
+                raise UserError(
+                    gettext('yeastar_api.msg_different_employee_pbx',
+                        employtee=employee.rec_name,
+                        pbx=self.rec_name))
         token = self.token or None
         token_expire = self.token_expire or None
         refresh_token = self.refresh_token or None
@@ -513,7 +515,10 @@ class YeastarPBX(ModelSQL, ModelView):
         status = status.upper() if status else status
         if status and status in status_valid_values:
             args['status'] = status
-        token = self.get_token()
+        # As this fucntion is called by cron, nnet to get token without
+        # employ control.
+        with Transaction().set_context(yeastar_wo_employee=True):
+            token = self.get_token()
         response_json = None
         if token:
             endpoint = self.get_endpoint('cdr_search')
