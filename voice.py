@@ -71,7 +71,12 @@ class VoicePromptText(ModelSQL, ModelView):
         if self.language_code:
             if not tts:
                 return result
-            client = tts.TextToSpeechClient()
+
+            try:
+                client = tts.TextToSpeechClient()
+            except DefaultCredentialsError:
+                return result
+
             response = client.list_voices(language_code=self.language_code)
             for voice in response.voices:
                 name = voice.name
@@ -188,7 +193,11 @@ class VoicePrompt(ModelSQL, ModelView):
                 audio_config = tts.AudioConfig(
                     audio_encoding=tts.AudioEncoding.LINEAR16)
 
-                client = tts.TextToSpeechClient()
+                try:
+                    client = tts.TextToSpeechClient()
+                except DefaultCredentialsError:
+                    return
+
                 response = client.synthesize_speech(
                     input=text_input,
                     voice=voice_params,
