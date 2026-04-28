@@ -1037,6 +1037,7 @@ class CreateFromProgressCall(Wizard):
         Activity = pool.get('activity.activity')
         Configuration = pool.get('activity.configuration')
         Date = pool.get('ir.date')
+        ActivityParty = pool.get('activity.activity-party.party')
 
         config = Configuration(1)
 
@@ -1047,7 +1048,9 @@ class CreateFromProgressCall(Wizard):
         if self.start.party:
             activity.party = self.start.party
         if self.start.party_call and self.start.party_call != self.start.party:
-            activity.contacts = [self.start.party_call]
+            contact = ActivityParty()
+            contact.party = self.start.party_call
+            activity.contacts = [contact]
         activity.call_id = self.start.call_id
         activity.save()
         return activity
