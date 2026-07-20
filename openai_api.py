@@ -5,9 +5,7 @@
 from io import BytesIO
 from openai import OpenAI
 
-from trytond.config import config
-
-
+import trytond.config as config
 API_KEY = config.get('openai', 'api_key')
 ORGANITZATION = config.get('openai', 'organization')
 
