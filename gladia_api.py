@@ -7,7 +7,7 @@ import json
 import time
 from io import BytesIO, BufferedReader
 
-from trytond.config import config
+import trytond.config as config
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
