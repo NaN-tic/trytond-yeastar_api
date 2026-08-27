@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    class="icon"
-   width="200px"
-   height="200.00px"
-   viewBox="0 0 1024 1024"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
    version="1.1"
    id="svg942"
    sodipodi:docname="yeastar-to-tryton.svg"
@@ -33,6 +33,7 @@
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg942" />
+  <g transform="scale(0.0234375)">
   <path
      d="m 856.25695,547.10583 h -32.16041 a 18.1903,17.92041 0 0 1 0,-35.84082 h 32.16041 c 15.13434,0 28.81345,-7.45489 36.81719,-20.07086 a 18.190297,17.920407 0 0 1 25.02984,-5.73451 c 8.58582,5.30442 11.05968,16.34341 5.82088,24.65846 a 79.251486,78.075625 0 0 1 -67.66791,36.98773 z"
      fill="#333333"
@@ -111,4 +112,5 @@
      fill="#0098f0"
      id="path932"
      style="stroke-width:3.90141" />
+  </g>
 </svg>
