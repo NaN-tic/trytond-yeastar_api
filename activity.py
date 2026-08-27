@@ -144,7 +144,7 @@ class Activity(metaclass=PoolMeta):
         if not extension or not pbx:
             raise UserError(
                 gettext('yeastar_api.msg_not_extension_pbx_employee',
-                    employee=employee))
+                    employee=employee.rec_name))
         attachments = []
         to_save = []
         for activity in activities:

@@ -1007,7 +1007,7 @@ class CreateFromProgressCall(Wizard):
         if not extension or not pbx:
             raise UserError(
                 gettext('yeastar_api.msg_not_extension_pbx_employee',
-                    employee=employee))
+                    employee=employee.rec_name))
         call = pbx.query_call_by_extension(str(extension))
 
         if not call:
