@@ -29,14 +29,6 @@ this repository contains the full copyright notices and license terms. -->
             <field name="name">Yeastar Administration</field>
             <field name="parent" ref="group_yeastar"/>
         </record>
-        <record model="res.user-res.group" id="user_admin_group_yeastar">
-            <field name="user" ref="res.user_admin"/>
-            <field name="group" ref="group_yeastar"/>
-        </record>
-        <record model="res.user-res.group" id="user_admin_group_yeastar_admin">
-            <field name="user" ref="res.user_admin"/>
-            <field name="group" ref="group_yeastar_admin"/>
-        </record>
 
         <menuitem
             id="menu_yeastar_admin"
