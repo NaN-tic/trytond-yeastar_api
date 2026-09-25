@@ -11,7 +11,7 @@ from trytond.model import ModelView, ModelSQL, fields, Unique
 from trytond.pyson import Eval, Bool
 from trytond.wizard import (
     Button, StateAction, StateTransition, StateView, Wizard)
-from trytond.transaction import Transaction
+from trytond.transaction import Transaction, without_check_access
 from trytond.i18n import gettext
 from trytond.exceptions import UserError, UserWarning
 
@@ -271,7 +271,8 @@ class YeastarPBX(ModelSQL, ModelView):
                 'refresh_token_expire_time', '0'))
         self.refresh_token_expire = now + timedelta(
             seconds=refresh_token_expire)
-        self.save()
+        with without_check_access():
+            self.save()
         #If token is getted correctly, commit it to use in the future calls,
         # although the current call fail.
         Transaction().commit()
