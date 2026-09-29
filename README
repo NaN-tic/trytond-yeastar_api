@@ -8,6 +8,74 @@ Installing
 
 See INSTALL
 
+Webhook capture
+---------------
+
+The webhook receiver currently captures events only. It does not create
+activities, assign durations, download recordings or start transcriptions.
+Capture real transfer events before implementing automatic processing.
+
+Deployment:
+
+1. Deploy the module, upgrade it in the target database using the usual
+   trytond-admin configuration, and restart all Tryton HTTP processes::
+
+       trytond-admin -c <server-config> -d nantic -u yeastar_api
+
+2. Ensure the HTTPS reverse proxy forwards POST requests for
+   /<database>/yeastar/webhook/<pbx-id> to Tryton without changing the body or
+   removing the X-Signature header.
+3. Open Administration > Yeastar > Yeastar PBX, then the Webhook tab.
+   Set Public Base URL to https://nantic.nan-tic.com and save. The calculated
+   Webhook URL includes the current database name and the saved PBX ID.
+   With database nantic and PBX 1 it is:
+   https://nantic.nan-tic.com/nantic/yeastar/webhook/1
+4. In Yeastar Integrations > API, add a POST webhook using this URL. Copy
+   Yeastar's generated signing secret into Tryton's Webhook Secret field.
+   Enable the webhook in Tryton and save before sending a connectivity test.
+5. Subscribe to 30011 (call state), 30012 (call end/CDR), 30013 (transfer)
+   and 30014 (forwarding). Enable the relevant extension/trunk call monitors.
+   The defaults of 5 seconds timeout and 3 retries are suitable for capture.
+6. Send Yeastar's connectivity test. A signed test returns HTTP 204 and
+   appears in the PBX's Webhook Events list with event type "test".
+
+The receiver verifies Base64-encoded HMAC-SHA256 of the raw request body.
+Disabled or unknown PBXs return 404, invalid signatures return 403, and
+invalid JSON/event envelopes return 400. All accepted payloads are stored
+in the database before acknowledgment. Exact repeated bodies are captured
+once per PBX, including concurrent retries; this is transport deduplication,
+not a business rule for call durations. A copied PBX has its webhook disabled
+and does not inherit the secret or captured events.
+
+Events are read-only to Yeastar administrators and restricted by company.
+The secret is accessible only to Yeastar administrators. Captures include
+call metadata; the secret and signature are not stored in event payloads.
+New event types and nested message formats are preserved for inspection.
+
+Capture an external call with a blind transfer, an attended transfer,
+a failed transfer, and a return to the original employee. Record the test
+times and extensions, and compare the captured messages with recording/CDR
+entries. Preserve distinct recording IDs, CDR UIDs and live call IDs.
+
+To export a capture window from a fresh trytond-console session::
+
+    import json
+    from datetime import datetime
+    Event = pool.get('yeastar.webhook.event')
+    events = Event.search([
+        ('pbx', '=', 1),
+        ('create_date', '>=', datetime(2026, 9, 29, 14, 0)),
+        ('create_date', '<', datetime(2026, 9, 29, 15, 0)),
+        ], order=[('create_date', 'ASC'), ('id', 'ASC')])
+    print(json.dumps([{
+        'received_at': str(event.create_date),
+        'payload': json.loads(event.payload),
+        } for event in events], indent=2))
+
+Replace the PBX ID and UTC time window with the values of the actual test.
+For a copied database, disable webhook reception before publishing it and
+configure a separate secret if it needs its own webhook.
+
 
 License
 -------

@@ -33,6 +33,19 @@ this repository contains the full copyright notices and license terms. -->
                 <button name="delete_token"/>
             </group>
         </page>
+        <page string="Webhook" id="pbx_webhook">
+            <label name="webhook_enabled"/>
+            <field name="webhook_enabled"/>
+            <label name="webhook_mode"/>
+            <field name="webhook_mode"/>
+            <label name="webhook_base_url"/>
+            <field name="webhook_base_url" colspan="3"/>
+            <label name="webhook_url"/>
+            <field name="webhook_url" colspan="3"/>
+            <label name="webhook_secret"/>
+            <field name="webhook_secret" widget="password" colspan="3"/>
+            <field name="webhook_events" colspan="4"/>
+        </page>
         <page string="Token" id="pbx_token">
             <label name="token"/>
             <field name="token" widget="password"/>

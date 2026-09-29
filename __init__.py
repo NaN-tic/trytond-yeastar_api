@@ -8,6 +8,10 @@ from . import activity
 from . import contact_mechanism
 from . import company
 from . import voice
+from . import webhook
+from . import routes
+
+__all__ = ['register', 'routes']
 
 
 def register():
@@ -30,6 +34,8 @@ def register():
         voice.VoicePromptText,
         voice.VoicePrompt,
         voice.VoicePromptTranslateTextStart,
+        webhook.PBX,
+        webhook.WebhookEvent,
         module='yeastar_api', type_='model')
     Pool.register(
         api.CreateFromProgressCall,

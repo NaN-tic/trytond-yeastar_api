@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <record model="ir.message" id="msg_webhook_invalid_base_url">
+            <field name="text">The public webhook base URL must be an HTTPS URL without credentials, query or fragment.</field>
+        </record>
+        <record model="ir.message" id="msg_webhook_payload_unique">
+            <field name="text">This webhook payload has already been captured.</field>
+        </record>
+        <record model="ir.ui.view" id="webhook_event_view_tree">
+            <field name="model">yeastar.webhook.event</field>
+            <field name="type">tree</field>
+            <field name="name">webhook_event_tree</field>
+        </record>
+        <record model="ir.ui.view" id="webhook_event_view_form">
+            <field name="model">yeastar.webhook.event</field>
+            <field name="type">form</field>
+            <field name="name">webhook_event_form</field>
+        </record>
+        <record model="ir.model.access" id="access_webhook_event">
+            <field name="model">yeastar.webhook.event</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_webhook_event_admin">
+            <field name="model">yeastar.webhook.event</field>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.rule.group" id="rule_group_webhook_event_companies">
+            <field name="name">User in companies</field>
+            <field name="model">yeastar.webhook.event</field>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_webhook_event_companies">
+            <field name="domain" eval="[('pbx.company', 'in', Eval('companies', []))]" pyson="1"/>
+            <field name="rule_group" ref="rule_group_webhook_event_companies"/>
+        </record>
+        <record model="ir.model.field.access" id="access_webhook_secret">
+            <field name="model">yeastar.pbx</field>
+            <field name="field">webhook_secret</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.field.access" id="access_webhook_secret_admin">
+            <field name="model">yeastar.pbx</field>
+            <field name="field">webhook_secret</field>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+    </data>
+</tryton>

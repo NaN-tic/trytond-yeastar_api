@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<form>
+    <label name="pbx"/>
+    <field name="pbx"/>
+    <label name="create_date"/>
+    <field name="create_date"/>
+    <label name="event_type"/>
+    <field name="event_type"/>
+    <label name="state"/>
+    <field name="state"/>
+    <label name="call_id"/>
+    <field name="call_id" colspan="3"/>
+    <label name="digest"/>
+    <field name="digest" colspan="3"/>
+    <field name="payload" colspan="4"/>
+</form>
