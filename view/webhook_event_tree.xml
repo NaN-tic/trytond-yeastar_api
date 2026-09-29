@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<tree>
+    <field name="create_date"/>
+    <field name="pbx"/>
+    <field name="event_type"/>
+    <field name="call_id"/>
+    <field name="state"/>
+</tree>
