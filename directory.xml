@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<tryton>
+    <data noupdate="1">
+        <record model="ir.cron" id="cron_sync_directory">
+            <field name="method">yeastar.pbx|sync_directory</field>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">days</field>
+            <field name="hour" eval="4"/>
+            <field name="minute" eval="0"/>
+        </record>
+    </data>
+</tryton>

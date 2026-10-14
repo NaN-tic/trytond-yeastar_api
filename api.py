@@ -579,20 +579,25 @@ class YeastarPBX(ModelSQL, ModelView):
         Mechanism = pool.get('party.contact_mechanism')
         Contact = pool.get('yeastar.contact')
 
-        # TODO: Control the possible multi PBX for mutli company
-        # Ass the moment is possible to have one PBX for company is not
-        # necessary to control for each PBX wich contacts set.
+        if len(pbxs) > 1:
+            for pbx in pbxs:
+                cls.load_contacts([pbx])
+            return
+        if not pbxs:
+            return
+        pbx, = pbxs
         domain = [
             ('party.active', '=', True),
             ('type', 'in', ('phone', 'mobile'))
             ]
         if hasattr(Party, 'current_company'):
             domain.append(('party.current_company', '=', True))
-        all_mechanims = Mechanism.search(domain)
+        with Transaction().set_context(company=pbx.company.id):
+            all_mechanims = Mechanism.search(domain)
         mechanisms = dict(((x, Contact.valid_number(x.value))
                 for x in all_mechanims if Contact.valid_number(x.value)))
         yeastar_contacts = dict(((x.contact_mechanism, x)
-                for x in Contact.search([('sync', '=', True)])))
+                for x in Contact.search([('yeastar_pbx', '=', pbx.id)])))
         contact_to_update = []
         contact_to_save = []
         for mechanism, value in mechanisms.items():
@@ -622,14 +627,39 @@ class YeastarPBX(ModelSQL, ModelView):
                 contact.num_type = 'business_number'
                 contact.number = value
                 contact_to_save.append(contact)
-        if contact_to_save:
-            for pbx in pbxs:
-                for contact in contact_to_save:
-                    contact.yeastar_pbx = pbx
+        for contact in contact_to_save:
+            contact.yeastar_pbx = pbx
         if contact_to_update:
             contact_to_save.extend(contact_to_update)
         if contact_to_save:
             Contact.save(contact_to_save)
+
+    @classmethod
+    def sync_directory(cls):
+        """Refresh managed contacts before reconciling phonebook membership."""
+        pool = Pool()
+        Phonebook = pool.get('yeastar.phonebook')
+        Contact = pool.get('yeastar.contact')
+        # Acquire write locks before any remote mutation. Tryton may restart
+        # transactions to acquire locks, which must not replay remote creates.
+        cls.lock()
+        Contact.lock()
+        Phonebook.lock()
+        pool.get('yeastar.phonebook-yeastar.contact').lock()
+        domain = []
+        company = Transaction().context.get('company')
+        if company:
+            domain.append(('company', '=', company))
+        for pbx in cls.search(domain):
+            phonebooks = Phonebook.search([('yeastar_pbx', '=', pbx.id)])
+            if not phonebooks:
+                continue
+            with Transaction().set_context(company=pbx.company.id,
+                    yeastar_wo_employee=True):
+                cls.load_contacts([pbx])
+                Contact.sync_contact(Contact.search([
+                            ('yeastar_pbx', '=', pbx.id)]))
+                Phonebook.sync_phonebook(phonebooks)
 
 
 class YeastarPhonebook(ModelSQL, ModelView):
@@ -690,7 +720,7 @@ class YeastarPhonebook(ModelSQL, ModelView):
             raise UserError(
                 gettext('yeastar_api.msg_query_phonebook_fail',
                     pbx=pbx.rec_name,
-                    phonebook=self.nme,
+                    phonebook=self.name,
                     errmsg=(response_json.get('errmsg', '')
                         if response_json else '')))
         return response_json.get('data', {}).get('contacts_list', [])
@@ -701,7 +731,6 @@ class YeastarPhonebook(ModelSQL, ModelView):
         '''
         Add or edit the Phonebooks to Yeastar P-Serie Cloud Edition PBX
         '''
-        to_save = []
         for phonebook in phonebooks:
             data = {
                 "name": phonebook.name,
@@ -712,7 +741,7 @@ class YeastarPhonebook(ModelSQL, ModelView):
             response_json = None
             if token:
                 phonebook_contacts = [x.yeastar_contact_id
-                    for x in phonebook.contacts]
+                    for x in phonebook.contacts if x.yeastar_contact_id]
                 if phonebook.yeastar_phonebook_id:
                     add_contacts = None
                     del_contacts = None
@@ -748,9 +777,8 @@ class YeastarPhonebook(ModelSQL, ModelView):
                             if response_json else '')))
             if not phonebook.yeastar_phonebook_id:
                 phonebook.yeastar_phonebook_id = response_json.get('id', None)
-                to_save.append(phonebook)
-        if to_save:
-            cls.save(to_save)
+                phonebook.save()
+                Transaction().commit()
 
     @classmethod
     @ModelView.button
@@ -798,6 +826,7 @@ class YeastarContact(ModelSQL, ModelView):
             })
     yeastar_contact_id = fields.Integer('Yeastar Contact ID', readonly=True)
     contact_mechanism = fields.Many2One('party.contact_mechanism', 'Contact',
+        ondelete='SET NULL',
         domain=[
             ('type', 'in', ('phone', 'mobile')),
             ])
@@ -811,7 +840,8 @@ class YeastarContact(ModelSQL, ModelView):
         super().__setup__()
         t = cls.__table__()
         cls._sql_constraints += [
-            ('action_uniq', Unique(t, t.contact_mechanism),
+            ('pbx_mechanism_uniq',
+                Unique(t, t.yeastar_pbx, t.contact_mechanism),
                 'There is already one Yeastar Contact with this contact mechanism.'),
             ]
         cls._buttons.update({
@@ -821,6 +851,12 @@ class YeastarContact(ModelSQL, ModelView):
                     'depends': ['yeastar_contact_id'],
                     },
                 })
+
+    @classmethod
+    def __register__(cls, module):
+        super().__register__(module)
+        # A company contact can be published to more than one PBX.
+        cls.__table_handler__(module).drop_constraint('action_uniq')
 
     @classmethod
     def get_num_types(cls):
@@ -875,13 +911,26 @@ class YeastarContact(ModelSQL, ModelView):
         '''
         Add or edit the Contacts to Yeastar P-Serie Cloud Edition PBX
         '''
+        Party = Pool().get('party.party')
+        Mechanism = Pool().get('party.contact_mechanism')
+        domain = [('party.active', '=', True),
+            ('type', 'in', ['phone', 'mobile'])]
+        if hasattr(Party, 'current_company'):
+            domain.append(('party.current_company', '=', True))
+        eligible = set(Mechanism.search(domain))
         delete_contacts = []
         for contact in contacts:
             if not contact.contact_mechanism:
                 delete_contacts.append(contact)
                 continue
-            if (not contact.sync or not contact.first_name
-                    or not contact.number):
+            mechanism = contact.contact_mechanism
+            if (not contact.sync or not mechanism.active
+                    or mechanism not in eligible
+                    or not mechanism.party.active
+                    or mechanism.type not in {'phone', 'mobile'}
+                    or not cls.valid_number(mechanism.value)
+                    or not contact.first_name or not contact.number):
+                cls.delete_contact([contact])
                 continue
             data = {
                 'first_name': contact.first_name,
@@ -906,7 +955,7 @@ class YeastarContact(ModelSQL, ModelView):
                 raise UserError(
                     gettext('yeastar_api.msg_sync_contact_fail',
                         pbx=contact.yeastar_pbx.rec_name,
-                        contact=contact.contact_mechanism.party.name,
+                        contact=contact.first_name or contact.rec_name,
                         errmsg=(response_json.get('errmsg', '')
                             if response_json else '')))
             if not contact.yeastar_contact_id:
@@ -940,10 +989,14 @@ class YeastarContact(ModelSQL, ModelView):
                 raise UserError(
                     gettext('yeastar_api.msg_delete_contact_fail',
                         pbx=contact.yeastar_pbx.rec_name,
-                        contact=contact.contact_mechanism.party.name,
+                        contact=contact.first_name or contact.rec_name,
                         errmsg=(response_json.get('errmsg', '')
                             if response_json else '')))
             contact.yeastar_contact_id = None
+            # Persist each successful remote deletion so a later failure does
+            # not cause us to delete the same remote ID on the next run.
+            contact.save()
+            Transaction().commit()
         if contacts:
             cls.save(contacts)
 
@@ -1190,6 +1243,8 @@ class Cron(metaclass=PoolMeta):
     def __setup__(cls):
         super().__setup__()
         cls.method.selection.extend([
+            ('yeastar.pbx|sync_directory',
+                "Synchronize Yeastar Contacts and Phonebooks"),
             ('yeastar.cdr|get_calls_details',
                 "Get Yeastar CDR Details"),
             ])
