@@ -52,7 +52,8 @@ class TestDirectorySync(unittest.TestCase):
             book.save()
             books.append(book)
         party = Party(name='Customer')
-        mechanism = party.contact_mechanisms.new(type='phone', value='123456')
+        mechanism = party.contact_mechanisms.new(
+            type='phone', value='+34911222333')
         party.save()
         mechanism, = party.contact_mechanisms
         cron, = Cron.find([('method', '=', 'yeastar.pbx|sync_directory')])
@@ -124,20 +125,20 @@ class TestDirectorySync(unittest.TestCase):
             party.name = 'Renamed customer'
             party.save()
             mechanism, = party.contact_mechanisms
-            mechanism.value = '654321'
+            mechanism.value = '+34911222444'
             party.save()
             mechanism, = party.contact_mechanisms
             cron.click('run_once')
             self.assertEqual({c['first_name'] for c in contacts.values()},
                 {'Renamed customer'})
             self.assertEqual({c['number_list'][0]['number']
-                for c in contacts.values()}, {'654321'})
+                for c in contacts.values()}, {'0034911222444'})
             key = (pbxs[0].id, book.yeastar_phonebook_id)
             self.assertEqual(remote_books[key]['members'],
                 {first.yeastar_contact_id})
             # A new contact is published, but not selected in a specific book.
             other = Party(name='Other')
-            other.contact_mechanisms.new(type='mobile', value='987654')
+            other.contact_mechanisms.new(type='mobile', value='+34600111222')
             other.save()
             cron.click('run_once')
             self.assertEqual(len(contacts), 4)

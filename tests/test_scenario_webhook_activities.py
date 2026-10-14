@@ -54,8 +54,8 @@ class TestWebhookActivities(unittest.TestCase):
         message = {
             'call_id': call_id, 'uid': f'cdr-{call_id}', 'call_note_id': note,
             'time_start': local.strftime('%Y-%m-%d %H:%M:%S'),
-            'call_from': '555123456' if direction == 'Inbound' else extension,
-            'call_to': extension if direction == 'Inbound' else '555123456',
+            'call_from': '+34911222333' if direction == 'Inbound' else extension,
+            'call_to': extension if direction == 'Inbound' else '+34911222333',
             'type': direction, 'status': 'ANSWERED',
             'talk_duration': talk, 'call_duration': total,
             'recording': f'{call_id}-{note}.wav',
@@ -113,7 +113,7 @@ class TestWebhookActivities(unittest.TestCase):
         customer = Party(name='External Customer')
         contact = customer.contact_mechanisms.new()
         contact.type = 'phone'
-        contact.value = '555123456'
+        contact.value = '+34911222333'
         customer.save()
         process, = Cron.find([
                 ('method', '=', 'yeastar.webhook.event|process_pending')])
@@ -160,7 +160,7 @@ class TestWebhookActivities(unittest.TestCase):
         self.config._context = User.get_preferences(True, {})
         with patch.object(Pool(self.config.database_name).get('yeastar.pbx'),
                 'query_call_by_extension', return_value={
-                    'call_id': 'external', 'callee': '555123456'}):
+                    'call_id': 'external', 'callee': '+34911222333'}):
             wizard = Wizard('yeastar.create.from_progress_call')
             wizard.execute('create_activity')
         manual, = Activity.find()
