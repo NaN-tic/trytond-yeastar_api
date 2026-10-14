@@ -42,6 +42,8 @@ this repository contains the full copyright notices and license terms. -->
             <field name="webhook_timezone"/>
             <label name="webhook_retention_months"/>
             <field name="webhook_retention_months"/>
+            <label name="automatic_transcription"/>
+            <field name="automatic_transcription"/>
             <label name="webhook_base_url"/>
             <field name="webhook_base_url" colspan="3"/>
             <label name="webhook_url"/>

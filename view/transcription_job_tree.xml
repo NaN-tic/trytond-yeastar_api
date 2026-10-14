@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<tree>
+    <field name="recording"/>
+    <field name="activity"/>
+    <field name="attachment"/>
+    <field name="state"/>
+    <field name="primary_language"/>
+    <field name="attempts"/>
+    <field name="next_attempt"/>
+</tree>

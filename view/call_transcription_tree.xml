@@ -3,4 +3,7 @@
 this repository contains the full copyright notices and license terms. -->
 <tree>
   <field name="name"/>
+  <field name="kind"/>
+  <field name="job"/>
+  <field name="subject"/>
 </tree>

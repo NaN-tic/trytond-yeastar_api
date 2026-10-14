@@ -35,6 +35,8 @@ class PBX(metaclass=PoolMeta):
         help="Delete completed events after this period. Zero disables cleanup.")
     webhook_calls = fields.One2Many('yeastar.webhook.call', 'pbx',
         'Processed Calls', readonly=True)
+    automatic_transcription = fields.Boolean('Automatic Gladia Transcription',
+        help="Download external recordings and transcribe them in the background.")
     webhook_events = fields.One2Many('yeastar.webhook.event', 'pbx',
         'Webhook Events', readonly=True)
 
@@ -45,6 +47,10 @@ class PBX(metaclass=PoolMeta):
     @staticmethod
     def default_webhook_retention_months():
         return 3
+
+    @staticmethod
+    def default_automatic_transcription():
+        return True
 
     def get_webhook_url(self, name):
         if self.id is None or self.id < 0 or not self.webhook_base_url:
@@ -77,6 +83,7 @@ class PBX(metaclass=PoolMeta):
         default.setdefault('webhook_events', None)
         default.setdefault('webhook_calls', None)
         default.setdefault('webhook_mode', 'capture')
+        default.setdefault('automatic_transcription', False)
         return super().copy(records, default=default)
 
 
