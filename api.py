@@ -1249,3 +1249,4 @@ class Cron(metaclass=PoolMeta):
             ('yeastar.cdr|get_calls_details',
                 "Get Yeastar CDR Details"),
             ])
+        cls.methods_company_needed.add('yeastar.pbx|sync_directory')
