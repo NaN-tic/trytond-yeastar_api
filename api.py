@@ -493,7 +493,7 @@ class YeastarPBX(ModelSQL, ModelView):
             }
 
     def get_cdr_details(self, start_time, end_time, call_from=None,
-            call_to=None, status=None):
+            call_to=None, status=None, page=1, page_size=1000):
         '''
         https://help.yeastar.com/en/p-series-cloud-edition/developer-guide/search-specific-cdr.html
         start_time and end_time must be datetime fornat or None.
@@ -503,7 +503,8 @@ class YeastarPBX(ModelSQL, ModelView):
             data: A list of dicts with the detailed information of the CDR
             }
         '''
-        args = {}
+        args = {'page': page, 'page_size': page_size,
+            'sort_by': 'time', 'order_by': 'asc'}
         if start_time and isinstance(start_time, datetime):
             args['start_time'] = start_time.strftime(self.time_format)
         if end_time and isinstance(end_time, datetime):
@@ -519,12 +520,16 @@ class YeastarPBX(ModelSQL, ModelView):
         # As this fucntion is called by cron, nnet to get token without
         # employ control.
         with Transaction().set_context(yeastar_wo_employee=True):
-            token = self.get_token()
+            token = self.get_token(commit=False)
         response_json = None
         if token:
-            endpoint = self.get_endpoint('cdr_search')
-            response_json = self._requests('GET', endpoint, args=args,
-                token=token)
+            # CDR v1 only exposes legacy history on upgraded PBXs. Other
+            # services continue using their configured API version.
+            response = requests.get(
+                f'{self.base_url.rstrip("/")}/openapi/v2.0/cdr/search',
+                params=dict(args, access_token=token), timeout=(10, 120))
+            response.raise_for_status()
+            response_json = response.json()
         if not response_json or response_json.get('errcode', 1) != 0:
             raise UserError(
                 gettext('yeastar_api.msg_download_record_call_not_possible',
@@ -1082,7 +1087,7 @@ class YeastarCDR(ModelSQL, ModelView):
 
     @classmethod
     def get_dispostion(cls):
-        return STATUS_CALL
+        return STATUS_CALL + [('abandoned', 'Abandoned')]
 
     @classmethod
     def get_call_type(cls):
@@ -1094,49 +1099,62 @@ class YeastarCDR(ModelSQL, ModelView):
 
     @classmethod
     def get_yeastar_cdr_details(cls, pbx):
+        Pool().get('yeastar.pbx').lock([pbx])
         cdrs = cls.search([
                 ('yeastar_pbx', '=', pbx),
                 ], order=[('time', 'DESC')], limit=1)
         if cdrs:
             cdr, = cdrs
-            start_time = cdr.time
+            # Revisit recent calls so late final results are updated too.
+            start_time = cdr.time - timedelta(days=1) if cdr.time else None
         else:
             start_time = None
         end_time = datetime.now()
-        cdr_details = pbx.get_cdr_details(start_time, end_time)
-        if not cdr_details:
-            return None
-        details = cdr_details.get('data', None)
-        if not details:
-            return None
-        to_create = []
-        for detail in details:
-            time = detail.get('time', None)
-            ring_duration = detail.get('ring_duration', None)
-            talk_duration = detail.get('talk_duration', None)
-            duration = detail.get('duration', None)
-            to_create.append({
+        page = 1
+        seen = set()
+        while True:
+            result = pbx.get_cdr_details(start_time, end_time, page=page)
+            details = result.get('data')
+            if details is None:
+                break
+            if not isinstance(details, list):
+                raise ValueError('Invalid Yeastar CDR response: missing data.')
+            if not details:
+                break
+            for detail in details:
+                uid = detail.get('uid')
+                if not uid or uid in seen:
+                    raise ValueError('Missing or repeated CDR ID in pagination.')
+                seen.add(uid)
+                values = {
                     'yeastar_pbx': pbx.id,
-                    'uid': detail.get('uid', None),
-                    'time': (datetime.strptime(time, pbx.time_format)
-                        if time else None),
-                    'call_from': detail.get('call_from', None),
-                    'call_to': detail.get('call_to', None),
-                    'ring_duration': (int(ring_duration)
-                        if ring_duration else None),
-                    'talk_duration': (int(talk_duration)
-                        if talk_duration else None),
-                    'duration': int(duration) if duration else None,
-                    'disposition': detail.get('disposition', None).replace(
+                    'uid': uid,
+                    'time': datetime.strptime(detail['time'], pbx.time_format),
+                    'call_from': detail.get('call_from'),
+                    'call_to': detail.get('call_to'),
+                    'ring_duration': timedelta(
+                        seconds=int(detail['routing_duration'])),
+                    'talk_duration': timedelta(
+                        seconds=int(detail['handling_duration'])),
+                    'duration': timedelta(
+                        seconds=int(detail['call_duration'])),
+                    'disposition': detail['last_status'].replace(
                         ' ', '').lower(),
-                    'call_type': detail.get('call_type', None).lower(),
-                    'did_number': detail.get('did_number', None),
-                    'dod_number': detail.get('dod_number', None),
-                    'record_file': detail.get('record_file', None),
-                    'reason': detail.get('reason', None),
-                    })
-        if to_create:
-            cls.create(to_create)
+                    'call_type': detail['call_type'].lower(),
+                    'did_number': ', '.join(detail.get('dids') or []),
+                    'dod_number': ', '.join(
+                        detail.get('outbound_caller_ids') or []),
+                    }
+                existing = cls.search([
+                        ('yeastar_pbx', '=', pbx.id), ('uid', '=', uid)],
+                    order=[('id', 'ASC')], limit=1)
+                if existing:
+                    cls.write(existing, values)
+                else:
+                    cls.create([values])
+            # Do not trust total_number: some firmware versions report the
+            # unfiltered count. An empty page is the termination condition.
+            page += 1
 
     @classmethod
     def get_calls_details(cls):
@@ -1145,7 +1163,7 @@ class YeastarCDR(ModelSQL, ModelView):
 
         company_id = Transaction().context.get('company')
         if not company_id:
-            return
+            raise ValueError('Select a company for the Yeastar CDR cron.')
         pbxs = Pbx.search([
                 ('company.id', '=', company_id),
                 ])
