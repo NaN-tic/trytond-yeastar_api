@@ -97,7 +97,7 @@ class Activity(metaclass=PoolMeta):
     @classmethod
     def copy(cls, activities, default=None):
         default = default.copy() if default is not None else {}
-        for name in ('call_id', 'language', 'call_primary_language',
+        for name in ('code', 'call_id', 'language', 'call_primary_language',
                 'call_language_percentages', 'call_generated_subject',
                 'call_generated_description', 'transcription_jobs',
                 'transcriptions', 'summarization_result'):

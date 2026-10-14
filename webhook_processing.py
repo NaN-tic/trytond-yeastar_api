@@ -124,7 +124,7 @@ class WebhookEvent(metaclass=PoolMeta):
         events = cls.search([
                 ('pbx', '=', pbx.id), ('call_id', '=', call_id),
                 ], order=[('create_date', 'ASC'), ('id', 'ASC')])
-        if not events or events[-1].create_date >= cutoff:
+        if not events or events[len(events) - 1].create_date >= cutoff:
             return
         messages = []
         for event in events:
