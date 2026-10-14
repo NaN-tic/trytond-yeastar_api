@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<tree>
+    <field name="pbx"/>
+    <field name="call_id"/>
+    <field name="employee"/>
+    <field name="activity"/>
+    <field name="duration"/>
+</tree>
