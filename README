@@ -76,6 +76,38 @@ Replace the PBX ID and UTC time window with the values of the actual test.
 For a copied database, disable webhook reception before publishing it and
 configure a separate secret if it needs its own webhook.
 
+Automatic contact directory
+---------------------------
+
+Upgrading the module installs Synchronize Yeastar Contacts and Phonebooks,
+once a day at 04:00 in the Tryton server timezone. Configure its Companies
+and adjust the schedule in Scheduled Actions. The cron processes PBXs with
+at least one phonebook configured in Tryton, without requiring an employee.
+
+Each run loads active phone/mobile contact mechanisms, updates names and
+numbers, publishes contacts and reconciles phonebook membership. When
+party_company is installed, the existing current-company filter applies.
+Contacts are tracked separately for each PBX. Select all company contacts
+includes all company contacts on Yeastar; Select specific company contacts
+uses exactly the contacts selected in Tryton. Newly discovered contacts are
+not automatically added to a specific-selection phonebook.
+
+Deleted, inactive, invalid or synchronization-disabled source contacts are
+removed from the PBX using their saved remote IDs. Inactive/disabled contacts
+retain their local link and phonebook selections for later reactivation.
+Deleted source mechanisms leave a null link until the next synchronization
+deletes their remote contact and local tracking row. Unlinking a contact from
+a specific phonebook changes membership only. Contacts created directly on
+the PBX without a Tryton tracking record are not deleted.
+
+Successful remote creations/deletions are saved incrementally, so a failure
+later in the run preserves completed work. Errors remain visible through
+the scheduled action and the next execution retries pending operations.
+As with the existing manual integration, a lost response to a remote create
+cannot be reconciled automatically: inspect Yeastar before retrying it.
+Run the cron only from the authoritative database for that PBX: a test copy
+contains the same remote IDs and would modify the live directory.
+
 Automatic activities
 --------------------
 
