@@ -120,17 +120,97 @@ If a linked activity is deleted, new legs are reported as errors rather than
 silently recreating it. Phone contacts are matched exactly against their raw
 or compact number; ambiguous matches leave the activity's party empty.
 
-The webhook processor does not download audio or invoke transcription services.
-The existing Get Call Transcription button uses the saved external recording
-filenames for imported activities, including all their external legs, rather
-than guessing a filename from the live call ID. It preserves the accounted
-duration. Internal recordings are excluded from the legacy recording lookup.
-
 An error rolls back the whole call's processing without blocking other calls.
 Inspect Processing Message on its events, correct the configuration and use
 Retry Processing on the errored events. Pending state/transfer events are kept
 until the call is closed; incomplete captures remain available for inspection.
 No activity is created for a call that has not supplied an eligible final CDR.
+
+Automatic recordings and Gladia
+-------------------------------
+
+Configure the existing Gladia credentials in trytond.conf::
+
+    [gladia]
+    url = https://api.gladia.io/v2
+    api_key = <your-api-key>
+
+After upgrading the module and restarting Tryton, Process Yeastar Recordings
+runs every minute. Automatic Gladia Transcription is enabled by default on a
+PBX; combined with Create Activities mode and a configured API key, it enqueues
+external recording references from processed calls, including historical ones.
+Turn this setting off to stop automatically enqueueing recordings. Already
+queued jobs continue processing. A copied PBX has automatic transcription off.
+
+The job downloads the exact recording named in the external CDR and attaches
+it to the activity. Internal and unanswered calls are excluded. The original
+audio is uploaded without a lossy MP3 conversion, preserving channels. It is
+uploaded once, submitted to POST /v2/pre-recorded and subsequently polled with
+GET /v2/pre-recorded/<id>. Each cron pass advances one stage; no web request
+waits for Gladia to finish. Queued/processing jobs retain the same provider ID.
+Gladia HTTP requests and PBX requests have connection/read timeouts.
+
+The model is Solaria-1 with language_config.languages set to ca, es, en and
+code_switching enabled. Speaker diarization is automatic, without imposing a
+speaker count. Utterance text, timestamps, language, speaker labels and channel
+information are retained. A speaker index distinguishes voices in one recording;
+it does not identify a named person across different recordings.
+
+The primary language is selected by summing the duration of Gladia's timed
+utterances in each language, not by counting words. These are detected speech
+segment durations, not employee-accounted minutes. For ties within a recording,
+Gladia's ranked language list is used, followed by ca/es/en. The original mixed
+transcript is preserved. Two additional transcript rows contain translations
+into the other two working languages, with their localized subject and summary.
+All three translation targets are requested in the initial job because the
+primary language is not known beforehand; the primary-language translation is
+not published as a redundant fourth transcript. This requests three translation
+targets from Gladia, even though only two are displayed.
+
+Gladia Audio-to-LLM generates a structured subject and summary in all three
+languages in that same job. This provides language-controlled summaries without
+a second audio transcription request; the fixed-format summarization add-on
+has no output-language parameter. Generated JSON is parsed and validated, never
+executed. Missing/failed translations or activity texts are shown as errors and
+the raw provider result remains available for inspection.
+
+For multiple recordings in one activity, language durations are aggregated
+across recordings. Ties follow recording order, then ca/es/en. Each recording's
+summary is selected in the activity's primary language and appended in recording
+order to Description. Subjects are combined into one concise Subject. The last
+generated text is tracked: later segments or reprocessing replace generated
+content but preserve manual edits and pre-existing manually written text. The
+accounted activity duration is never changed by transcription or recording
+length. Existing manual activities retain their authored subject/description;
+their generated summary is still available in the conversation tab.
+
+The conversation tab now shows recordings, states, primary language, percentages
+and the original/translated transcripts. Per-call speaker/language input is no
+longer needed. Legacy settings and LLM results remain in the database. Queue
+Call Recordings can enqueue missing recordings manually without starting STT
+inline. For old activities without webhook legs it retains the configured
+recording-list page lookup, matching only external calls for that employee.
+
+Retry resumes the failed stage, preserving uploaded audio, accepted job IDs
+and received results. Temporary download/upload/poll errors use exponential
+backoff, with at most five attempts before manual retry. A missing recording
+can therefore be retried after the PBX has finished preparing it.
+
+The submitting state is committed before the billable POST. If the HTTP reply
+is lost, malformed, or a worker is interrupted, the job becomes Submission
+Status Unknown rather than submitting the same audio again. Find the accepted
+job in Gladia using custom_metadata.tryton_job and custom_metadata.database,
+enter its Gladia Job ID as an administrator, then use Resume with Gladia Job ID.
+An interrupted submitting job is marked unknown after ten minutes. Transcribe
+Again explicitly starts a new billable job for completed/failed results; old
+job IDs/results are retained, and the existing audio attachment is reused.
+
+See Gladia's current documentation:
+
+* https://docs.gladia.io/api-reference/v2/pre-recorded/init
+* https://docs.gladia.io/chapters/pre-recorded-stt/transcription-process
+* https://docs.gladia.io/chapters/audio-intelligence/audio-to-llm
+* https://docs.gladia.io/chapters/language/supported-languages
 
 Retention
 ---------
@@ -142,8 +222,8 @@ PBX/call is pending, errored or recent, the entire captured call is retained.
 Capture Only events are never removed automatically while still pending.
 
 Activities, attachments, transcriptions, and the permanent processed-call/leg
-identities are not deleted by this scheduled action. Both scheduled actions
-respect their company context. The two scheduled actions are installed once;
+identities and recording jobs are not deleted by this scheduled action. All
+scheduled actions respect their company context and are installed once;
 their schedules can be adjusted through the usual Tryton interface.
 
 

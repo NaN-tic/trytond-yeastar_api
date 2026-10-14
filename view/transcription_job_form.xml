@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<form>
+    <label name="pbx"/>
+    <field name="pbx"/>
+    <label name="activity"/>
+    <field name="activity"/>
+    <label name="recording"/>
+    <field name="recording" colspan="3"/>
+    <label name="attachment"/>
+    <field name="attachment"/>
+    <label name="state"/>
+    <field name="state"/>
+    <label name="primary_language"/>
+    <field name="primary_language"/>
+    <label name="gladia_id"/>
+    <field name="gladia_id"/>
+    <label name="attempts"/>
+    <field name="attempts"/>
+    <label name="next_attempt"/>
+    <field name="next_attempt"/>
+    <notebook colspan="4">
+        <page name="transcriptions">
+            <field name="transcriptions" colspan="4"/>
+            <label name="language_percentages"/>
+            <field name="language_percentages" colspan="3"/>
+        </page>
+        <page name="error_message">
+            <field name="error_message" colspan="4"/>
+            <label name="error_stage"/>
+            <field name="error_stage"/>
+        </page>
+        <page name="raw_result">
+            <field name="raw_result" colspan="4"/>
+            <field name="previous_results" colspan="4"/>
+        </page>
+    </notebook>
+    <group id="buttons" col="3" colspan="4">
+        <button name="retry"/>
+        <button name="resume"/>
+        <button name="reprocess"/>
+    </group>
+</form>
