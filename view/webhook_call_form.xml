@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<form>
+    <label name="pbx"/>
+    <field name="pbx"/>
+    <label name="call_id"/>
+    <field name="call_id"/>
+    <label name="employee"/>
+    <field name="employee"/>
+    <label name="activity"/>
+    <field name="activity"/>
+    <label name="duration"/>
+    <field name="duration"/>
+    <field name="legs" colspan="4"/>
+</form>

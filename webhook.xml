@@ -1,6 +1,89 @@
 <?xml version="1.0"?>
 <tryton>
     <data>
+        <record model="ir.message" id="msg_webhook_call_unique">
+            <field name="text">This employee already has an activity link for this call.</field>
+        </record>
+        <record model="ir.message" id="msg_webhook_leg_unique">
+            <field name="text">This external call leg has already been processed.</field>
+        </record>
+        <record model="ir.model.button" id="webhook_event_retry_button">
+            <field name="name">retry</field>
+            <field name="string">Retry Processing</field>
+            <field name="model">yeastar.webhook.event</field>
+        </record>
+        <record model="ir.model.button-res.group" id="webhook_event_retry_group">
+            <field name="button" ref="webhook_event_retry_button"/>
+            <field name="group" ref="group_yeastar_admin"/>
+        </record>
+        <record model="ir.ui.view" id="webhook_call_view_tree">
+            <field name="model">yeastar.webhook.call</field>
+            <field name="type">tree</field>
+            <field name="name">webhook_call_tree</field>
+        </record>
+        <record model="ir.ui.view" id="webhook_call_view_form">
+            <field name="model">yeastar.webhook.call</field>
+            <field name="type">form</field>
+            <field name="name">webhook_call_form</field>
+        </record>
+        <record model="ir.ui.view" id="webhook_leg_view_tree">
+            <field name="model">yeastar.webhook.leg</field>
+            <field name="type">tree</field>
+            <field name="name">webhook_leg_tree</field>
+        </record>
+        <record model="ir.ui.view" id="webhook_leg_view_form">
+            <field name="model">yeastar.webhook.leg</field>
+            <field name="type">form</field>
+            <field name="name">webhook_leg_form</field>
+        </record>
+        <record model="ir.model.access" id="access_webhook_call">
+            <field name="model">yeastar.webhook.call</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_webhook_call_admin">
+            <field name="model">yeastar.webhook.call</field>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_webhook_leg">
+            <field name="model">yeastar.webhook.leg</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_webhook_leg_admin">
+            <field name="model">yeastar.webhook.leg</field>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.rule.group" id="rule_group_webhook_call_companies">
+            <field name="name">User in companies</field>
+            <field name="model">yeastar.webhook.call</field>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_webhook_call_companies">
+            <field name="domain" eval="[('pbx.company', 'in', Eval('companies', []))]" pyson="1"/>
+            <field name="rule_group" ref="rule_group_webhook_call_companies"/>
+        </record>
+        <record model="ir.rule.group" id="rule_group_webhook_leg_companies">
+            <field name="name">User in companies</field>
+            <field name="model">yeastar.webhook.leg</field>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_webhook_leg_companies">
+            <field name="domain" eval="[('pbx.company', 'in', Eval('companies', []))]" pyson="1"/>
+            <field name="rule_group" ref="rule_group_webhook_leg_companies"/>
+        </record>
         <record model="ir.message" id="msg_webhook_invalid_base_url">
             <field name="text">The public webhook base URL must be an HTTPS URL without credentials, query or fragment.</field>
         </record>
@@ -57,6 +140,18 @@
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record model="ir.cron" id="cron_process_webhooks">
+            <field name="method">yeastar.webhook.event|process_pending</field>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">minutes</field>
+        </record>
+        <record model="ir.cron" id="cron_clean_webhooks">
+            <field name="method">yeastar.webhook.event|clean</field>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">days</field>
         </record>
     </data>
 </tryton>

@@ -131,25 +131,42 @@ class Activity(metaclass=PoolMeta):
         User = pool.get('res.user')
         Attachment = pool.get('ir.attachment')
         CallTranscription = pool.get('call.transcription')
+        WebhookCall = pool.get('yeastar.webhook.call')
 
         configuration = Configuration(1)
         user = User(Transaction().user)
         employee = user.employee if user else None
-        if not employee:
-            raise UserError(
-                gettext('yeastar_api.msg_not_employee',
-                    user=user.name))
-        extension = employee.yeastar_extension
-        pbx = employee.yeastar_pbx
-        if not extension or not pbx:
-            raise UserError(
-                gettext('yeastar_api.msg_not_extension_pbx_employee',
-                    employee=employee.rec_name))
         attachments = []
         to_save = []
+        recordings = []
         for activity in activities:
             if not activity.call_id:
                 continue
+            calls = WebhookCall.search([('activity', '=', activity.id)])
+            if calls:
+                # CDR filenames identify individual external legs, even when a
+                # transfer changes the recording ID. Never use audio duration
+                # to overwrite the external conversation time already counted.
+                for call in calls:
+                    pbx = call.pbx
+                    with Transaction().set_context(yeastar_wo_employee=True):
+                        token = pbx.get_token()
+                    if not token:
+                        continue
+                    for filename in sorted({leg.recording for leg in call.legs
+                            if leg.recording}):
+                        info = pbx.download_record(file=filename, token=token)
+                        recordings.append((activity, pbx, token, info, None))
+                continue
+            if not employee:
+                raise UserError(gettext('yeastar_api.msg_not_employee',
+                        user=user.name))
+            extension = employee.yeastar_extension
+            pbx = employee.yeastar_pbx
+            if not extension or not pbx:
+                raise UserError(gettext(
+                        'yeastar_api.msg_not_extension_pbx_employee',
+                        employee=employee.rec_name))
             page = configuration.yeastar_record_list_page or '1'
             page_size = configuration.yeastar_record_list_page_size or '5'
             records_list = pbx.get_records_list(page=page, page_size=page_size,
@@ -160,6 +177,9 @@ class Activity(metaclass=PoolMeta):
             id = None
             duration = None
             for record in data:
+                if record.get('call_type', '').lower() not in {
+                        'inbound', 'outbound'}:
+                    continue
                 if (record.get('call_from_number') != str(extension)
                         and record.get('call_to_number') != str(extension)):
                     continue
@@ -174,6 +194,9 @@ class Activity(metaclass=PoolMeta):
                 return
             if id:
                 record_info = pbx.download_record(id, token=token)
+            recordings.append((activity, pbx, token, record_info, duration))
+
+        for activity, pbx, token, record_info, duration in recordings:
             file_name = (record_info.get('file_name', None)
                 if record_info else None)
             audio_url = (record_info.get('download_resource_url', None)
@@ -223,8 +246,8 @@ class Activity(metaclass=PoolMeta):
             if not transcription:
                 return None
 
-            activity.duration = (timedelta(seconds=duration)
-                if duration else timedelta(seconds=0))
+            if duration is not None:
+                activity.duration = timedelta(seconds=duration)
             for key, value in transcription.items():
                 if key == 'transcript':
                     call_transcription = CallTranscription()
@@ -260,7 +283,8 @@ class Activity(metaclass=PoolMeta):
                             if res.get('prompt', '') == llm.prompt:
                                 llm.response = res.get('result', '')
                         llm.save()
-            to_save.append(activity)
+            if activity not in to_save:
+                to_save.append(activity)
 
             attach = Attachment(
                 name=file_name,

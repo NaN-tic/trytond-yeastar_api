@@ -11,9 +11,9 @@ See INSTALL
 Webhook capture
 ---------------
 
-The webhook receiver currently captures events only. It does not create
-activities, assign durations, download recordings or start transcriptions.
-Capture real transfer events before implementing automatic processing.
+The webhook receiver stores signed events before acknowledging them. PBXs
+default to Capture Only mode. Automatic activity creation is opt-in and runs
+outside the HTTP request, through a scheduled action.
 
 Deployment:
 
@@ -75,6 +75,76 @@ To export a capture window from a fresh trytond-console session::
 Replace the PBX ID and UTC time window with the values of the actual test.
 For a copied database, disable webhook reception before publishing it and
 configure a separate secret if it needs its own webhook.
+
+Automatic activities
+--------------------
+
+After upgrading the module, configure the following in the test database:
+
+1. Assign each employee's Yeastar PBX and extension. Employees without an
+   extension are excluded. An employee is eligible when end_date is empty or
+   today or later; the legacy database active column is not used. A duplicate
+   eligible assignment is reported as an error rather than resolved arbitrarily.
+2. Set the default Yeastar activity type in Activity Configuration.
+3. In the PBX Webhook tab, set PBX Timezone to the timezone used by Yeastar
+   (for example Europe/Madrid), then select Create Activities.
+4. The Process Yeastar Webhooks scheduled action runs every minute. It can
+   also be run manually from Scheduled Actions. A call must have received no
+   new events for at least one minute before it is processed. Enabling this
+   mode also processes previously captured events, using current employee
+   assignments. Keep Capture Only selected until ready to import that history.
+
+Only answered Inbound and Outbound CDR legs involving a configured employee
+are eligible. Internal calls, unanswered calls and virtual queue/IVR legs do
+not create activities or recording references. One activity is created per
+PBX, call ID and employee; additional external legs, including a return after
+a transfer, extend the same activity. A pre-existing manual activity with
+that company, employee and call ID is reused. Its duration is reconciled on
+first import; subsequent legs add their duration without erasing later manual
+adjustments. Ambiguous existing activities are reported as errors.
+
+The activity duration is the CDR talk duration minus observed HOLD intervals,
+including the hold during an internal transfer consultation. Overlapping hold
+intervals are counted once. Yeastar state notifications have no occurrence
+timestamp: hold durations use reception timestamps, clipped to the CDR leg and
+rounded to seconds. Delayed or missing notifications can therefore affect this
+deduction. Internal consultation CDRs are never added to external call time.
+PBX timestamps are converted to UTC using PBX Timezone; ambiguous/nonexistent
+daylight-saving timestamps are retained as errors for review.
+
+Processed Calls on the PBX shows the permanent call/employee/activity links and
+the external legs, including original CDR durations, excluded hold time, CDR
+UIDs, call note IDs and exact recording filenames. These records survive raw
+webhook cleanup, preventing duplicate activities and durations on redelivery.
+If a linked activity is deleted, new legs are reported as errors rather than
+silently recreating it. Phone contacts are matched exactly against their raw
+or compact number; ambiguous matches leave the activity's party empty.
+
+The webhook processor does not download audio or invoke transcription services.
+The existing Get Call Transcription button uses the saved external recording
+filenames for imported activities, including all their external legs, rather
+than guessing a filename from the live call ID. It preserves the accounted
+duration. Internal recordings are excluded from the legacy recording lookup.
+
+An error rolls back the whole call's processing without blocking other calls.
+Inspect Processing Message on its events, correct the configuration and use
+Retry Processing on the errored events. Pending state/transfer events are kept
+until the call is closed; incomplete captures remain available for inspection.
+No activity is created for a call that has not supplied an eligible final CDR.
+
+Retention
+---------
+
+Clean Yeastar Webhooks runs daily. Webhook Retention (Months) defaults to 3;
+set it to 0 to disable cleanup for that PBX. Only Processed or Discarded events
+older than that many calendar months are deleted. If any event of the same
+PBX/call is pending, errored or recent, the entire captured call is retained.
+Capture Only events are never removed automatically while still pending.
+
+Activities, attachments, transcriptions, and the permanent processed-call/leg
+identities are not deleted by this scheduled action. Both scheduled actions
+respect their company context. The two scheduled actions are installed once;
+their schedules can be adjusted through the usual Tryton interface.
 
 
 License

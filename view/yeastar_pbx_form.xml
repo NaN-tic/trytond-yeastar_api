@@ -38,6 +38,10 @@ this repository contains the full copyright notices and license terms. -->
             <field name="webhook_enabled"/>
             <label name="webhook_mode"/>
             <field name="webhook_mode"/>
+            <label name="webhook_timezone"/>
+            <field name="webhook_timezone"/>
+            <label name="webhook_retention_months"/>
+            <field name="webhook_retention_months"/>
             <label name="webhook_base_url"/>
             <field name="webhook_base_url" colspan="3"/>
             <label name="webhook_url"/>
@@ -45,6 +49,7 @@ this repository contains the full copyright notices and license terms. -->
             <label name="webhook_secret"/>
             <field name="webhook_secret" widget="password" colspan="3"/>
             <field name="webhook_events" colspan="4"/>
+            <field name="webhook_calls" colspan="4"/>
         </page>
         <page string="Token" id="pbx_token">
             <label name="token"/>
