@@ -13,4 +13,6 @@
     <label name="digest"/>
     <field name="digest" colspan="3"/>
     <field name="payload" colspan="4"/>
+    <field name="processing_message" colspan="4"/>
+    <button name="retry" colspan="4"/>
 </form>

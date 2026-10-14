@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<form>
+    <label name="call"/>
+    <field name="call"/>
+    <label name="pbx"/>
+    <field name="pbx"/>
+    <label name="call_id"/>
+    <field name="call_id"/>
+    <label name="uid"/>
+    <field name="uid"/>
+    <label name="note_id"/>
+    <field name="note_id"/>
+    <label name="extension"/>
+    <field name="extension"/>
+    <label name="external_number"/>
+    <field name="external_number"/>
+    <label name="direction"/>
+    <field name="direction"/>
+    <label name="start"/>
+    <field name="start"/>
+    <label name="talk_duration"/>
+    <field name="talk_duration"/>
+    <label name="hold_duration"/>
+    <field name="hold_duration"/>
+    <label name="duration"/>
+    <field name="duration"/>
+    <label name="recording"/>
+    <field name="recording" colspan="3"/>
+</form>

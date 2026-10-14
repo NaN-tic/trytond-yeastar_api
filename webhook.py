@@ -2,10 +2,11 @@ from urllib.parse import quote, urlsplit
 
 from trytond.exceptions import UserError
 from trytond.i18n import gettext
-from trytond.model import ModelSQL, ModelView, Unique, fields
+from trytond.model import Index, ModelSQL, ModelView, Unique, fields
 from trytond.pool import PoolMeta
 from trytond.pyson import Bool, Eval
 from trytond.transaction import Transaction
+from trytond.tools import timezone
 
 
 class PBX(metaclass=PoolMeta):
@@ -22,13 +23,28 @@ class PBX(metaclass=PoolMeta):
         'get_webhook_url')
     webhook_mode = fields.Selection([
             ('capture', 'Capture Only'),
-            ], 'Webhook Mode', required=True, readonly=True)
+            ('activities', 'Create Activities'),
+            ], 'Webhook Mode', required=True)
+    webhook_timezone = fields.Selection(
+        [(None, '')] + [(z, z) for z in sorted(timezone.available_timezones())],
+        'PBX Timezone', translate=False, states={
+            'required': Eval('webhook_mode') == 'activities',
+            }, help="Timezone used by time_start in Yeastar CDRs.")
+    webhook_retention_months = fields.Integer('Webhook Retention (Months)',
+        required=True, domain=[('webhook_retention_months', '>=', 0)],
+        help="Delete completed events after this period. Zero disables cleanup.")
+    webhook_calls = fields.One2Many('yeastar.webhook.call', 'pbx',
+        'Processed Calls', readonly=True)
     webhook_events = fields.One2Many('yeastar.webhook.event', 'pbx',
         'Webhook Events', readonly=True)
 
     @staticmethod
     def default_webhook_mode():
         return 'capture'
+
+    @staticmethod
+    def default_webhook_retention_months():
+        return 3
 
     def get_webhook_url(self, name):
         if self.id is None or self.id < 0 or not self.webhook_base_url:
@@ -59,6 +75,8 @@ class PBX(metaclass=PoolMeta):
         default.setdefault('webhook_enabled', False)
         default.setdefault('webhook_secret', None)
         default.setdefault('webhook_events', None)
+        default.setdefault('webhook_calls', None)
+        default.setdefault('webhook_mode', 'capture')
         return super().copy(records, default=default)
 
 
@@ -74,8 +92,12 @@ class WebhookEvent(ModelSQL, ModelView):
     digest = fields.Char('Payload Digest', required=True, readonly=True)
     payload = fields.Text('Payload', required=True, readonly=True)
     state = fields.Selection([
-            ('captured', 'Captured'),
+            ('captured', 'Pending'),
+            ('processed', 'Processed'),
+            ('discarded', 'Discarded'),
+            ('error', 'Error'),
             ], 'State', required=True, readonly=True)
+    processing_message = fields.Text('Processing Message', readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -86,7 +108,24 @@ class WebhookEvent(ModelSQL, ModelView):
                 'yeastar_api.msg_webhook_payload_unique'),
             ]
         cls._order = [('create_date', 'DESC'), ('id', 'DESC')]
+        cls._sql_indexes.update({
+                Index(table, (table.pbx, Index.Equality()),
+                    (table.call_id, Index.Equality())),
+                Index(table, (table.pbx, Index.Equality()),
+                    (table.state, Index.Equality()),
+                    (table.create_date, Index.Range())),
+                })
+        cls._buttons.update({
+                'retry': {'invisible': Eval('state') != 'error'},
+                })
 
     @staticmethod
     def default_state():
         return 'captured'
+
+    @classmethod
+    @ModelView.button
+    def retry(cls, events):
+        cls.write([e for e in events if e.state == 'error'], {
+                'state': 'captured', 'processing_message': None,
+                })

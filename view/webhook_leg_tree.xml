@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<tree>
+    <field name="start" widget="date"/>
+    <field name="start" widget="time"/>
+    <field name="extension"/>
+    <field name="external_number"/>
+    <field name="direction"/>
+    <field name="talk_duration"/>
+    <field name="hold_duration"/>
+    <field name="duration"/>
+    <field name="recording"/>
+</tree>
