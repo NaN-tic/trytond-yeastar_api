@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <record model="ir.message" id="msg_transcription_unique">
+            <field name="text">This recording already has a transcription in this language.</field>
+        </record>
+        <record model="ir.message" id="msg_recording_job_unique">
+            <field name="text">This recording is already queued for this activity.</field>
+        </record>
+        <record model="ir.message" id="msg_recording_not_ready">
+            <field name="text">The external recording is not available from the PBX yet.</field>
+        </record>
+        <record model="ir.ui.view" id="transcription_job_view_tree">
+            <field name="model">yeastar.transcription.job</field>
+            <field name="type">tree</field>
+            <field name="name">transcription_job_tree</field>
+        </record>
+        <record model="ir.ui.view" id="transcription_job_view_form">
+            <field name="model">yeastar.transcription.job</field>
+            <field name="type">form</field>
+            <field name="name">transcription_job_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_transcription_job">
+            <field name="name">Call Recordings</field>
+            <field name="res_model">yeastar.transcription.job</field>
+        </record>
+        <menuitem id="menu_transcription_jobs" parent="menu_yeastar_admin"
+            action="act_transcription_job" sequence="30"/>
+        <record model="ir.model.access" id="access_transcription_job">
+            <field name="model">yeastar.transcription.job</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_transcription_job_user">
+            <field name="model">yeastar.transcription.job</field>
+            <field name="group" ref="group_yeastar"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_transcription_job_admin">
+            <field name="model">yeastar.transcription.job</field>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.rule.group" id="rule_group_transcription_job_companies">
+            <field name="name">User in companies</field>
+            <field name="model">yeastar.transcription.job</field>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_transcription_job_companies">
+            <field name="domain" eval="[('pbx.company', 'in', Eval('companies', []))]" pyson="1"/>
+            <field name="rule_group" ref="rule_group_transcription_job_companies"/>
+        </record>
+        <record model="ir.model.button" id="transcription_job_retry_button">
+            <field name="name">retry</field>
+            <field name="string">Retry</field>
+            <field name="model">yeastar.transcription.job</field>
+        </record>
+        <record model="ir.model.button-res.group" id="transcription_job_retry_group">
+            <field name="button" ref="transcription_job_retry_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.button" id="transcription_job_resume_button">
+            <field name="name">resume</field>
+            <field name="string">Resume with Gladia Job ID</field>
+            <field name="model">yeastar.transcription.job</field>
+        </record>
+        <record model="ir.model.button-res.group" id="transcription_job_resume_group">
+            <field name="button" ref="transcription_job_resume_button"/>
+            <field name="group" ref="group_yeastar_admin"/>
+        </record>
+        <record model="ir.model.button" id="transcription_job_reprocess_button">
+            <field name="name">reprocess</field>
+            <field name="string">Transcribe Again (New Gladia Job)</field>
+            <field name="model">yeastar.transcription.job</field>
+        </record>
+        <record model="ir.model.button-res.group" id="transcription_job_reprocess_group">
+            <field name="button" ref="transcription_job_reprocess_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record model="ir.cron" id="cron_process_recordings">
+            <field name="method">yeastar.transcription.job|process_pending</field>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">minutes</field>
+        </record>
+    </data>
+</tryton>

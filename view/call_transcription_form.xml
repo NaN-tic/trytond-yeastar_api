@@ -4,5 +4,15 @@ this repository contains the full copyright notices and license terms. -->
 <form>
   <field name="name"/>
   <field name="activity"/>
+  <label name="job"/>
+  <field name="job"/>
+  <label name="kind"/>
+  <field name="kind"/>
+  <label name="language_code"/>
+  <field name="language_code"/>
+  <label name="subject"/>
+  <field name="subject"/>
+  <field name="summary" colspan="4"/>
   <field name="transcription" colspan="4" height="400"/>
+  <field name="utterances" colspan="4"/>
 </form>

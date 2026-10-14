@@ -200,30 +200,15 @@ class TestWebhookActivities(unittest.TestCase):
         self.assertEqual(manual.duration, timedelta(seconds=95))
         self.assertEqual(len(Activity.find()), 2)
         self.assertEqual(len(Leg.find()), 3)
-        # Transcription uses exact external filenames, including all return
-        # legs, and cannot restore hold time by using the recording duration.
-        from trytond.modules.yeastar_api import activity as activity_module
-        PBXModel = Pool(self.config.database_name).get('yeastar.pbx')
-        with patch.object(PBXModel, 'get_token', return_value='token'), \
-                patch.object(PBXModel, 'download_record', side_effect=
-                    lambda id=None, file=None, token=None: {
-                        'file_name': file,
-                        'download_resource_url': '/recording.wav',
-                        }) as download, \
-                patch.object(PBXModel, '_requests', return_value=b'audio'), \
-                patch.object(activity_module, 'convert_wav_to_mp3',
-                    return_value=b'mp3'), \
-                patch.object(activity_module, 'gladia_api_key', None), \
-                patch.object(activity_module, 'openai_api_key', 'test-key'), \
-                patch.object(activity_module, 'openai_transcribe', return_value={
-                    'transcript': {'language': 'en', 'result': 'External call'}}):
-            manual.click('get_call_transcription')
-        self.assertEqual({c.kwargs['file'] for c in download.call_args_list},
+        # Queueing is idempotent and does not download or process audio inline.
+        manual.click('get_call_transcription')
+        manual.click('get_call_transcription')
+        self.assertEqual({j.recording for j in manual.transcription_jobs},
             {'external-first.wav', 'external-return.wav'})
         manual.reload()
         self.assertEqual(manual.duration, timedelta(seconds=95))
-        self.assertEqual(len(manual.transcriptions), 2)
-        self.assertEqual(len(Attachment.find()), 2)
+        self.assertEqual(len(manual.transcriptions), 0)
+        self.assertEqual(len(Attachment.find()), 0)
         # Bad CDRs roll back atomically without preventing other calls.
         self.send(30012, self.cdr('bad', 'valid-before-bad'),
             self.start + timedelta(seconds=209))
@@ -261,7 +246,7 @@ class TestWebhookActivities(unittest.TestCase):
         self.assertEqual({e.call_id for e in Event.find()}, {'bad', 'live'})
         self.assertEqual(len(Activity.find()), 3)
         self.assertEqual(len(Leg.find()), 4)
-        self.assertEqual(len(Attachment.find()), 2)
+        self.assertEqual(len(Attachment.find()), 0)
         # Permanent leg identity survives raw event cleanup.
         self.send(30012, first, self.start + timedelta(seconds=181))
         process.click('run_once')

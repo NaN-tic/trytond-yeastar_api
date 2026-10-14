@@ -283,6 +283,8 @@ class WebhookEvent(metaclass=PoolMeta):
                             'duration': timedelta(),
                             'state': 'done',
                             'subject': f'{direction} call: {number}',
+                            'call_generated_subject':
+                                f'{direction} call: {number}',
                             'party': parties.pop() if len(parties) == 1 else None,
                             }])
             call, = Call.create([{

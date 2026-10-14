@@ -191,9 +191,9 @@ class YeastarPBX(ModelSQL, ModelView):
             return None
         if type_ == 'POST':
             response = requests.post(url, data=data,
-                headers=headers, verify=verify)
+                headers=headers, verify=verify, timeout=(10, 120))
         elif type_ == 'GET':
-            response = requests.get(url, verify=verify)
+            response = requests.get(url, verify=verify, timeout=(10, 120))
             #response = requests.get(url, stream=True, verify=verify)
         else:
             return None
@@ -204,14 +204,13 @@ class YeastarPBX(ModelSQL, ModelView):
             else:
                 return response.content
         else:
-            self.revoke_token(token)
             raise UserError(
                 gettext('yeastar_api.msg_get_post_fail',
                     url=self.base_url,
                     pbx=self.rec_name,
                     status=response.status_code))
 
-    def get_token(self):
+    def get_token(self, commit=True):
         '''
         Access token expires after 30 minutes.
         You could obtain new one wiht the refresh token.
@@ -274,7 +273,8 @@ class YeastarPBX(ModelSQL, ModelView):
         self.save()
         #If token is getted correctly, commit it to use in the future calls,
         # although the current call fail.
-        Transaction().commit()
+        if commit:
+            Transaction().commit()
 
         return self.token
 

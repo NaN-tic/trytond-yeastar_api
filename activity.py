@@ -1,49 +1,8 @@
-#This file is part asterisk module for Tryton.
-#The COPYRIGHT file at the top level of this repository contains
-#the full copyright notices and license terms.
-from datetime import timedelta
-try:
-    from pydub import AudioSegment
-except Exception:
-    AudioSegment = None
-from io import BytesIO
-
-from trytond.model import ModelView, ModelSQL, fields
+# The COPYRIGHT file at the top level of this repository contains the full
+# copyright notices and license terms.
+from trytond.model import ModelSQL, ModelView, Unique, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.transaction import Transaction
-from trytond.pyson import Eval, Bool
-from trytond.i18n import gettext
-from trytond.exceptions import UserError
-from .openai_api import (API_KEY as openai_api_key,
-    transcribe as openai_transcribe)
-from .gladia_api import (API_KEY as gladia_api_key,
-    upload_file as gladia_upload_file,
-    create_transcribe as gladia_create_transcribe,
-    get_transcribe as gladia_get_transcribe)
-
-
-def convert_wav_to_mp3(wav_file):
-    '''
-    Convert the wave_file to MP3 format.
-    The wave_fil could be byte type object or a BytesIO object.
-    The MP3 returned will be the same type as the wav_file.
-    '''
-    if not AudioSegment:
-        raise Exception("pydub is not installed")
-    if isinstance(wav_file, bytes):
-        input = BytesIO(wav_file)
-    elif isinstance(wav_file, BytesIO):
-        input = wav_file
-    else:
-        raise Exception("Invalid wav_file type")
-    buffer = BytesIO()
-    audio = AudioSegment.from_wav(input)
-    audio.export(buffer, format="mp3")
-    if isinstance(wav_file, bytes):
-        mp3_file = buffer.getvalue()
-    else:
-        mp3_file = buffer
-    return mp3_file
+from trytond.pyson import Bool, Eval
 
 
 class CallTranscription(ModelSQL, ModelView):
@@ -53,6 +12,26 @@ class CallTranscription(ModelSQL, ModelView):
     name = fields.Char('Name', readonly=True)
     activity = fields.Many2One('activity.activity', 'Activity')
     transcription = fields.Text('Transcription')
+    job = fields.Many2One('yeastar.transcription.job', 'Recording Job',
+        ondelete='SET NULL', readonly=True)
+    language_code = fields.Char('Language', readonly=True)
+    kind = fields.Selection([
+            (None, ''), ('original', 'Original'),
+            ('translation', 'Translation'),
+            ], 'Kind', readonly=True)
+    utterances = fields.Text('Timed Speaker Segments (JSON)', readonly=True)
+    subject = fields.Char('Subject', readonly=True)
+    summary = fields.Text('Summary', readonly=True)
+
+    @classmethod
+    def __setup__(cls):
+        super().__setup__()
+        table = cls.__table__()
+        cls._sql_constraints += [
+            ('job_language_kind_unique',
+                Unique(table, table.job, table.language_code, table.kind),
+                'yeastar_api.msg_transcription_unique'),
+            ]
 
 
 class CallTranscriptionLLMProcess(ModelSQL, ModelView):
@@ -64,244 +43,63 @@ class CallTranscriptionLLMProcess(ModelSQL, ModelView):
     response = fields.Text('Response', readonly=True)
 
 
-STATE = {
-    'invisible': ~Bool(Eval('call_id')),
-    }
+STATE = {'invisible': ~Bool(Eval('call_id'))}
 
 
 class Activity(metaclass=PoolMeta):
-    'Activity'
     __name__ = 'activity.activity'
 
     call_id = fields.Char('Call ID', readonly=True)
+    # Keep historical settings/results available on upgraded databases.
     language = fields.Many2One('ir.lang', 'Language Call', states=STATE)
-    speakers = fields.Integer('Number of Speakers', states=STATE,
-        help="Leave it blank to let the AI try to figure it out.")
+    speakers = fields.Integer('Number of Speakers', states=STATE)
     translation_languages = fields.MultiSelection('get_translation_languages',
-        "Translation Languages", states=STATE)
+        'Translation Languages', states=STATE)
     transcriptions = fields.One2Many('call.transcription', 'activity',
         'Call Transcriptions', states=STATE)
     summarization = fields.Selection([
-            (None, ""),
-            ('general', "General"),
-            ('bullet_points', "Bullet Points"),
-            ('concise', "Concise"),
-            ], "Summarization", states=STATE)
+            (None, ''), ('general', 'General'),
+            ('bullet_points', 'Bullet Points'), ('concise', 'Concise'),
+            ], 'Summarization', states=STATE)
     summarization_result = fields.Text('Summarization Result', readonly=True)
     llm_process = fields.One2Many('call.transcription.llm.process', 'activity',
         'LLM Processing', states=STATE)
+    transcription_jobs = fields.One2Many(
+        'yeastar.transcription.job', 'activity',
+        'Recordings', readonly=True, states=STATE)
+    call_primary_language = fields.Char('Primary Language', readonly=True)
+    call_language_percentages = fields.Text(
+        'Spoken Language Percentages (JSON)',
+        readonly=True)
+    call_generated_subject = fields.Char('Last Generated Subject',
+        readonly=True)
+    call_generated_description = fields.Text('Last Generated Description',
+        readonly=True)
 
     @classmethod
     def __setup__(cls):
         super().__setup__()
-        cls._buttons.update({
-                'get_call_transcription': {},
-                })
+        cls._buttons.update({'get_call_transcription': {}})
 
     @classmethod
     def get_translation_languages(cls):
-        pool = Pool()
-        Language = pool.get('ir.lang')
-
-        langs = Language.search([])
-        return [(x.code, x.name) for x in langs]
-
-    @staticmethod
-    def default_speakers():
-        return 2
-
-    @staticmethod
-    def default_translation_languages():
-        return None
-
-    @staticmethod
-    def default_summarization():
-        return 'bullet_points'
+        Language = Pool().get('ir.lang')
+        return [(language.code, language.name)
+            for language in Language.search([])]
 
     @classmethod
     @ModelView.button
     def get_call_transcription(cls, activities):
-        '''
-        Download the file recorde of the call and convert speech to text
-        '''
-        # TODO: Allow to download the record file at any time, not only
-        # after the call.
-        pool = Pool()
-        Configuration = pool.get('activity.configuration')
-        User = pool.get('res.user')
-        Attachment = pool.get('ir.attachment')
-        CallTranscription = pool.get('call.transcription')
-        WebhookCall = pool.get('yeastar.webhook.call')
-
-        configuration = Configuration(1)
-        user = User(Transaction().user)
-        employee = user.employee if user else None
-        attachments = []
-        to_save = []
-        recordings = []
-        for activity in activities:
-            if not activity.call_id:
-                continue
-            calls = WebhookCall.search([('activity', '=', activity.id)])
-            if calls:
-                # CDR filenames identify individual external legs, even when a
-                # transfer changes the recording ID. Never use audio duration
-                # to overwrite the external conversation time already counted.
-                for call in calls:
-                    pbx = call.pbx
-                    with Transaction().set_context(yeastar_wo_employee=True):
-                        token = pbx.get_token()
-                    if not token:
-                        continue
-                    for filename in sorted({leg.recording for leg in call.legs
-                            if leg.recording}):
-                        info = pbx.download_record(file=filename, token=token)
-                        recordings.append((activity, pbx, token, info, None))
-                continue
-            if not employee:
-                raise UserError(gettext('yeastar_api.msg_not_employee',
-                        user=user.name))
-            extension = employee.yeastar_extension
-            pbx = employee.yeastar_pbx
-            if not extension or not pbx:
-                raise UserError(gettext(
-                        'yeastar_api.msg_not_extension_pbx_employee',
-                        employee=employee.rec_name))
-            page = configuration.yeastar_record_list_page or '1'
-            page_size = configuration.yeastar_record_list_page_size or '5'
-            records_list = pbx.get_records_list(page=page, page_size=page_size,
-                sort_by='id', order_by='desc')
-            if not records_list or not records_list.get('data', None):
-                continue
-            data = records_list['data']
-            id = None
-            duration = None
-            for record in data:
-                if record.get('call_type', '').lower() not in {
-                        'inbound', 'outbound'}:
-                    continue
-                if (record.get('call_from_number') != str(extension)
-                        and record.get('call_to_number') != str(extension)):
-                    continue
-                if activity.call_id in record.get('file', ''):
-                    id = record.get('id')
-                    duration = record.get('duration')
-                    break
-
-            record_info = None
-            token = pbx.get_token()
-            if not token:
-                return
-            if id:
-                record_info = pbx.download_record(id, token=token)
-            recordings.append((activity, pbx, token, record_info, duration))
-
-        for activity, pbx, token, record_info, duration in recordings:
-            file_name = (record_info.get('file_name', None)
-                if record_info else None)
-            audio_url = (record_info.get('download_resource_url', None)
-                if record_info else None)
-            if (not file_name or not audio_url):
-                continue
-            wav_response = pbx._requests('GET', args=audio_url, token=token)
-
-            # Convert the WAV file donwlaod from Yeastar to MP3 to take up
-            # less space.
-            mp3_response = None
-            try:
-                mp3_response = convert_wav_to_mp3(wav_response)
-            except Exception:
-                pass
-            if mp3_response:
-                response = mp3_response
-                file_name = file_name.replace('.wav', '.mp3')
-                mime = 'audio/mp3'
-            else:
-                response = wav_response
-                mime = 'audio/wav'
-
-            transcription = None
-            lang = activity.language.code if activity.language else None
-            if gladia_api_key:
-                audio_to_llm = []
-                for llm in activity.llm_process:
-                    audio_to_llm.append(llm.prompt)
-                file = gladia_upload_file(response, filename=file_name,
-                    mime=mime)
-                audio_url = file.get('audio_url', None)
-                transcription = gladia_create_transcribe(audio_url, lang=lang,
-                    number_speakers=activity.speakers,
-                    translation_lang=activity.translation_languages,
-                    summarization=activity.summarization,
-                    audio_to_llm=audio_to_llm, metadata={})
-                if transcription:
-                    transcription = gladia_get_transcribe(
-                        transcription.get('id', None))
-            elif openai_api_key:
-                if not lang:
-                    lang = Transaction().context.get('language')
-                transcription = openai_transcribe(response, language=lang)
-            else:
-                transcription = None
-            if not transcription:
-                return None
-
-            if duration is not None:
-                activity.duration = timedelta(seconds=duration)
-            for key, value in transcription.items():
-                if key == 'transcript':
-                    call_transcription = CallTranscription()
-                    call_transcription.name = value.get('language', lang)
-                    call_transcription.activity = activity
-                    call_transcription.transcription = value.get('result', '')
-                    call_transcription.save()
-                if key == 'sentences':
-                    sentences = []
-                    sentence_lang = (value[0].get('language', lang)
-                        if value and len(value) > 0 else lang)
-                    for res in value:
-                        sentences.append(
-                            "(%s) %s" % (res.get('speaker', ''),
-                                res.get('sentence', '')))
-                    call_transcription = CallTranscription()
-                    call_transcription.name = sentence_lang
-                    call_transcription.activity = activity
-                    call_transcription.transcription = "\n".join(sentences)
-                    call_transcription.save()
-                if key == 'translations':
-                    for res in value:
-                        call_transcription = CallTranscription()
-                        call_transcription.name = res.get('language', lang)
-                        call_transcription.activity = activity
-                        call_transcription.transcription = res.get('result', '')
-                        call_transcription.save()
-                if key == 'summarization':
-                    activity.summarization_result = value
-                if key == 'llm':
-                    for llm in activity.llm_process:
-                        for res in value:
-                            if res.get('prompt', '') == llm.prompt:
-                                llm.response = res.get('result', '')
-                        llm.save()
-            if activity not in to_save:
-                to_save.append(activity)
-
-            attach = Attachment(
-                name=file_name,
-                type='data',
-                #data=audio_content,
-                data=response,
-                resource=activity)
-            attachments.append(attach)
-
-        if to_save:
-            cls.save(to_save)
-        if attachments:
-            Attachment.save(attachments)
+        """Queue recordings; downloading and transcription run in the cron."""
+        Job = Pool().get('yeastar.transcription.job')
+        Job.enqueue(activities, discover=True)
 
     @classmethod
     def copy(cls, activities, default=None):
         default = default.copy() if default is not None else {}
-        default.setdefault('call_id', None)
-        default.setdefault('language', None)
+        for name in ('call_id', 'language', 'call_primary_language',
+                'call_language_percentages', 'call_generated_subject',
+                'call_generated_description', 'transcription_jobs',
+                'transcriptions', 'summarization_result'):
+            default.setdefault(name, None)
         return super().copy(activities, default=default)
