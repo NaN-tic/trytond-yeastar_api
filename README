@@ -79,6 +79,17 @@ configure a separate secret if it needs its own webhook.
 Automatic activities
 --------------------
 
+CDR imports use /openapi/v2.0/cdr/search, independently of the PBX API path
+used by other services. The CDR cron requires a company. It reads all pages
+in ascending time order until an empty page and revisits the previous day
+to update late results by PBX and UID instead of creating duplicates.
+Legacy duplicate rows are not automatically deleted. Audit them before using
+historical totals in BI. CDR v2 routing_duration maps to Ring Duration,
+handling_duration to Talk Duration (including hold time), and call_duration
+to Total Duration. These are call-level metrics, not employee activity time.
+Dates retain the existing PBX-local convention. Existing recording filenames
+are preserved because the v2 list does not supply them.
+
 After upgrading the module, configure the following in the test database:
 
 1. Assign each employee's Yeastar PBX and extension. Employees without an
