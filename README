@@ -111,6 +111,14 @@ contains the same remote IDs and would modify the live directory.
 Automatic activities
 --------------------
 
+Caller identification compares normalized phone/mobile numbers of active
+parties. It assigns only unique matches and preserves manually assigned
+parties. With phonenumbers installed, national numbers use the country of the
+company party's address; otherwise only explicit international numbers can
+be matched. Prefixes + and 00 and ordinary formatting are normalized. No
+suffix guessing is performed. The nantic module adds a pending-caller
+resolution workflow on top of this matching.
+
 CDR imports use /openapi/v2.0/cdr/search, independently of the PBX API path
 used by other services. The CDR cron requires a company. It reads all pages
 in ascending time order until an empty page and revisits the previous day
