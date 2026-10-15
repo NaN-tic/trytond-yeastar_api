@@ -6,5 +6,5 @@
     <field name="state"/>
     <field name="primary_language"/>
     <field name="attempts"/>
-    <field name="next_attempt"/>
+    <field name="next_attempt" widget="date"/>
 </tree>
