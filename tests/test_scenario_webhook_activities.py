@@ -177,7 +177,7 @@ class TestWebhookActivities(unittest.TestCase):
         self.assertEqual(transferred.dtstart,
             self.start + timedelta(seconds=120))
         self.assertEqual(transferred.party, customer)
-        self.assertEqual(transferred.state, 'done')
+        self.assertEqual(transferred.state, 'planned')
         self.assertEqual(len(Call.find()), 2)
         self.assertEqual(len(Leg.find()), 2)
         self.assertEqual(len(Event.find([('state', '=', 'discarded')])), 3)
