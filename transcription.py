@@ -371,7 +371,8 @@ class TranscriptionJob(ModelSQL, ModelView):
         if llm.get('success'):
             for entry in llm.get('results') or []:
                 output = entry.get('results') or {}
-                if (entry.get('success')
+                if (entry.get('success') is not False
+                        and not entry.get('error')
                         and output.get('prompt')
                         == gladia_api.ACTIVITY_PROMPT):
                     text = output['response'].strip()
