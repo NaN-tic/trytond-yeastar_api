@@ -49,6 +49,14 @@ STATE = {'invisible': ~Bool(Eval('call_id'))}
 class Activity(metaclass=PoolMeta):
     __name__ = 'activity.activity'
 
+    def identify_call_party(self, number, pbx):
+        from .phone import matching_phone_parties
+
+        if not self.party:
+            parties = matching_phone_parties(number, self.company)
+            if len(parties) == 1:
+                self.__class__.write([self], {'party': parties[0].id})
+
     call_id = fields.Char('Call ID', readonly=True)
     # Keep historical settings/results available on upgraded databases.
     language = fields.Many2One('ir.lang', 'Language Call', states=STATE)
