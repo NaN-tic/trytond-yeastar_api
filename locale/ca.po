@@ -2,6 +2,466 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "view:yeastar.pbx:"
+msgid "Webhook"
+msgstr "Webhook"
+
+msgctxt "selection:ir.cron,method:"
+msgid "Process Yeastar Recordings"
+msgstr "Processar els enregistraments de Yeastar"
+
+msgctxt "selection:ir.cron,method:"
+msgid "Process Yeastar Webhooks"
+msgstr "Processar els webhooks de Yeastar"
+
+msgctxt "selection:ir.cron,method:"
+msgid "Clean Yeastar Webhooks"
+msgstr "Netejar els webhooks de Yeastar"
+
+msgctxt "selection:ir.cron,method:"
+msgid "Synchronize Yeastar Contacts and Phonebooks"
+msgstr "Sincronitzar els contactes i les agendes de Yeastar"
+
+msgctxt "field:activity.activity,call_generated_description:"
+msgid "Last Generated Description"
+msgstr "Última descripció generada"
+
+msgctxt "field:activity.activity,call_generated_subject:"
+msgid "Last Generated Subject"
+msgstr "Últim assumpte generat"
+
+msgctxt "field:activity.activity,call_language_percentages:"
+msgid "Spoken Language Percentages (JSON)"
+msgstr "Percentatges dels idiomes parlats (JSON)"
+
+msgctxt "field:activity.activity,call_primary_language:"
+msgid "Primary Language"
+msgstr "Idioma principal"
+
+msgctxt "field:activity.activity,transcription_jobs:"
+msgid "Recordings"
+msgstr "Enregistraments"
+
+msgctxt "field:call.transcription,job:"
+msgid "Recording Job"
+msgstr "Treball d'enregistrament"
+
+msgctxt "field:call.transcription,kind:"
+msgid "Kind"
+msgstr "Tipus"
+
+msgctxt "field:call.transcription,language_code:"
+msgid "Language"
+msgstr "Idioma"
+
+msgctxt "field:call.transcription,subject:"
+msgid "Subject"
+msgstr "Assumpte"
+
+msgctxt "field:call.transcription,summary:"
+msgid "Summary"
+msgstr "Resum"
+
+msgctxt "field:call.transcription,utterances:"
+msgid "Timed Speaker Segments (JSON)"
+msgstr "Segments temporitzats per interlocutor (JSON)"
+
+msgctxt "field:yeastar.pbx,automatic_transcription:"
+msgid "Automatic Gladia Transcription"
+msgstr "Transcripció automàtica amb Gladia"
+
+msgctxt "field:yeastar.pbx,webhook_base_url:"
+msgid "Public Base URL"
+msgstr "URL base pública"
+
+msgctxt "field:yeastar.pbx,webhook_calls:"
+msgid "Processed Calls"
+msgstr "Trucades processades"
+
+msgctxt "field:yeastar.pbx,webhook_enabled:"
+msgid "Webhook Enabled"
+msgstr "Webhook activat"
+
+msgctxt "field:yeastar.pbx,webhook_events:"
+msgid "Webhook Events"
+msgstr "Esdeveniments del webhook"
+
+msgctxt "field:yeastar.pbx,webhook_mode:"
+msgid "Webhook Mode"
+msgstr "Mode del webhook"
+
+msgctxt "field:yeastar.pbx,webhook_retention_months:"
+msgid "Webhook Retention (Months)"
+msgstr "Conservació del webhook (mesos)"
+
+msgctxt "field:yeastar.pbx,webhook_secret:"
+msgid "Webhook Secret"
+msgstr "Secret del webhook"
+
+msgctxt "field:yeastar.pbx,webhook_timezone:"
+msgid "PBX Timezone"
+msgstr "Zona horària de la centraleta"
+
+msgctxt "field:yeastar.pbx,webhook_url:"
+msgid "Webhook URL"
+msgstr "URL del webhook"
+
+msgctxt "field:yeastar.transcription.job,activity:"
+msgid "Activity"
+msgstr "Activitat"
+
+msgctxt "field:yeastar.transcription.job,attachment:"
+msgid "Audio"
+msgstr "Àudio"
+
+msgctxt "field:yeastar.transcription.job,attempts:"
+msgid "Retry Count"
+msgstr "Nombre de reintents"
+
+msgctxt "field:yeastar.transcription.job,audio_url:"
+msgid "Gladia Upload URL"
+msgstr "URL de pujada a Gladia"
+
+msgctxt "field:yeastar.transcription.job,error_message:"
+msgid "Processing Error"
+msgstr "Error de processament"
+
+msgctxt "field:yeastar.transcription.job,error_stage:"
+msgid "Failed Stage"
+msgstr "Etapa amb error"
+
+msgctxt "field:yeastar.transcription.job,gladia_id:"
+msgid "Gladia Job ID"
+msgstr "Identificador del treball de Gladia"
+
+msgctxt "field:yeastar.transcription.job,language_durations:"
+msgid "Speech Seconds by Language (JSON)"
+msgstr "Segons de parla per idioma (JSON)"
+
+msgctxt "field:yeastar.transcription.job,language_percentages:"
+msgid "Language Percentages (JSON)"
+msgstr "Percentatges per idioma (JSON)"
+
+msgctxt "field:yeastar.transcription.job,localized_texts:"
+msgid "Subjects and Summaries (JSON)"
+msgstr "Assumptes i resums (JSON)"
+
+msgctxt "field:yeastar.transcription.job,next_attempt:"
+msgid "Next Attempt"
+msgstr "Proper intent"
+
+msgctxt "field:yeastar.transcription.job,pbx:"
+msgid "PBX"
+msgstr "Centraleta"
+
+msgctxt "field:yeastar.transcription.job,previous_results:"
+msgid "Previous Jobs (JSON)"
+msgstr "Treballs anteriors (JSON)"
+
+msgctxt "field:yeastar.transcription.job,primary_language:"
+msgid "Primary Language"
+msgstr "Idioma principal"
+
+msgctxt "field:yeastar.transcription.job,raw_result:"
+msgid "Gladia Result (JSON)"
+msgstr "Resultat de Gladia (JSON)"
+
+msgctxt "field:yeastar.transcription.job,recording:"
+msgid "Recording File"
+msgstr "Fitxer d'enregistrament"
+
+msgctxt "field:yeastar.transcription.job,start:"
+msgid "Recording Start"
+msgstr "Inici de l'enregistrament"
+
+msgctxt "field:yeastar.transcription.job,state:"
+msgid "State"
+msgstr "Estat"
+
+msgctxt "field:yeastar.transcription.job,transcriptions:"
+msgid "Transcriptions"
+msgstr "Transcripcions"
+
+msgctxt "field:yeastar.webhook.call,activity:"
+msgid "Activity"
+msgstr "Activitat"
+
+msgctxt "field:yeastar.webhook.call,call_id:"
+msgid "Call ID"
+msgstr "Identificador de trucada"
+
+msgctxt "field:yeastar.webhook.call,duration:"
+msgid "Accounted Duration"
+msgstr "Durada comptabilitzada"
+
+msgctxt "field:yeastar.webhook.call,employee:"
+msgid "Employee"
+msgstr "Empleat"
+
+msgctxt "field:yeastar.webhook.call,legs:"
+msgid "Call Legs"
+msgstr "Trams de trucada"
+
+msgctxt "field:yeastar.webhook.call,pbx:"
+msgid "PBX"
+msgstr "Centraleta"
+
+msgctxt "field:yeastar.webhook.event,call_id:"
+msgid "Call ID"
+msgstr "Identificador de trucada"
+
+msgctxt "field:yeastar.webhook.event,digest:"
+msgid "Payload Digest"
+msgstr "Empremta del contingut"
+
+msgctxt "field:yeastar.webhook.event,event_type:"
+msgid "Event Type"
+msgstr "Tipus d'esdeveniment"
+
+msgctxt "field:yeastar.webhook.event,payload:"
+msgid "Payload"
+msgstr "Contingut"
+
+msgctxt "field:yeastar.webhook.event,pbx:"
+msgid "PBX"
+msgstr "Centraleta"
+
+msgctxt "field:yeastar.webhook.event,processing_message:"
+msgid "Processing Message"
+msgstr "Missatge de processament"
+
+msgctxt "field:yeastar.webhook.event,state:"
+msgid "State"
+msgstr "Estat"
+
+msgctxt "field:yeastar.webhook.leg,call:"
+msgid "Call"
+msgstr "Trucada"
+
+msgctxt "field:yeastar.webhook.leg,call_id:"
+msgid "Call ID"
+msgstr "Identificador de trucada"
+
+msgctxt "field:yeastar.webhook.leg,direction:"
+msgid "Direction"
+msgstr "Sentit"
+
+msgctxt "field:yeastar.webhook.leg,duration:"
+msgid "External Conversation Duration"
+msgstr "Durada de la conversa externa"
+
+msgctxt "field:yeastar.webhook.leg,extension:"
+msgid "Extension"
+msgstr "Extensió"
+
+msgctxt "field:yeastar.webhook.leg,external_number:"
+msgid "External Number"
+msgstr "Número extern"
+
+msgctxt "field:yeastar.webhook.leg,hold_duration:"
+msgid "Excluded Hold Duration"
+msgstr "Durada d'espera exclosa"
+
+msgctxt "field:yeastar.webhook.leg,note_id:"
+msgid "Call Note ID"
+msgstr "Identificador de la nota de trucada"
+
+msgctxt "field:yeastar.webhook.leg,pbx:"
+msgid "PBX"
+msgstr "Centraleta"
+
+msgctxt "field:yeastar.webhook.leg,recording:"
+msgid "Recording File"
+msgstr "Fitxer d'enregistrament"
+
+msgctxt "field:yeastar.webhook.leg,start:"
+msgid "Start (UTC)"
+msgstr "Inici (UTC)"
+
+msgctxt "field:yeastar.webhook.leg,talk_duration:"
+msgid "CDR Talk Duration"
+msgstr "Durada de conversa del CDR"
+
+msgctxt "field:yeastar.webhook.leg,uid:"
+msgid "CDR ID"
+msgstr "Identificador del CDR"
+
+msgctxt "help:company.employee,yeastar_create_activities:"
+msgid "Automatically create activities for calls on this extension when the PBX is configured to create activities."
+msgstr "Crear automàticament activitats per a les trucades d'aquesta extensió quan la centraleta estigui configurada per crear activitats."
+
+msgctxt "help:yeastar.pbx,automatic_transcription:"
+msgid "Download external recordings and transcribe them in the background."
+msgstr "Descarregar els enregistraments externs i transcriure'ls en segon pla."
+
+msgctxt "help:yeastar.pbx,webhook_base_url:"
+msgid "Public HTTPS URL of Tryton, including any proxy prefix."
+msgstr "URL HTTPS pública de Tryton, incloent-hi qualsevol prefix del servidor intermediari."
+
+msgctxt "help:yeastar.pbx,webhook_retention_months:"
+msgid "Delete completed events after this period. Zero disables cleanup."
+msgstr "Eliminar els esdeveniments completats després d'aquest període. El valor zero desactiva la neteja."
+
+msgctxt "help:yeastar.pbx,webhook_secret:"
+msgid "Copy the signing secret generated by Yeastar."
+msgstr "Copieu el secret de signatura generat per Yeastar."
+
+msgctxt "help:yeastar.pbx,webhook_timezone:"
+msgid "Timezone used by time_start in Yeastar CDRs."
+msgstr "Zona horària utilitzada per time_start als CDR de Yeastar."
+
+msgctxt "model:ir.action,name:act_transcription_job"
+msgid "Call Recordings"
+msgstr "Enregistraments de trucades"
+
+msgctxt "model:ir.message,text:msg_recording_job_unique"
+msgid "This recording is already queued for this activity."
+msgstr "Aquest enregistrament ja és a la cua d'aquesta activitat."
+
+msgctxt "model:ir.message,text:msg_recording_not_ready"
+msgid "The external recording is not available from the PBX yet."
+msgstr "L'enregistrament extern encara no està disponible a la centraleta."
+
+msgctxt "model:ir.message,text:msg_transcription_unique"
+msgid "This recording already has a transcription in this language."
+msgstr "Aquest enregistrament ja té una transcripció en aquest idioma."
+
+msgctxt "model:ir.message,text:msg_webhook_call_unique"
+msgid "This employee already has an activity link for this call."
+msgstr "Aquest empleat ja té una activitat vinculada a aquesta trucada."
+
+msgctxt "model:ir.message,text:msg_webhook_invalid_base_url"
+msgid "The public webhook base URL must be an HTTPS URL without credentials, query or fragment."
+msgstr "L'URL base pública del webhook ha de ser una URL HTTPS sense credencials, consulta ni fragment."
+
+msgctxt "model:ir.message,text:msg_webhook_leg_unique"
+msgid "This external call leg has already been processed."
+msgstr "Aquest tram de trucada externa ja s'ha processat."
+
+msgctxt "model:ir.message,text:msg_webhook_payload_unique"
+msgid "This webhook payload has already been captured."
+msgstr "Aquest contingut del webhook ja s'ha capturat."
+
+msgctxt "model:ir.model.button,string:activity_get_call_transcription_button"
+msgid "Queue Call Recordings"
+msgstr "Posar els enregistraments de trucades a la cua"
+
+msgctxt "model:ir.model.button,string:transcription_job_reprocess_button"
+msgid "Transcribe Again (New Gladia Job)"
+msgstr "Tornar a transcriure (nou treball de Gladia)"
+
+msgctxt "model:ir.model.button,string:transcription_job_resume_button"
+msgid "Resume with Gladia Job ID"
+msgstr "Reprendre amb l'identificador del treball de Gladia"
+
+msgctxt "model:ir.model.button,string:transcription_job_retry_button"
+msgid "Retry"
+msgstr "Reintentar"
+
+msgctxt "model:ir.model.button,string:webhook_event_retry_button"
+msgid "Retry Processing"
+msgstr "Reintentar el processament"
+
+msgctxt "model:yeastar.transcription.job,name:"
+msgid "Yeastar Recording Transcription"
+msgstr "Transcripció d'enregistrament de Yeastar"
+
+msgctxt "model:yeastar.webhook.call,name:"
+msgid "Yeastar Processed Call"
+msgstr "Trucada processada de Yeastar"
+
+msgctxt "model:yeastar.webhook.event,name:"
+msgid "Yeastar Webhook Event"
+msgstr "Esdeveniment del webhook de Yeastar"
+
+msgctxt "model:yeastar.webhook.leg,name:"
+msgid "Yeastar External Call Leg"
+msgstr "Tram de trucada externa de Yeastar"
+
+msgctxt "selection:call.transcription,kind:"
+msgid "Original"
+msgstr "Original"
+
+msgctxt "selection:call.transcription,kind:"
+msgid "Translation"
+msgstr "Traducció"
+
+msgctxt "selection:yeastar.pbx,webhook_mode:"
+msgid "Capture Only"
+msgstr "Només capturar"
+
+msgctxt "selection:yeastar.pbx,webhook_mode:"
+msgid "Create Activities"
+msgstr "Crear activitats"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Completed"
+msgstr "Completat"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Error"
+msgstr "Error"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Gladia Job Failed"
+msgstr "Treball de Gladia fallit"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "No Speech"
+msgstr "Sense parla"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Ready to Submit"
+msgstr "Preparat per enviar"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Ready to Upload"
+msgstr "Preparat per pujar"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Result Received"
+msgstr "Resultat rebut"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Submission Status Unknown"
+msgstr "Estat de l'enviament desconegut"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Submitting"
+msgstr "Enviant"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Transcribing"
+msgstr "Transcrivint"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Waiting for Recording"
+msgstr "Esperant l'enregistrament"
+
+msgctxt "selection:yeastar.webhook.event,state:"
+msgid "Discarded"
+msgstr "Descartat"
+
+msgctxt "selection:yeastar.webhook.event,state:"
+msgid "Error"
+msgstr "Error"
+
+msgctxt "selection:yeastar.webhook.event,state:"
+msgid "Pending"
+msgstr "Pendent"
+
+msgctxt "selection:yeastar.webhook.event,state:"
+msgid "Processed"
+msgstr "Processat"
+
+msgctxt "selection:yeastar.webhook.leg,direction:"
+msgid "Inbound"
+msgstr "Entrant"
+
+msgctxt "selection:yeastar.webhook.leg,direction:"
+msgid "Outbound"
+msgstr "Sortint"
+
 msgctxt "field:activity.activity,call_id:"
 msgid "Call ID"
 msgstr "Identificador de trucada"
