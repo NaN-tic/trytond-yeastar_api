@@ -90,6 +90,10 @@ msgctxt "field:company.employee,yeastar_extension:"
 msgid "Yeastar Extension"
 msgstr "Extensión de Yeastar"
 
+msgctxt "field:company.employee,yeastar_create_activities:"
+msgid "Create Call Activities"
+msgstr "Crear actividades de llamadas"
+
 msgctxt "field:company.employee,yeastar_pbx:"
 msgid "Yeastar PBX"
 msgstr "PBX Yeastar"

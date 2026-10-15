@@ -100,6 +100,7 @@ class TestWebhookActivities(unittest.TestCase):
             employee = Employee(party=party, company=company,
                 yeastar_pbx=self.pbx, yeastar_extension=extension)
             employee.save()
+            self.assertTrue(employee.yeastar_create_activities)
             employees.append(employee)
         # The end date itself is still a working day.
         employees[1].end_date = datetime.now().date()
@@ -258,3 +259,31 @@ class TestWebhookActivities(unittest.TestCase):
         error.reload()
         self.assertEqual(error.state, 'captured')
         self.assertIsNone(error.processing_message)
+        # Opting out excludes both call directions while other extensions
+        # on the same transferred call continue to create activities.
+        employees[0].yeastar_create_activities = False
+        employees[0].save()
+        Job = Model.get('yeastar.transcription.job')
+        job_count = len(Job.find())
+        for direction in ('Inbound', 'Outbound'):
+            self.send(30012, self.cdr('disabled-' + direction, 'disabled',
+                    direction=direction), self.start + timedelta(seconds=220))
+        process.click('run_once')
+        self.assertEqual(len(Activity.find()), 3)
+        self.assertEqual(len(Leg.find()), 4)
+        self.assertEqual(len(Job.find()), job_count)
+        for event in Event.find([('call_id', 'like', 'disabled-%')]):
+            self.assertEqual(event.state, 'discarded')
+            self.assertIn('disabled', event.processing_message)
+        self.send(30012, self.cdr('disabled-Inbound', 'enabled-leg',
+                extension='205'), self.start + timedelta(seconds=221))
+        process.click('run_once')
+        enabled, = Activity.find([('call_id', '=', 'disabled-Inbound')])
+        self.assertEqual(enabled.employee, employees[1])
+        employees[0].yeastar_create_activities = True
+        employees[0].save()
+        self.send(30012, self.cdr('re-enabled', 'new-call'),
+            self.start + timedelta(seconds=222))
+        process.click('run_once')
+        enabled, = Activity.find([('call_id', '=', 're-enabled')])
+        self.assertEqual(enabled.employee, employees[0])
