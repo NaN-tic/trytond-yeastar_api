@@ -271,7 +271,7 @@ class WebhookEvent(metaclass=PoolMeta):
                             'call_id': event.call_id,
                             'dtstart': answered,
                             'duration': timedelta(),
-                            'state': 'done',
+                            'state': 'planned',
                             'subject': f'{direction} call: {number}',
                             'call_generated_subject':
                                 f'{direction} call: {number}',
