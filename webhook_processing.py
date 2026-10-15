@@ -175,7 +175,6 @@ class WebhookEvent(metaclass=PoolMeta):
         Configuration = pool.get('activity.configuration')
         Call = pool.get('yeastar.webhook.call')
         Leg = pool.get('yeastar.webhook.leg')
-        Contact = pool.get('party.contact_mechanism')
 
         direction = message.get('type')
         if direction == 'Internal':
@@ -265,15 +264,6 @@ class WebhookEvent(metaclass=PoolMeta):
             if activities:
                 activity, = activities
             else:
-                # Exact normalized phone matches only; ambiguous contacts stay
-                # unassigned instead of choosing an arbitrary customer.
-                compact = ''.join(c for c in number if c.isdecimal() or c == '+')
-                contacts = Contact.search([
-                        ('type', 'in', ['phone', 'mobile']),
-                        ['OR', ('value', '=', number),
-                            ('value_compact', '=', compact)],
-                        ])
-                parties = {contact.party.id for contact in contacts}
                 activity, = Activity.create([{
                             'company': pbx.company.id,
                             'employee': employee.id,
@@ -285,7 +275,6 @@ class WebhookEvent(metaclass=PoolMeta):
                             'subject': f'{direction} call: {number}',
                             'call_generated_subject':
                                 f'{direction} call: {number}',
-                            'party': parties.pop() if len(parties) == 1 else None,
                             }])
             call, = Call.create([{
                         'pbx': pbx.id, 'call_id': event.call_id,
@@ -293,6 +282,7 @@ class WebhookEvent(metaclass=PoolMeta):
                         'duration': timedelta(),
                         }])
             old_duration = None
+        activity.identify_call_party(number, pbx)
         Leg.create([{
                     'call': call.id, 'pbx': pbx.id, 'call_id': event.call_id,
                     'uid': uid, 'note_id': note_id, 'extension': extension,
