@@ -204,6 +204,8 @@ class WebhookEvent(metaclass=PoolMeta):
         if len(employees) != 1:
             raise ValueError(f'Multiple employees for extension {extension}.')
         employee, = employees
+        if not employee.yeastar_create_activities:
+            return 'Automatic call activities are disabled for this employee.'
         if not event.call_id or message.get('call_id') != event.call_id:
             raise ValueError('Missing or inconsistent call ID.')
         uid, note_id = message.get('uid'), message.get('call_note_id')

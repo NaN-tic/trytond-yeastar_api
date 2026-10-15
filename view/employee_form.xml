@@ -7,5 +7,7 @@
         <field name="yeastar_pbx"/>
         <label name="yeastar_extension"/>
         <field name="yeastar_extension"/>
+        <label name="yeastar_create_activities"/>
+        <field name="yeastar_create_activities"/>
     </xpath>
 </data>

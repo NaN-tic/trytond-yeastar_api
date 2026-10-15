@@ -15,6 +15,13 @@ class Employee(metaclass=PoolMeta):
             ('company', '=', Eval('company', -1)),
             ])
     yeastar_extension = fields.Integer('Yeastar Extension')
+    yeastar_create_activities = fields.Boolean('Create Call Activities',
+        help='Automatically create activities for calls on this extension '
+        'when the PBX is configured to create activities.')
+
+    @staticmethod
+    def default_yeastar_create_activities():
+        return True
 
     @classmethod
     def copy(cls, employees, default=None):

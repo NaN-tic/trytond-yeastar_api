@@ -136,6 +136,9 @@ After upgrading the module, configure the following in the test database:
    extension are excluded. An employee is eligible when end_date is empty or
    today or later; the legacy database active column is not used. A duplicate
    eligible assignment is reported as an error rather than resolved arbitrarily.
+   Create Call Activities is enabled by default for new and existing employees.
+   Disable it on an employee to exclude that extension from automatic call
+   activities, including their duration and recording jobs.
 2. Set the default Yeastar activity type in Activity Configuration.
 3. In the PBX Webhook tab, set PBX Timezone to the timezone used by Yeastar
    (for example Europe/Madrid), then select Create Activities.
