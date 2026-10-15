@@ -56,7 +56,7 @@ class TestGladiaRecordings(unittest.TestCase):
                     'utterances': [], 'error': None}
                 for lang in ('ca', 'es', 'en')]},
             'audio_to_llm': {'success': True, 'results': [{
-                'success': True, 'results': {
+                'results': {
                     'prompt': gladia_api.ACTIVITY_PROMPT,
                     'response': json.dumps(localized)}}]},
             }}
@@ -223,6 +223,29 @@ class TestGladiaRecordings(unittest.TestCase):
             self.tick()
             self.assertEqual(self.submissions, 2)
             self.assertEqual(len(Transcription.find()), 6)
+            # Recover a saved result rejected by the previous parser without
+            # uploading, submitting or polling the recording again.
+            first = jobs[0]
+            with Transaction().start(self.config.database_name, 0):
+                JobModel = Pool().get('yeastar.transcription.job')
+                JobModel.write([JobModel(first.id)], {
+                        'state': 'error', 'error_stage': 'received',
+                        'error_message':
+                            'Gladia titles and summaries are missing.'})
+            first.reload()
+            saved_result = first.raw_result
+            saved_id = first.gladia_id
+            with patch.object(gladia_api.requests, 'request') as request:
+                first.click('retry')
+                self.tick()
+                request.assert_not_called()
+            first.reload()
+            self.assertEqual(first.state, 'done')
+            self.assertFalse(first.error_message)
+            self.assertEqual(first.raw_result, saved_result)
+            self.assertEqual(first.gladia_id, saved_id)
+            self.assertEqual(len(Transcription.find()), 6)
+            self.assertEqual(self.submissions, 2)
             # Preserve user edits while explicitly reprocessing one recording.
             activity.subject = 'Edited subject'
             activity.description = 'Edited description'
