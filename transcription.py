@@ -16,6 +16,47 @@ from trytond.transaction import Transaction, TransactionError
 from . import gladia_api
 
 
+def decode_activity_texts(text):
+    """Recover redundant object closures only between complete language values."""
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as error:
+        # Decode strings and nested objects normally: punctuation inside a
+        # title or summary must never be modified by a textual replacement.
+        decoder = json.JSONDecoder()
+        remaining = text.strip()
+        if not remaining.startswith('{'):
+            raise error
+        remaining = remaining[1:].lstrip()
+        localized = {}
+        for index in range(len(gladia_api.LANGUAGES)):
+            language, end = decoder.raw_decode(remaining)
+            if (not isinstance(language, str)
+                    or language not in gladia_api.LANGUAGES
+                    or language in localized):
+                raise error
+            remaining = remaining[end:].lstrip()
+            if not remaining.startswith(':'):
+                raise error
+            content, end = decoder.raw_decode(remaining[1:].lstrip())
+            if not isinstance(content, dict):
+                raise error
+            localized[language] = content
+            remaining = remaining[1:].lstrip()[end:].lstrip()
+            if index < len(gladia_api.LANGUAGES) - 1:
+                if not remaining.startswith(','):
+                    raise error
+                remaining = remaining[1:].lstrip()
+                if remaining.startswith('}'):
+                    remaining = remaining[1:].lstrip()
+                    if not remaining.startswith(','):
+                        raise error
+                    remaining = remaining[1:].lstrip()
+        if remaining != '}':
+            raise error
+        return localized
+
+
 class TranscriptionJob(ModelSQL, ModelView):
     'Yeastar Recording Transcription'
     __name__ = 'yeastar.transcription.job'
@@ -373,12 +414,13 @@ class TranscriptionJob(ModelSQL, ModelView):
                 output = entry.get('results') or {}
                 if (entry.get('success') is not False
                         and not entry.get('error')
-                        and output.get('prompt')
-                        == gladia_api.ACTIVITY_PROMPT):
+                        and output.get('prompt') in (
+                            gladia_api.ACTIVITY_PROMPT,
+                            gladia_api.LEGACY_ACTIVITY_PROMPT)):
                     text = output['response'].strip()
                     if text.startswith('```') and text.endswith('```'):
                         text = '\n'.join(text.splitlines()[1:-1])
-                    localized = json.loads(text)
+                    localized = decode_activity_texts(text)
         if not isinstance(localized, dict):
             raise ValueError('Gladia titles and summaries are missing.')
         values = []

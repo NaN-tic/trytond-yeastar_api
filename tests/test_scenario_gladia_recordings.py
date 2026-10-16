@@ -246,6 +246,61 @@ class TestGladiaRecordings(unittest.TestCase):
             self.assertEqual(first.gladia_id, saved_id)
             self.assertEqual(len(Transcription.find()), 6)
             self.assertEqual(self.submissions, 2)
+            saved_response = json.loads(saved_result)
+            output = saved_response['result']['audio_to_llm']['results'][0][
+                'results']
+            localized = json.loads(output['response'])
+            localized['ca']['summary'] += '\nLiteral punctuation: }, }, "es": {'
+            valid_text = json.dumps(localized, ensure_ascii=False, indent=2)
+            malformed_text = valid_text.replace(
+                '\n  },\n  "es": {', '\n  },\n  },\n  "es": {', 1)
+            self.assertNotEqual(valid_text, malformed_text)
+            # Recover the reported redundant closure for both prompt versions.
+            for prompt in (gladia_api.ACTIVITY_PROMPT,
+                    gladia_api.LEGACY_ACTIVITY_PROMPT):
+                output.update(prompt=prompt, response=malformed_text)
+                raw_result = json.dumps(saved_response)
+                with Transaction().start(self.config.database_name, 0):
+                    JobModel.write([JobModel(first.id)], {
+                            'raw_result': raw_result, 'state': 'error',
+                            'error_stage': 'received'})
+                first.reload()
+                with patch.object(gladia_api.requests, 'request') as request:
+                    first.click('retry')
+                    self.tick()
+                    request.assert_not_called()
+                first.reload()
+                self.assertEqual(first.state, 'done')
+                self.assertEqual(first.raw_result, raw_result)
+                self.assertEqual(json.loads(first.localized_texts), localized)
+                self.assertEqual(first.gladia_id, saved_id)
+                self.assertEqual(len(Transcription.find()), 6)
+                self.assertEqual({t.language_code: t.summary
+                    for t in first.transcriptions},
+                    {lang: content['summary']
+                        for lang, content in localized.items()})
+            # Incomplete, duplicate-language and invalid-schema results must
+            # preserve all previously published texts, without network calls.
+            for invalid_text in (malformed_text[:-1],
+                    malformed_text.replace('"es": {', '"ca": {'),
+                    malformed_text.replace('"title":', '"missing":', 1),
+                    malformed_text + ' extra data'):
+                output['response'] = invalid_text
+                with Transaction().start(self.config.database_name, 0):
+                    JobModel.write([JobModel(first.id)], {
+                            'raw_result': json.dumps(saved_response),
+                            'state': 'error', 'error_stage': 'received'})
+                first.reload()
+                with patch.object(gladia_api.requests, 'request') as request:
+                    first.click('retry')
+                    self.tick()
+                    request.assert_not_called()
+                first.reload()
+                self.assertEqual(first.state, 'error')
+                self.assertEqual(first.error_stage, 'received')
+                self.assertEqual(json.loads(first.localized_texts), localized)
+                self.assertEqual(len(Transcription.find()), 6)
+            self.assertEqual(self.submissions, 2)
             # Preserve user edits while explicitly reprocessing one recording.
             activity.subject = 'Edited subject'
             activity.description = 'Edited description'
