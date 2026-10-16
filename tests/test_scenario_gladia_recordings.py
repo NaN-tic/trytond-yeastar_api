@@ -39,7 +39,7 @@ class TestGladiaRecordings(unittest.TestCase):
 
     def result(self, job_id):
         localized = {lang: {'title': f'{lang} title {job_id}',
-                'summary': f'{lang} summary {job_id}'}
+                'summary': f'- {lang} summary {job_id}\n- {lang} next step'}
             for lang in ('ca', 'es', 'en')}
         response = {'id': job_id, 'status': 'done', 'result': {
             'transcription': {
@@ -203,7 +203,8 @@ class TestGladiaRecordings(unittest.TestCase):
             self.assertIn('en title gladia-1', activity.subject)
             self.assertIn('en title gladia-2', activity.subject)
             self.assertEqual(activity.description,
-                'en summary gladia-1\n\nen summary gladia-2')
+                '- en summary gladia-1\n- en next step\n\n'
+                '- en summary gladia-2\n- en next step')
             for job in jobs:
                 primary = 'ca' if job.recording == 'first.wav' else 'en'
                 self.assertEqual(job.primary_language, primary)
