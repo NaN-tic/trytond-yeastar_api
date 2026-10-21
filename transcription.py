@@ -541,3 +541,5 @@ class Cron(metaclass=PoolMeta):
         cls.method.selection.append((
                 'yeastar.transcription.job|process_pending',
                 'Process Yeastar Recordings'))
+        cls.methods_company_needed.add(
+            'yeastar.transcription.job|process_pending')
