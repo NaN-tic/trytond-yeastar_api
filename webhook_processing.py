@@ -376,3 +376,7 @@ class Cron(metaclass=PoolMeta):
                     'Process Yeastar Webhooks'),
                 ('yeastar.webhook.event|clean', 'Clean Yeastar Webhooks'),
                 ])
+        cls.methods_company_needed.update({
+                'yeastar.webhook.event|process_pending',
+                'yeastar.webhook.event|clean',
+                })
