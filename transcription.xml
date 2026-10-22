@@ -78,7 +78,7 @@
         </record>
         <record model="ir.model.button" id="transcription_job_reprocess_button">
             <field name="name">reprocess</field>
-            <field name="string">Transcribe Again (New Gladia Job)</field>
+            <field name="string">Regenerate Transcription</field>
             <field name="model">yeastar.transcription.job</field>
         </record>
         <record model="ir.model.button-res.group" id="transcription_job_reprocess_group">

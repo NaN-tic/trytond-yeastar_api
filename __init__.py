@@ -11,6 +11,7 @@ from . import voice
 from . import webhook
 from . import webhook_processing
 from . import transcription
+from . import recording_ai
 from . import routes
 
 __all__ = ['register', 'routes']
@@ -44,9 +45,15 @@ def register():
         webhook_processing.Cron,
         transcription.TranscriptionJob,
         transcription.Cron,
+        recording_ai.PBX,
+        recording_ai.RecordingRun,
+        recording_ai.RecordingSummary,
+        recording_ai.ExperimentStart,
         module='yeastar_api', type_='model')
     Pool.register(
         api.CreateFromProgressCall,
         api.YeastarGetCallsDetails,
         voice.VoicePromptTranslateText,
+        recording_ai.Experiment,
+        recording_ai.SummaryExperiment,
         module='yeastar_api', type_='wizard')

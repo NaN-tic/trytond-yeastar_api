@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<form>
+    <label name="job"/><field name="job"/>
+    <label name="state"/><field name="state"/>
+    <label name="create_date"/><field name="create_date"/>
+    <label name="model_name"/><field name="model_name"/>
+    <label name="languages"/><field name="languages"/>
+    <label name="remote_id"/><field name="remote_id"/>
+    <notebook colspan="4">
+        <page name="transcript"><field name="transcript" colspan="4"/></page>
+        <page name="summaries"><field name="summaries" colspan="4"/></page>
+        <page name="transcription_prompt">
+            <label name="transcription_provider"/><field name="transcription_provider"/>
+            <label name="transcription_model"/><field name="transcription_model"/>
+            <field name="transcription_prompt" colspan="4"/>
+            <label name="summary_provider"/><field name="summary_provider"/>
+            <label name="summary_model"/><field name="summary_model"/>
+            <field name="summary_prompt" colspan="4"/>
+        </page>
+        <page name="raw_result"><field name="raw_result" colspan="4"/></page>
+        <page name="error"><field name="error" colspan="4"/></page>
+    </notebook>
+    <group id="buttons" colspan="4" col="3">
+        <button name="regenerate_summary"/>
+        <button name="resume"/>
+        <button name="retry"/>
+    </group>
+</form>

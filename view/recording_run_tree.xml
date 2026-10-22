@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<tree>
+    <field name="create_date"/>
+    <field name="transcription_provider"/>
+    <field name="model_name"/>
+    <field name="state"/>
+    <field name="languages"/>
+</tree>

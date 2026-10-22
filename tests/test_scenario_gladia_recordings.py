@@ -7,11 +7,11 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlsplit
 
 import requests
-from proteus import Model
+from proteus import Model, Wizard
 from werkzeug.test import Client
 
 from trytond.modules.company.tests.tools import create_company, get_company
-from trytond.modules.yeastar_api import gladia_api
+from trytond.modules.yeastar_api import gladia_api, recording_ai
 from trytond.pool import Pool
 from trytond.protocols.wrappers import Response
 from trytond.tests.test_tryton import drop_db
@@ -93,7 +93,7 @@ class TestGladiaRecordings(unittest.TestCase):
             self.assertEqual(parameters['translation_config']['target_languages'],
                 ['ca', 'es', 'en'])
             self.assertEqual(parameters['audio_to_llm_config']['prompts'],
-                [gladia_api.ACTIVITY_PROMPT])
+                [gladia_api.ACTIVITY_PROMPT + recording_ai.SUMMARY_SCHEMA])
             self.submissions += 1
             job_id = f'gladia-{self.submissions}'
             self.results[job_id] = self.result(job_id)
@@ -184,7 +184,7 @@ class TestGladiaRecordings(unittest.TestCase):
                     lambda file, token: {'file_name': file,
                         'download_resource_url': '/recording.wav'}) as download, \
                 patch.object(PBXModel, '_requests', return_value=b'original audio'):
-            for _ in range(6):
+            for _ in range(9):
                 self.tick()
             jobs = Job.find()
             self.assertEqual(len(jobs), 2)
@@ -227,9 +227,13 @@ class TestGladiaRecordings(unittest.TestCase):
             # Recover a saved result rejected by the previous parser without
             # uploading, submitting or polling the recording again.
             first = jobs[0]
+            saved_run_result = first.runs[0].raw_result
+            saved_run_id = first.runs[0].remote_id
             with Transaction().start(self.config.database_name, 0):
                 JobModel = Pool().get('yeastar.transcription.job')
                 JobModel.write([JobModel(first.id)], {
+                        'raw_result': saved_run_result,
+                        'gladia_id': saved_run_id,
                         'state': 'error', 'error_stage': 'received',
                         'error_message':
                             'Gladia titles and summaries are missing.'})
@@ -307,31 +311,41 @@ class TestGladiaRecordings(unittest.TestCase):
             activity.description = 'Edited description'
             activity.save()
             first = jobs[0]
-            first.click('reprocess')
+            wizard = Wizard('yeastar.recording.experiment', [first])
+            wizard.execute('generate')
             self.lose_response = True
-            self.tick()  # Upload the saved attachment, without downloading again.
-            self.tick()  # Accepted remotely; HTTP reply lost.
+            self.tick()  # Upload and submit the saved audio; HTTP reply lost.
             first.reload()
-            self.assertEqual(first.state, 'uncertain')
+            run = first.runs[0]
+            self.assertEqual(run.state, 'uncertain')
             self.assertEqual(self.submissions, 3)
             self.tick()
             self.assertEqual(self.submissions, 3)
-            first.gladia_id = 'gladia-3'
-            first.save()
-            first.click('resume')
+            run.remote_id = 'gladia-3'
+            run.save()
+            run.click('resume')
             self.poll_timeout = True
             self.tick()
+            run.reload()
+            self.assertEqual(run.state, 'error')
+            run.click('retry')
+            for _ in range(4):
+                self.tick()
             first.reload()
-            self.assertEqual(first.state, 'submitted')
-            self.assertEqual(first.attempts, 1)
-            self.assertIsNotNone(first.next_attempt)
-            self.tick()
-            self.tick()
-            first.reload()
-            self.assertEqual(first.state, 'done')
+            run.reload()
+            self.assertEqual(run.state, 'done')
             self.assertEqual(self.submissions, 3)
             self.assertEqual(len(Attachment.find()), 2)
             self.assertEqual(len(Transcription.find()), 6)
+            self.assertEqual(len(first.runs), 2)
+            # Alternative results never replace the selected version on arrival.
+            self.assertNotEqual(first.selected_summary.run, run)
+            self.assertEqual(first.primary_language, 'ca')
+            summary, = run.summaries
+            self.assertFalse(summary.published)
+            summary.click('publish')
+            first.reload()
+            self.assertEqual(first.selected_summary, summary)
             activity.reload()
             self.assertEqual(activity.subject, 'Edited subject')
             self.assertEqual(activity.description, 'Edited description')
@@ -339,29 +353,170 @@ class TestGladiaRecordings(unittest.TestCase):
             self.assertEqual(first.primary_language, 'es')
             self.assertEqual(activity.call_primary_language, 'es')
             # Missing translations do not publish partially updated results.
-            first.click('reprocess')
-            self.tick()
+            wizard = Wizard('yeastar.recording.experiment', [first])
+            wizard.execute('generate')
             self.tick()
             first.reload()
-            self.assertEqual((first.state, first.gladia_id),
+            run = first.runs[0]
+            self.assertEqual((run.state, run.remote_id),
                 ('submitted', 'gladia-4'))
             self.results['gladia-4']['result']['translation']['success'] = False
             self.tick()
-            first.reload()
-            self.assertEqual(first.state, 'received')
-            self.assertFalse(json.loads(first.raw_result)['result'][
+            run.reload()
+            self.assertEqual(run.state, 'received')
+            self.assertFalse(json.loads(run.raw_result)['result'][
                     'translation']['success'])
             self.tick()
-            first.reload()
-            self.assertEqual(first.state, 'error')
-            self.assertEqual(first.error_stage, 'received')
-            self.assertIn('translations', first.error_message)
+            run.reload()
+            self.assertEqual(run.state, 'error')
+            self.assertIn('translations', run.error)
             self.assertEqual(len(Transcription.find()), 6)
-            first.click('retry')
+            run.click('retry')
             self.tick()
             self.assertEqual(self.submissions, 4)
+            # Compare OpenRouter transcriptions and summaries on saved audio.
+            Catalog = Model.get('ai.model.openrouter')
+            with Transaction().start(self.config.database_name, 0):
+                models = Pool().get('ai.model.openrouter').create([
+                    {'name': 'Audio test', 'openrouter_id': 'test/audio',
+                        'input_modalities': 'text,audio',
+                        'output_modalities': 'text'},
+                    {'name': 'Summary test', 'openrouter_id': 'test/text',
+                        'input_modalities': 'text', 'output_modalities': 'text'}])
+                model_ids = [m.id for m in models]
+            audio_model, text_model = map(Catalog, model_ids)
+            calls = []
+
+            def completion(payload, origin):
+                calls.append(payload)
+                if isinstance(payload['messages'][1]['content'], list):
+                    part = payload['messages'][1]['content'][0]
+                    self.assertEqual(base64.b64decode(
+                        part['input_audio']['data']), b'original audio')
+                    content = {'transcript': 'New original transcript',
+                        'languages': ['ca', 'es'], 'primary_language': 'ca',
+                        'translations': {lang: f'{lang} new translation'
+                            for lang in ('ca', 'es', 'en')}}
+                else:
+                    self.assertEqual(payload['messages'][1]['content'],
+                        'New original transcript')
+                    content = {lang: {'title': f'{lang} new title',
+                        'summary': f'- {lang} summary {len(calls)}'}
+                        for lang in ('ca', 'es', 'en')}
+                return {'choices': [{'message': {'content': json.dumps(content)}}]}
+
+            with patch.object(recording_ai, 'complete', side_effect=completion):
+                wizard = Wizard('yeastar.recording.experiment', [first])
+                wizard.form.transcription_provider = 'openrouter'
+                wizard.form.transcription_model = audio_model
+                wizard.form.summary_provider = 'openrouter'
+                wizard.form.summary_model = text_model
+                wizard.execute('generate')
+                for _ in range(5):
+                    self.tick()
+                first.reload()
+                openrouter_run = first.runs[0]
+                self.assertEqual(openrouter_run.state, 'done')
+                self.assertEqual(openrouter_run.transcript, 'New original transcript')
+                self.assertEqual(openrouter_run.model_name, 'test/audio')
+                self.assertEqual(first.selected_summary, summary)
+                self.assertEqual(len(calls), 2)
+                self.assertEqual(self.submissions, 4)
+                self.assertEqual(download.call_count, 2)
+                original_summary, = openrouter_run.summaries
+                original_summary.click('publish')
+                first.reload()
+                self.assertEqual(first.selected_summary, original_summary)
+                self.assertEqual(json.loads(first.language_percentages), {})
+                original, = [t for t in first.transcriptions if t.kind == 'original']
+                self.assertEqual(original.transcription, 'New original transcript')
+                # A summary-only experiment must never resend the recording.
+                wizard = Wizard('yeastar.recording.experiment', [openrouter_run])
+                wizard.form.summary_model = text_model
+                wizard.form.summary_prompt = 'Return a concise bullet summary.'
+                wizard.execute('generate')
+                for _ in range(3):
+                    self.tick()
+                self.assertEqual(len(calls), 3)
+                openrouter_run.reload()
+                self.assertEqual(len(openrouter_run.summaries), 2)
+                first.reload()
+                self.assertEqual(first.selected_summary, original_summary)
+                replacement = openrouter_run.summaries[0]
+                self.assertEqual(replacement.prompt,
+                    'Return a concise bullet summary.')
+                replacement.click('publish')
+                first.reload()
+                self.assertEqual(first.selected_summary, replacement)
+                original_summary.reload()
+                self.assertFalse(original_summary.published)
+                self.assertIn('summary 2', original_summary.result)
+                self.assertIn('summary 3', replacement.result)
             # Copying an activity must never copy jobs or their generated text.
             copied, = activity.duplicate()
             self.assertFalse(copied.transcription_jobs)
             self.assertFalse(copied.transcriptions)
             self.assertIsNone(copied.call_id)
+            # PBX defaults drive automatic runs too, and the first result is
+            # published without an explicit validation click.
+            pbx.transcription_provider = 'openrouter'
+            pbx.transcription_model = audio_model
+            pbx.summary_provider = 'openrouter'
+            pbx.summary_model = text_model
+            pbx.transcription_prompt = 'Preserve speaker turns and languages.'
+            pbx.save()
+            attachment_id = first.attachment.id
+            with Transaction().start(self.config.database_name, 0):
+                auto_job, = Pool().get('yeastar.transcription.job').create([{
+                    'pbx': pbx.id, 'activity': copied.id,
+                    'recording': 'automatic.wav', 'attachment': attachment_id,
+                    'state': 'ready'}])
+                auto_job_id = auto_job.id
+            with patch.object(recording_ai, 'complete', side_effect=completion):
+                for _ in range(7):
+                    self.tick()
+            auto_job = Job(auto_job_id)
+            self.assertEqual(auto_job.selected_summary.state, 'done')
+            self.assertTrue(auto_job.selected_summary.published)
+            auto_run, = auto_job.runs
+            self.assertEqual(auto_run.transcription_prompt,
+                'Preserve speaker turns and languages.')
+            pbx.transcription_prompt = 'A different prompt for future calls.'
+            pbx.save()
+            auto_run.reload()
+            self.assertEqual(auto_run.transcription_prompt,
+                'Preserve speaker turns and languages.')
+            # The recording shortcut regenerates only the selected transcript's
+            # summary; malformed responses retain the previous publication.
+            previous_summary = auto_job.selected_summary
+            wizard = Wizard('yeastar.recording.summary.experiment', [auto_job])
+            wizard.execute('generate')
+            with patch.object(recording_ai, 'complete', return_value={
+                    'choices': [{'message': {'content': '{"ca": {}}'}}]}):
+                for _ in range(3):
+                    self.tick()
+            auto_job.reload()
+            self.assertEqual(auto_job.selected_summary, previous_summary)
+            auto_run.reload()
+            failed_summary = auto_run.summaries[0]
+            self.assertEqual(failed_summary.state, 'error')
+            with patch.object(recording_ai, 'complete') as request:
+                failed_summary.click('retry')
+                self.tick()
+                request.assert_not_called()
+            # A malformed Gladia summary must not hide a valid transcription.
+            wizard = Wizard('yeastar.recording.experiment', [auto_job])
+            wizard.form.transcription_provider = 'gladia'
+            wizard.form.summary_provider = 'gladia'
+            wizard.execute('generate')
+            self.tick()
+            self.results['gladia-5']['result']['audio_to_llm']['results'][0][
+                'results']['response'] = '{"ca": {}}'
+            for _ in range(4):
+                self.tick()
+            auto_job.reload()
+            run = auto_job.runs[0]
+            self.assertEqual(run.state, 'done')
+            self.assertEqual(run.transcript, 'Original mixed conversation')
+            self.assertEqual(run.summaries[0].state, 'error')
+            self.assertEqual(auto_job.selected_summary, previous_summary)
