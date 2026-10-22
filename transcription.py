@@ -1,6 +1,5 @@
 import json
 import math
-import mimetypes
 from datetime import datetime, timedelta
 
 import requests
@@ -10,7 +9,7 @@ from trytond.exceptions import UserError
 from trytond.i18n import gettext
 from trytond.model import Index, ModelSQL, ModelView, Unique, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval
+from trytond.pyson import Bool, Eval
 from trytond.transaction import Transaction, TransactionError
 
 from . import gladia_api
@@ -81,6 +80,7 @@ class TranscriptionJob(ModelSQL, ModelView):
             ('done', 'Completed'), ('empty', 'No Speech'),
             ('error', 'Error'), ('failed', 'Gladia Job Failed'),
             ('uncertain', 'Submission Status Unknown'),
+            ('processing', 'Processing Versions'),
             ], 'State', required=True, readonly=True)
     attempts = fields.Integer('Retry Count', readonly=True)
     next_attempt = fields.DateTime('Next Attempt', readonly=True)
@@ -97,6 +97,10 @@ class TranscriptionJob(ModelSQL, ModelView):
         readonly=True)
     transcriptions = fields.One2Many('call.transcription', 'job',
         'Transcriptions', readonly=True)
+    runs = fields.One2Many('yeastar.recording.run', 'job',
+        'Transcription Versions', readonly=True)
+    selected_summary = fields.Many2One('yeastar.recording.summary',
+        'Published Summary', readonly=True, ondelete='RESTRICT')
 
     @classmethod
     def __setup__(cls):
@@ -113,7 +117,9 @@ class TranscriptionJob(ModelSQL, ModelView):
         cls._buttons.update({
                 'retry': {'invisible': Eval('state') != 'error'},
                 'reprocess': {'invisible': ~Eval('state').in_(
-                        ['done', 'empty', 'failed', 'error'])},
+                        ['done', 'empty', 'failed', 'error', 'processing'])},
+                'regenerate_summary': {
+                    'invisible': ~Bool(Eval('localized_texts'))},
                 'resume': {'invisible': Eval('state') != 'uncertain'},
                 })
 
@@ -182,17 +188,26 @@ class TranscriptionJob(ModelSQL, ModelView):
 
     @classmethod
     def _locked(cls, job_id, operation, *args):
+        return cls._run_locked(cls, job_id, operation, *args)
+
+    @classmethod
+    def _run_locked(cls, Model, job_id, operation, *args):
         """Retry database work without repeating remote submissions."""
         extras = {}
         failures = 0
         while True:
             try:
                 with Transaction().new_transaction(**extras):
-                    job = cls(job_id)
-                    cls.lock([job])
+                    record = Model(job_id)
+                    Model.lock([record])
+                    job = record
+                    if Model.__name__ == 'yeastar.recording.run':
+                        job = record.job
+                    elif Model.__name__ == 'yeastar.recording.summary':
+                        job = record.run.job
                     with Transaction().set_context(
                             company=job.pbx.company.id, _check_access=False):
-                        return getattr(job, operation)(*args)
+                        return getattr(record, operation)(*args)
             except TransactionError as exception:
                 exception.fix(extras)
             except backend.DatabaseOperationalError:
@@ -203,6 +218,8 @@ class TranscriptionJob(ModelSQL, ModelView):
     @classmethod
     def process_pending(cls):
         pool = Pool()
+        pool.get('yeastar.recording.run').process_pending()
+        pool.get('yeastar.recording.summary').process_pending()
         Call = pool.get('yeastar.webhook.call')
         company = Transaction().context.get('company')
         domain = [('activity', '!=', None),
@@ -239,24 +256,23 @@ class TranscriptionJob(ModelSQL, ModelView):
                     cls._locked(job.id, '_failed', error)
                     continue
                 cls._locked(job.id, '_accept', job_id)
-        if gladia_api.API_KEY:
-            domain = [('activity', '!=', None),
-                ('pbx.webhook_mode', '=', 'activities'),
-                ('pbx.automatic_transcription', '=', True)]
-            if company:
-                domain.append(('pbx.company', '=', company))
-            # Enqueue in its own transaction too. A parent PBX lock would both
-            # replay the cron on lock escalation and block child token updates.
-            extras = {}
-            while True:
-                try:
-                    with Transaction().new_transaction(**extras):
-                        activities = list({c.activity
-                            for c in Call.search(domain)})
-                        cls.enqueue(activities)
-                    break
-                except TransactionError as exception:
-                    exception.fix(extras)
+        domain = [('activity', '!=', None),
+            ('pbx.webhook_mode', '=', 'activities'),
+            ('pbx.automatic_transcription', '=', True)]
+        if company:
+            domain.append(('pbx.company', '=', company))
+        # Enqueue in its own transaction too. A parent PBX lock would both
+        # replay the cron on lock escalation and block child token updates.
+        extras = {}
+        while True:
+            try:
+                with Transaction().new_transaction(**extras):
+                    activities = list({c.activity
+                        for c in Call.search(domain)})
+                    cls.enqueue(activities)
+                break
+            except TransactionError as exception:
+                exception.fix(extras)
 
     def _advance(self):
         cls = self.__class__
@@ -299,15 +315,12 @@ class TranscriptionJob(ModelSQL, ModelView):
         elif self.state == 'ready':
             if not self.attachment or not self.attachment.data:
                 raise ValueError('The saved recording is missing.')
-            filename = self.attachment.name
-            uploaded = gladia_api.upload_file(bytes(self.attachment.data),
-                filename=filename,
-                mime=mimetypes.guess_type(filename)[0] or 'audio/wav')
-            if not uploaded.get('audio_url'):
-                raise ValueError('Gladia did not return an upload URL.')
-            cls.write([self], {'audio_url': uploaded['audio_url'],
-                    'state': 'uploaded', 'attempts': 0, 'next_attempt': None,
-                    'error_message': None})
+            self.pbx.check_settings()
+            Run = Pool().get('yeastar.recording.run')
+            if not self.runs:
+                Run.create([{'job': self.id, **self.pbx.settings()}])
+            cls.write([self], {'state': 'processing', 'attempts': 0,
+                    'next_attempt': None, 'error_message': None})
         elif self.state == 'uploaded':
             if not gladia_api.API_KEY:
                 raise ValueError('Configure the Gladia API key.')
@@ -466,15 +479,21 @@ class TranscriptionJob(ModelSQL, ModelView):
                 ('localized_texts', '!=', None)],
             order=[('start', 'ASC'), ('id', 'ASC')])
         durations = dict.fromkeys(gladia_api.LANGUAGES, 0.0)
+        complete_durations = True
         for job in jobs:
-            for lang, seconds in json.loads(job.language_durations).items():
-                durations[lang] += seconds
+            job_durations = json.loads(job.language_durations or '{}')
+            if not sum(job_durations.values()):
+                complete_durations = False
+            for lang, seconds in job_durations.items():
+                durations[lang] = durations.get(lang, 0) + seconds
         ranking = list(dict.fromkeys([j.primary_language for j in jobs]
-            + list(gladia_api.LANGUAGES)))
+            + list(gladia_api.LANGUAGES) + list(durations)))
         primary = (max(durations,
                 key=lambda lang: (durations[lang], -ranking.index(lang)))
-            if jobs else None)
-        texts = [json.loads(job.localized_texts)[primary] for job in jobs]
+            if jobs and complete_durations and sum(durations.values()) else (
+                jobs[0].primary_language if jobs else None))
+        texts = [json.loads(job.localized_texts).get(primary)
+            or json.loads(job.localized_texts)['en'] for job in jobs]
         subject = '; '.join(dict.fromkeys(
                 t['title'].strip() for t in texts))[:240]
         description = '\n\n'.join(t['summary'].strip() for t in texts)
@@ -482,7 +501,8 @@ class TranscriptionJob(ModelSQL, ModelView):
             'call_primary_language': primary,
             'call_language_percentages': json.dumps({
                 lang: round(seconds * 100 / sum(durations.values()), 2)
-                for lang, seconds in durations.items()} if jobs else {}),
+                for lang, seconds in durations.items()}
+                if complete_durations and sum(durations.values()) else {}),
             'summarization_result': description,
             }
         # Generated placeholders/results may be updated; manual edits survive.
@@ -514,22 +534,52 @@ class TranscriptionJob(ModelSQL, ModelView):
                 job._accept(job.gladia_id)
 
     @classmethod
-    @ModelView.button
+    @ModelView.button_action('yeastar_api.act_recording_experiment')
     def reprocess(cls, jobs):
-        for job in jobs:
-            cls.lock([job])
-            if job.state not in {'done', 'empty', 'failed', 'error'}:
-                continue
-            # A local/polling error is retried using the same accepted job.
-            if job.state == 'error' and job.gladia_id and not job.raw_result:
-                continue
-            history = json.loads(job.previous_results or '[]')
-            history.append({'id': job.gladia_id, 'result': job.raw_result})
-            cls.write([job], {
-                    'state': 'ready' if job.attachment else 'pending',
-                    'audio_url': None, 'gladia_id': None, 'raw_result': None,
-                    'previous_results': json.dumps(history), 'attempts': 0,
-                    'next_attempt': None, 'error_message': None})
+        pass
+
+    @classmethod
+    @ModelView.button_action('yeastar_api.act_recording_summary_experiment')
+    def regenerate_summary(cls, jobs):
+        pass
+
+    def archive_legacy_result(self):
+        """Preserve the current pre-versioning result before an experiment."""
+        pool = Pool()
+        self.__class__.lock([self])
+        if self.runs or not self.localized_texts:
+            return
+        originals = [t for t in self.transcriptions if t.kind == 'original']
+        if not originals:
+            return
+        original, = originals
+        normalized = {'transcript': original.transcription,
+            'languages': list(json.loads(self.language_durations or '{}')),
+            'primary_language': self.primary_language,
+            'durations': json.loads(self.language_durations or '{}'),
+            'translations': {t.language_code: t.transcription
+                for t in self.transcriptions},
+            'utterances': json.loads(original.utterances or '[]')}
+        Run = pool.get('yeastar.recording.run')
+        Summary = pool.get('yeastar.recording.summary')
+        prompt = gladia_api.ACTIVITY_PROMPT
+        if self.raw_result:
+            response = json.loads(self.raw_result)
+            entries = (response.get('result', {}).get('audio_to_llm') or {}).get(
+                'results', [])
+            for entry in entries:
+                prompt = (entry.get('results') or {}).get('prompt') or prompt
+        run, = Run.create([{'job': self.id, 'state': 'done',
+            'transcription_provider': 'gladia', 'summary_provider': 'gladia',
+            'transcription_prompt': None, 'summary_prompt': prompt,
+            'remote_id': self.gladia_id, 'raw_result': self.raw_result,
+            'result': json.dumps(normalized),
+            'transcript': original.transcription,
+            'languages': ', '.join(normalized['languages'])}])
+        summary, = Summary.create([{'run': run.id, 'provider': 'gladia',
+            'prompt': prompt, 'state': 'done',
+            'result': self.localized_texts}])
+        self.__class__.write([self], {'selected_summary': summary.id})
 
 
 class Cron(metaclass=PoolMeta):

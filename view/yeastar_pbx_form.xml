@@ -53,6 +53,14 @@ this repository contains the full copyright notices and license terms. -->
             <field name="webhook_events" colspan="4"/>
             <field name="webhook_calls" colspan="4"/>
         </page>
+        <page string="Recording AI" id="pbx_recording_ai">
+            <label name="transcription_provider"/><field name="transcription_provider"/>
+            <label name="transcription_model"/><field name="transcription_model"/>
+            <label name="transcription_prompt"/><field name="transcription_prompt" colspan="3"/>
+            <label name="summary_provider"/><field name="summary_provider"/>
+            <label name="summary_model"/><field name="summary_model"/>
+            <label name="summary_prompt"/><field name="summary_prompt" colspan="3"/>
+        </page>
         <page string="Token" id="pbx_token">
             <label name="token"/>
             <field name="token" widget="password"/>

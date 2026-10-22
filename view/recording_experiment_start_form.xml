@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<form>
+    <label name="transcription_provider"/><field name="transcription_provider"/>
+    <label name="transcription_model"/><field name="transcription_model"/>
+    <label name="transcription_prompt"/><field name="transcription_prompt" colspan="3"/>
+    <label name="summary_provider"/><field name="summary_provider"/>
+    <label name="summary_model"/><field name="summary_model"/>
+    <label name="summary_prompt"/><field name="summary_prompt" colspan="3"/>
+</form>

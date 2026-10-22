@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <record model="ir.message" id="msg_ai_no_completion">
+            <field name="text">The model returned no completion.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_no_text">
+            <field name="text">The model returned no text.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_gladia_summary">
+            <field name="text">Gladia summaries require Gladia transcription. Select an OpenRouter summary model.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_recording">
+            <field name="text">The saved recording is missing.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_request_failed">
+            <field name="text">%(error)s: remote request failed.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_job_id">
+            <field name="text">Gladia did not return a job ID.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_summaries">
+            <field name="text">Gladia titles and summaries are missing.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_not_configured">
+            <field name="text">OpenRouter is not configured.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_openrouter_failed">
+            <field name="text">%(error)s: OpenRouter request failed.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_transcript">
+            <field name="text">Missing original transcript.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_languages">
+            <field name="text">Missing detected languages.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_primary">
+            <field name="text">Missing dominant language.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_translations">
+            <field name="text">Missing translations.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_translation">
+            <field name="text">Missing translation in %(language)s.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_invalid_timestamps">
+            <field name="text">Invalid utterance timestamps.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_gladia_translations">
+            <field name="text">Gladia translations failed or are missing.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_choose_summary_model">
+            <field name="text">Choose an OpenRouter model to regenerate a summary from an existing transcript.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_no_summary">
+            <field name="text">Gladia returned no summary text.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_invalid_summary">
+            <field name="text">The model returned an invalid summary object.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_missing_activity_texts">
+            <field name="text">Missing activity texts in %(language)s.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_summary_only">
+            <field name="text">Select an OpenRouter model to summarize the saved transcript. To use Gladia, transcribe the audio again.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_select_transcription">
+            <field name="text">Select a completed transcription first.</field>
+        </record>
+        <record model="ir.message" id="msg_ai_complete_transcription">
+            <field name="text">The transcription must be completed first.</field>
+        </record>
+        <record model="ir.ui.view" id="recording_run_form">
+            <field name="model">yeastar.recording.run</field>
+            <field name="type">form</field>
+            <field name="name">recording_run_form</field>
+        </record>
+        <record model="ir.ui.view" id="recording_run_tree">
+            <field name="model">yeastar.recording.run</field>
+            <field name="type">tree</field>
+            <field name="name">recording_run_tree</field>
+        </record>
+        <record model="ir.ui.view" id="recording_summary_form">
+            <field name="model">yeastar.recording.summary</field>
+            <field name="type">form</field>
+            <field name="name">recording_summary_form</field>
+        </record>
+        <record model="ir.ui.view" id="recording_summary_tree">
+            <field name="model">yeastar.recording.summary</field>
+            <field name="type">tree</field>
+            <field name="name">recording_summary_tree</field>
+        </record>
+        <record model="ir.ui.view" id="recording_experiment_start_form">
+            <field name="model">yeastar.recording.experiment.start</field>
+            <field name="type">form</field>
+            <field name="name">recording_experiment_start_form</field>
+        </record>
+        <record model="ir.action.wizard" id="act_recording_experiment">
+            <field name="name">Regenerate Recording Text</field>
+            <field name="wiz_name">yeastar.recording.experiment</field>
+        </record>
+        <record model="ir.action-res.group" id="recording_experiment_group">
+            <field name="action" ref="act_recording_experiment"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.action.wizard" id="act_recording_summary_experiment">
+            <field name="name">Regenerate Recording Summary</field>
+            <field name="wiz_name">yeastar.recording.summary.experiment</field>
+        </record>
+        <record model="ir.action-res.group" id="recording_summary_experiment_group">
+            <field name="action" ref="act_recording_summary_experiment"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.button" id="recording_job_summary_button">
+            <field name="name">regenerate_summary</field>
+            <field name="string">Regenerate Summary</field>
+            <field name="model">yeastar.transcription.job</field>
+        </record>
+        <record model="ir.model.button-res.group" id="recording_job_summary_group">
+            <field name="button" ref="recording_job_summary_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.access" id="access_recording_run">
+            <field name="model">yeastar.recording.run</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_recording_run_user">
+            <field name="model">yeastar.recording.run</field>
+            <field name="group" ref="group_yeastar"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_recording_run_admin">
+            <field name="model">yeastar.recording.run</field>
+            <field name="group" ref="group_yeastar_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_recording_summary">
+            <field name="model">yeastar.recording.summary</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.model.access" id="access_recording_summary_user">
+            <field name="model">yeastar.recording.summary</field>
+            <field name="group" ref="group_yeastar"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+        <record model="ir.rule.group" id="rule_group_recording_run_companies">
+            <field name="name">User in companies</field>
+            <field name="model">yeastar.recording.run</field>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_recording_run_companies">
+            <field name="domain" eval="[('job.pbx.company', 'in', Eval('companies', []))]" pyson="1"/>
+            <field name="rule_group" ref="rule_group_recording_run_companies"/>
+        </record>
+        <record model="ir.rule.group" id="rule_group_recording_summary_companies">
+            <field name="name">User in companies</field>
+            <field name="model">yeastar.recording.summary</field>
+            <field name="global_p" eval="True"/>
+        </record>
+        <record model="ir.rule" id="rule_recording_summary_companies">
+            <field name="domain" eval="[('run.job.pbx.company', 'in', Eval('companies', []))]" pyson="1"/>
+            <field name="rule_group" ref="rule_group_recording_summary_companies"/>
+        </record>
+        <record model="ir.model.button" id="recording_run_summary_button">
+            <field name="name">regenerate_summary</field>
+            <field name="string">Regenerate Summary</field>
+            <field name="model">yeastar.recording.run</field>
+        </record>
+        <record model="ir.model.button-res.group" id="recording_run_summary_group">
+            <field name="button" ref="recording_run_summary_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.button" id="recording_run_resume_button">
+            <field name="name">resume</field>
+            <field name="string">Resume with Gladia Job ID</field>
+            <field name="model">yeastar.recording.run</field>
+        </record>
+        <record model="ir.model.button-res.group" id="recording_run_resume_group">
+            <field name="button" ref="recording_run_resume_button"/>
+            <field name="group" ref="group_yeastar_admin"/>
+        </record>
+        <record model="ir.model.button" id="recording_run_retry_button">
+            <field name="name">retry</field>
+            <field name="string">Retry</field>
+            <field name="model">yeastar.recording.run</field>
+        </record>
+        <record model="ir.model.button-res.group" id="recording_run_retry_group">
+            <field name="button" ref="recording_run_retry_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.button" id="recording_summary_publish_button">
+            <field name="name">publish</field>
+            <field name="string">Use This Summary</field>
+            <field name="model">yeastar.recording.summary</field>
+        </record>
+        <record model="ir.model.button-res.group" id="recording_summary_publish_group">
+            <field name="button" ref="recording_summary_publish_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.button" id="recording_summary_retry_button">
+            <field name="name">retry</field>
+            <field name="string">Retry</field>
+            <field name="model">yeastar.recording.summary</field>
+        </record>
+        <record model="ir.model.button-res.group" id="recording_summary_retry_group">
+            <field name="button" ref="recording_summary_retry_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+    </data>
+</tryton>

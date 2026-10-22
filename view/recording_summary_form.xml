@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<form>
+    <label name="run"/><field name="run"/>
+    <label name="state"/><field name="state"/>
+    <label name="create_date"/><field name="create_date"/>
+    <label name="provider"/><field name="provider"/>
+    <label name="model_name"/><field name="model_name"/>
+    <label name="published"/><field name="published"/>
+    <label name="subject"/><field name="subject" colspan="3"/>
+    <field name="summary" colspan="4"/>
+    <notebook colspan="4">
+        <page name="result"><field name="result" colspan="4"/></page>
+        <page name="prompt"><field name="prompt" colspan="4"/></page>
+        <page name="raw_result"><field name="raw_result" colspan="4"/></page>
+        <page name="error"><field name="error" colspan="4"/></page>
+    </notebook>
+    <group id="buttons" colspan="4" col="2">
+        <button name="publish"/>
+        <button name="retry"/>
+    </group>
+</form>

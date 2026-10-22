@@ -8,6 +8,49 @@ Installing
 
 See INSTALL
 
+Configurable recording transcription and summaries
+--------------------------------------------------
+
+Upgrade yeastar_api and its ai_model dependency, then restart workers. In each
+Yeastar PBX, the Recording AI tab selects the transcription and summary
+providers independently. Both default to Gladia. OpenRouter model selectors
+use the synchronized ai.model.openrouter catalog, filtering transcription
+models by audio input and text output. Configure provider credentials through
+the existing Gladia and ai_model server settings.
+
+Supported combinations are Gladia transcription with Gladia or OpenRouter
+summaries, and OpenRouter transcription with OpenRouter summaries. Gladia's
+summary is generated together with its audio transcription; regenerating only
+a summary from a saved transcript requires an OpenRouter text model.
+
+Call Recordings stores immutable transcription versions and their summary
+versions, including provider/model identifiers, prompts, creation dates and
+raw responses. Regenerate Transcription reuses the saved attachment and opens
+a settings dialog initialized from the PBX. Regenerate Summary on a version
+uses that exact transcript; the recording-level action uses the published
+transcription. Changing PBX defaults does not change queued version settings.
+
+The first successful summary is published automatically. Later experiments
+remain unpublished until Use This Summary is clicked. This selects both the
+summary and its source transcription, updates generated activity text and
+retains every alternative. Manually edited activity subjects and descriptions
+remain protected. Recordings belonging to one activity are still combined in
+chronological order. Existing published Gladia results are archived when first
+used for an experiment.
+
+Processing uses the existing Process Yeastar Recordings scheduled action.
+Inspect version states and errors in the recording's Transcription Versions
+tab. API responses are saved before parsing, allowing local retries without
+paying for another transcription. An interrupted Gladia submission can be
+resumed with its remote job ID. An ambiguous OpenRouter transcription can be
+replaced by an explicit new experiment. Summary retries are explicit.
+
+Original-language text, language switches and unintelligible passages are
+preserved by the default transcription prompt. Separate translations and
+localized summaries remain available in Catalan, Spanish and English.
+OpenRouter models do not supply measured language durations in this workflow;
+language percentages are left empty instead of estimating them.
+
 Webhook capture
 ---------------
 

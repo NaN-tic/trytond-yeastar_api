@@ -2,6 +2,550 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "field:yeastar.pbx,summary_model:"
+msgid "Summary Model"
+msgstr "Modelo de resumen"
+
+msgctxt "field:yeastar.pbx,summary_prompt:"
+msgid "Summary Prompt"
+msgstr "Instrucciones para el resumen"
+
+msgctxt "field:yeastar.pbx,summary_provider:"
+msgid "Summary Provider"
+msgstr "Proveedor del resumen"
+
+msgctxt "field:yeastar.pbx,transcription_model:"
+msgid "Transcription Model"
+msgstr "Modelo de transcripción"
+
+msgctxt "field:yeastar.pbx,transcription_prompt:"
+msgid "Transcription Prompt"
+msgstr "Instrucciones para la transcripción"
+
+msgctxt "field:yeastar.pbx,transcription_provider:"
+msgid "Transcription Provider"
+msgstr "Proveedor de la transcripción"
+
+msgctxt "field:yeastar.recording.experiment.start,summary_model:"
+msgid "Summary Model"
+msgstr "Modelo de resumen"
+
+msgctxt "field:yeastar.recording.experiment.start,summary_only:"
+msgid "Summary Only"
+msgstr "Solo el resumen"
+
+msgctxt "field:yeastar.recording.experiment.start,summary_prompt:"
+msgid "Summary Prompt"
+msgstr "Instrucciones para el resumen"
+
+msgctxt "field:yeastar.recording.experiment.start,summary_provider:"
+msgid "Summary Provider"
+msgstr "Proveedor del resumen"
+
+msgctxt "field:yeastar.recording.experiment.start,transcription_model:"
+msgid "Transcription Model"
+msgstr "Modelo de transcripción"
+
+msgctxt "field:yeastar.recording.experiment.start,transcription_prompt:"
+msgid "Transcription Prompt"
+msgstr "Instrucciones para la transcripción"
+
+msgctxt "field:yeastar.recording.experiment.start,transcription_provider:"
+msgid "Transcription Provider"
+msgstr "Proveedor de la transcripción"
+
+msgctxt "field:yeastar.recording.run,error:"
+msgid "Error"
+msgstr "Error"
+
+msgctxt "field:yeastar.recording.run,job:"
+msgid "Recording"
+msgstr "Grabación"
+
+msgctxt "field:yeastar.recording.run,languages:"
+msgid "Detected Languages"
+msgstr "Idiomas detectados"
+
+msgctxt "field:yeastar.recording.run,model_name:"
+msgid "Transcription Model Used"
+msgstr "Modelo de transcripción utilizado"
+
+msgctxt "field:yeastar.recording.run,raw_result:"
+msgid "Provider Result (JSON)"
+msgstr "Resultado del proveedor (JSON)"
+
+msgctxt "field:yeastar.recording.run,remote_id:"
+msgid "Gladia Job ID"
+msgstr "Identificador del trabajo de Gladia"
+
+msgctxt "field:yeastar.recording.run,result:"
+msgid "Normalized Transcript (JSON)"
+msgstr "Transcripción normalizada (JSON)"
+
+msgctxt "field:yeastar.recording.run,state:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "field:yeastar.recording.run,summaries:"
+msgid "Summaries"
+msgstr "Resúmenes"
+
+msgctxt "field:yeastar.recording.run,summary_model:"
+msgid "Summary Model"
+msgstr "Modelo de resumen"
+
+msgctxt "field:yeastar.recording.run,summary_prompt:"
+msgid "Summary Prompt"
+msgstr "Instrucciones para el resumen"
+
+msgctxt "field:yeastar.recording.run,summary_provider:"
+msgid "Summary Provider"
+msgstr "Proveedor del resumen"
+
+msgctxt "field:yeastar.recording.run,transcript:"
+msgid "Original Transcript"
+msgstr "Transcripción original"
+
+msgctxt "field:yeastar.recording.run,transcription_model:"
+msgid "Transcription Model"
+msgstr "Modelo de transcripción"
+
+msgctxt "field:yeastar.recording.run,transcription_prompt:"
+msgid "Transcription Prompt"
+msgstr "Instrucciones para la transcripción"
+
+msgctxt "field:yeastar.recording.run,transcription_provider:"
+msgid "Transcription Provider"
+msgstr "Proveedor de la transcripción"
+
+msgctxt "field:yeastar.recording.summary,error:"
+msgid "Error"
+msgstr "Error"
+
+msgctxt "field:yeastar.recording.summary,model:"
+msgid "Model"
+msgstr "Modelo"
+
+msgctxt "field:yeastar.recording.summary,model_name:"
+msgid "Summary Model Used"
+msgstr "Modelo de resumen utilizado"
+
+msgctxt "field:yeastar.recording.summary,prompt:"
+msgid "Prompt"
+msgstr "Instrucciones"
+
+msgctxt "field:yeastar.recording.summary,provider:"
+msgid "Provider"
+msgstr "Proveedor"
+
+msgctxt "field:yeastar.recording.summary,published:"
+msgid "Published"
+msgstr "Publicado"
+
+msgctxt "field:yeastar.recording.summary,raw_result:"
+msgid "Provider Result (JSON)"
+msgstr "Resultado del proveedor (JSON)"
+
+msgctxt "field:yeastar.recording.summary,result:"
+msgid "Titles and Summaries (JSON)"
+msgstr "Títulos y resúmenes (JSON)"
+
+msgctxt "field:yeastar.recording.summary,run:"
+msgid "Transcription Version"
+msgstr "Versión de la transcripción"
+
+msgctxt "field:yeastar.recording.summary,state:"
+msgid "State"
+msgstr "Estado"
+
+msgctxt "field:yeastar.recording.summary,subject:"
+msgid "Subject"
+msgstr "Asunto"
+
+msgctxt "field:yeastar.recording.summary,summary:"
+msgid "Summary"
+msgstr "Resumen"
+
+msgctxt "field:yeastar.transcription.job,runs:"
+msgid "Transcription Versions"
+msgstr "Versiones de la transcripción"
+
+msgctxt "field:yeastar.transcription.job,selected_summary:"
+msgid "Published Summary"
+msgstr "Resumen publicado"
+
+msgctxt "model:activity.configuration.yeastar,string:"
+msgid "Activity Configuration Yeastar"
+msgstr "Configuración de las actividades de Yeastar"
+
+msgctxt "model:call.transcription,string:"
+msgid "Call Transcription"
+msgstr "Transcripción de llamada"
+
+msgctxt "model:call.transcription.llm.process,string:"
+msgid "Call Transcription Llm Process"
+msgstr "Procesamiento LLM de la transcripción de llamada"
+
+msgctxt "model:ir.action,name:act_recording_experiment"
+msgid "Regenerate Recording Text"
+msgstr "Regenerar el texto de la grabación"
+
+msgctxt "model:ir.action,name:act_recording_summary_experiment"
+msgid "Regenerate Recording Summary"
+msgstr "Regenerar el resumen de la grabación"
+
+msgctxt "model:ir.message,text:msg_ai_choose_summary_model"
+msgid "Choose an OpenRouter model to regenerate a summary from an existing transcript."
+msgstr "Elija un modelo de OpenRouter para regenerar un resumen a partir de una transcripción existente."
+
+msgctxt "model:ir.message,text:msg_ai_complete_transcription"
+msgid "The transcription must be completed first."
+msgstr "Primero hay que completar la transcripción."
+
+msgctxt "model:ir.message,text:msg_ai_gladia_summary"
+msgid "Gladia summaries require Gladia transcription. Select an OpenRouter summary model."
+msgstr "Los resúmenes de Gladia requieren una transcripción de Gladia. Seleccione un modelo de resumen de OpenRouter."
+
+msgctxt "model:ir.message,text:msg_ai_gladia_translations"
+msgid "Gladia translations failed or are missing."
+msgstr "Las traducciones de Gladia han fallado o no están disponibles."
+
+msgctxt "model:ir.message,text:msg_ai_invalid_summary"
+msgid "The model returned an invalid summary object."
+msgstr "El modelo ha devuelto un objeto de resumen no válido."
+
+msgctxt "model:ir.message,text:msg_ai_invalid_timestamps"
+msgid "Invalid utterance timestamps."
+msgstr "Las marcas de tiempo de los fragmentos de habla no son válidas."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_ai_missing_activity_texts"
+msgid "Missing activity texts in %(language)s."
+msgstr "Faltan los textos de la actividad en %(language)s."
+
+msgctxt "model:ir.message,text:msg_ai_missing_job_id"
+msgid "Gladia did not return a job ID."
+msgstr "Gladia no ha devuelto ningún identificador de trabajo."
+
+msgctxt "model:ir.message,text:msg_ai_missing_languages"
+msgid "Missing detected languages."
+msgstr "Faltan los idiomas detectados."
+
+msgctxt "model:ir.message,text:msg_ai_missing_primary"
+msgid "Missing dominant language."
+msgstr "Falta el idioma predominante."
+
+msgctxt "model:ir.message,text:msg_ai_missing_recording"
+msgid "The saved recording is missing."
+msgstr "No se encuentra la grabación guardada."
+
+msgctxt "model:ir.message,text:msg_ai_missing_summaries"
+msgid "Gladia titles and summaries are missing."
+msgstr "Faltan los títulos y los resúmenes de Gladia."
+
+msgctxt "model:ir.message,text:msg_ai_missing_transcript"
+msgid "Missing original transcript."
+msgstr "Falta la transcripción original."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_ai_missing_translation"
+msgid "Missing translation in %(language)s."
+msgstr "Falta la traducción en %(language)s."
+
+msgctxt "model:ir.message,text:msg_ai_missing_translations"
+msgid "Missing translations."
+msgstr "Faltan las traducciones."
+
+msgctxt "model:ir.message,text:msg_ai_no_completion"
+msgid "The model returned no completion."
+msgstr "El modelo no ha devuelto ninguna respuesta."
+
+msgctxt "model:ir.message,text:msg_ai_no_summary"
+msgid "Gladia returned no summary text."
+msgstr "Gladia no ha devuelto ningún texto de resumen."
+
+msgctxt "model:ir.message,text:msg_ai_no_text"
+msgid "The model returned no text."
+msgstr "El modelo no ha devuelto ningún texto."
+
+msgctxt "model:ir.message,text:msg_ai_not_configured"
+msgid "OpenRouter is not configured."
+msgstr "OpenRouter no está configurado."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_ai_openrouter_failed"
+msgid "%(error)s: OpenRouter request failed."
+msgstr "%(error)s: ha fallado la petición a OpenRouter."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_ai_request_failed"
+msgid "%(error)s: remote request failed."
+msgstr "%(error)s: ha fallado la petición remota."
+
+msgctxt "model:ir.message,text:msg_ai_select_transcription"
+msgid "Select a completed transcription first."
+msgstr "Primero seleccione una transcripción completada."
+
+msgctxt "model:ir.message,text:msg_ai_summary_only"
+msgid "Select an OpenRouter model to summarize the saved transcript. To use Gladia, transcribe the audio again."
+msgstr "Seleccione un modelo de OpenRouter para resumir la transcripción guardada. Para utilizar Gladia, vuelva a transcribir el audio."
+
+msgctxt "model:ir.model.button,string:recording_job_summary_button"
+msgid "Regenerate Summary"
+msgstr "Regenerar el resumen"
+
+msgctxt "model:ir.model.button,string:recording_run_resume_button"
+msgid "Resume with Gladia Job ID"
+msgstr "Reanudar con el identificador del trabajo de Gladia"
+
+msgctxt "model:ir.model.button,string:recording_run_retry_button"
+msgid "Retry"
+msgstr "Reintentar"
+
+msgctxt "model:ir.model.button,string:recording_run_summary_button"
+msgid "Regenerate Summary"
+msgstr "Regenerar el resumen"
+
+msgctxt "model:ir.model.button,string:recording_summary_publish_button"
+msgid "Use This Summary"
+msgstr "Utilizar este resumen"
+
+msgctxt "model:ir.model.button,string:recording_summary_retry_button"
+msgid "Retry"
+msgstr "Reintentar"
+
+msgctxt "model:ir.rule.group,name:rule_group_recording_run_companies"
+msgid "User in companies"
+msgstr "Usuario de las empresas"
+
+msgctxt "model:ir.rule.group,name:rule_group_recording_summary_companies"
+msgid "User in companies"
+msgstr "Usuario de las empresas"
+
+msgctxt "model:ir.rule.group,name:rule_group_transcription_job_companies"
+msgid "User in companies"
+msgstr "Usuario de las empresas"
+
+msgctxt "model:ir.rule.group,name:rule_group_webhook_call_companies"
+msgid "User in companies"
+msgstr "Usuario de las empresas"
+
+msgctxt "model:ir.rule.group,name:rule_group_webhook_event_companies"
+msgid "User in companies"
+msgstr "Usuario de las empresas"
+
+msgctxt "model:ir.rule.group,name:rule_group_webhook_leg_companies"
+msgid "User in companies"
+msgstr "Usuario de las empresas"
+
+msgctxt "model:ir.ui.menu,name:menu_transcription_jobs"
+msgid "Call Recordings"
+msgstr "Grabaciones de llamadas"
+
+msgctxt "model:voice.prompt,string:"
+msgid "Voice Prompt"
+msgstr "Aviso de voz"
+
+msgctxt "model:voice.prompt.text,string:"
+msgid "Voice Prompt Text"
+msgstr "Texto de aviso de voz"
+
+msgctxt "model:voice.prompt.translate_text.start,string:"
+msgid "Voice Prompt Translate Text Start"
+msgstr "Traducción del texto del aviso de voz"
+
+msgctxt "model:yeastar.cdr,string:"
+msgid "Yeastar Cdr"
+msgstr "CDR de Yeastar"
+
+msgctxt "model:yeastar.contact,string:"
+msgid "Yeastar Contact"
+msgstr "Contacto de Yeastar"
+
+msgctxt "model:yeastar.create.from_progress_call.start,string:"
+msgid "Yeastar Create From Progress Call Start"
+msgstr "Creación desde una llamada en curso de Yeastar"
+
+msgctxt "model:yeastar.endpoint,string:"
+msgid "Yeastar Endpoint"
+msgstr "Punto de acceso de Yeastar"
+
+msgctxt "model:yeastar.pbx,string:"
+msgid "Yeastar Pbx"
+msgstr "Centralita Yeastar"
+
+msgctxt "model:yeastar.phonebook,string:"
+msgid "Yeastar Phonebook"
+msgstr "Agenda de Yeastar"
+
+msgctxt "model:yeastar.phonebook-yeastar.contact,string:"
+msgid "Yeastar Phonebook - Yeastar Contact"
+msgstr "Agenda de Yeastar - Contacto de Yeastar"
+
+msgctxt "model:yeastar.recording.experiment.start,string:"
+msgid "Yeastar Recording Experiment Start"
+msgstr "Configuración de la prueba de grabación de Yeastar"
+
+msgctxt "model:yeastar.recording.run,string:"
+msgid "Yeastar Recording Run"
+msgstr "Versión de transcripción de la grabación de Yeastar"
+
+msgctxt "model:yeastar.recording.summary,string:"
+msgid "Yeastar Recording Summary"
+msgstr "Resumen de la grabación de Yeastar"
+
+msgctxt "model:yeastar.transcription.job,string:"
+msgid "Yeastar Transcription Job"
+msgstr "Trabajo de transcripción de Yeastar"
+
+msgctxt "model:yeastar.webhook.call,string:"
+msgid "Yeastar Webhook Call"
+msgstr "Llamada del webhook de Yeastar"
+
+msgctxt "model:yeastar.webhook.event,string:"
+msgid "Yeastar Webhook Event"
+msgstr "Evento del webhook de Yeastar"
+
+msgctxt "model:yeastar.webhook.leg,string:"
+msgid "Yeastar Webhook Leg"
+msgstr "Tramo de llamada del webhook de Yeastar"
+
+msgctxt "selection:yeastar.pbx,summary_provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.pbx,summary_provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.pbx,transcription_provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.pbx,transcription_provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.recording.experiment.start,summary_provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.recording.experiment.start,summary_provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.recording.experiment.start,transcription_provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.recording.experiment.start,transcription_provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Completed"
+msgstr "Completado"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Error"
+msgstr "Error"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "No Speech"
+msgstr "Sin habla"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Pending"
+msgstr "Pendiente"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Result Received"
+msgstr "Resultado recibido"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Submission Status Unknown"
+msgstr "Estado del envío desconocido"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Submitting"
+msgstr "Enviando"
+
+msgctxt "selection:yeastar.recording.run,state:"
+msgid "Transcribing"
+msgstr "Transcribiendo"
+
+msgctxt "selection:yeastar.recording.run,summary_provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.recording.run,summary_provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.recording.run,transcription_provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.recording.run,transcription_provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.recording.summary,provider:"
+msgid "Gladia"
+msgstr "Gladia"
+
+msgctxt "selection:yeastar.recording.summary,provider:"
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+msgctxt "selection:yeastar.recording.summary,state:"
+msgid "Completed"
+msgstr "Completado"
+
+msgctxt "selection:yeastar.recording.summary,state:"
+msgid "Error"
+msgstr "Error"
+
+msgctxt "selection:yeastar.recording.summary,state:"
+msgid "Generating"
+msgstr "Generando"
+
+msgctxt "selection:yeastar.recording.summary,state:"
+msgid "Pending"
+msgstr "Pendiente"
+
+msgctxt "selection:yeastar.recording.summary,state:"
+msgid "Result Received"
+msgstr "Resultado recibido"
+
+msgctxt "selection:yeastar.recording.summary,state:"
+msgid "Submission Status Unknown"
+msgstr "Estado del envío desconocido"
+
+msgctxt "selection:yeastar.transcription.job,state:"
+msgid "Processing Versions"
+msgstr "Procesando las versiones"
+
+msgctxt "view:yeastar.pbx:"
+msgid "Recording AI"
+msgstr "IA de las grabaciones"
+
+msgctxt "wizard_button:yeastar.recording.experiment,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:yeastar.recording.experiment,start,generate:"
+msgid "Generate"
+msgstr "Generar"
+
+msgctxt "wizard_button:yeastar.recording.summary.experiment,start,end:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "wizard_button:yeastar.recording.summary.experiment,start,generate:"
+msgid "Generate"
+msgstr "Generar"
+
 msgctxt "view:yeastar.pbx:"
 msgid "Webhook"
 msgstr "Webhook"
@@ -67,8 +611,8 @@ msgid "Timed Speaker Segments (JSON)"
 msgstr "Segmentos temporizados por interlocutor (JSON)"
 
 msgctxt "field:yeastar.pbx,automatic_transcription:"
-msgid "Automatic Gladia Transcription"
-msgstr "Transcripción automática con Gladia"
+msgid "Automatic Transcription"
+msgstr "Transcripción automática"
 
 msgctxt "field:yeastar.pbx,webhook_base_url:"
 msgid "Public Base URL"
@@ -347,8 +891,8 @@ msgid "Queue Call Recordings"
 msgstr "Poner las grabaciones de llamadas en la cola"
 
 msgctxt "model:ir.model.button,string:transcription_job_reprocess_button"
-msgid "Transcribe Again (New Gladia Job)"
-msgstr "Volver a transcribir (nuevo trabajo de Gladia)"
+msgid "Regenerate Transcription"
+msgstr "Regenerar la transcripción"
 
 msgctxt "model:ir.model.button,string:transcription_job_resume_button"
 msgid "Resume with Gladia Job ID"

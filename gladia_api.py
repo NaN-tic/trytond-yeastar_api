@@ -69,7 +69,7 @@ def upload_file(audio, filename='conversation.wav', mime='audio/wav'):
             files={'audio': (filename, stream, mime)})
 
 
-def create_transcribe(audio_url, metadata=None):
+def create_transcribe(audio_url, metadata=None, prompt=None, summary=True):
     # The dominant language is known only after transcription. Request all
     # targets once, then publish the two other languages without resubmitting.
     return _requests('POST', 'pre-recorded', json={
@@ -83,8 +83,8 @@ def create_transcribe(audio_url, metadata=None):
             'target_languages': list(LANGUAGES), 'model': 'enhanced',
             'match_original_utterances': True, 'lipsync': False,
             },
-        'audio_to_llm': True,
-        'audio_to_llm_config': {'prompts': [ACTIVITY_PROMPT]},
+        'audio_to_llm': summary,
+        'audio_to_llm_config': {'prompts': [prompt or ACTIVITY_PROMPT]},
         'custom_metadata': metadata or {},
         })
 
