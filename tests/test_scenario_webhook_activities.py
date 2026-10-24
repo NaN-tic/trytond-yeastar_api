@@ -103,13 +103,16 @@ class TestWebhookActivities(unittest.TestCase):
             self.assertTrue(employee.yeastar_create_activities)
             employees.append(employee)
         # The end date itself is still a working day.
-        employees[1].end_date = datetime.now().date()
+        with Transaction().start(self.config.database_name, 0,
+                context={'company': company.id}):
+            today = Pool().get('ir.date').today()
+        employees[1].end_date = today
         employees[1].save()
         departed_party = Party(name='Former Employee')
         departed_party.save()
         departed = Employee(party=departed_party, company=company,
             yeastar_pbx=self.pbx, yeastar_extension=206,
-            end_date=datetime.now().date() - timedelta(days=1))
+            end_date=today - timedelta(days=1))
         departed.save()
         customer = Party(name='External Customer')
         contact = customer.contact_mechanisms.new()
