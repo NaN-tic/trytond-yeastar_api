@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <tryton>
     <data>
+        <record model="ir.message" id="msg_stt_invalid_catalog">
+            <field name="text">OpenRouter returned an invalid transcription catalog or endpoint list.</field>
+        </record>
+        <record model="ir.message" id="msg_stt_invalid_options">
+            <field name="text">Enter a JSON object with valid OpenRouter transcription options. Model and audio cannot be overridden. The response format must be json or verbose_json.</field>
+        </record>
         <record model="ir.message" id="msg_ai_no_completion">
             <field name="text">The model returned no completion.</field>
         </record>

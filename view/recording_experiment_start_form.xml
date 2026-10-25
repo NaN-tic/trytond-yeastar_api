@@ -2,6 +2,8 @@
 <form>
     <label name="transcription_provider"/><field name="transcription_provider"/>
     <label name="transcription_model"/><field name="transcription_model"/>
+    <label name="transcription_diarize"/><field name="transcription_diarize"/>
+    <label name="transcription_options"/><field name="transcription_options" colspan="3"/>
     <label name="transcription_prompt"/><field name="transcription_prompt" colspan="3"/>
     <label name="summary_provider"/><field name="summary_provider"/>
     <label name="summary_model"/><field name="summary_model"/>

@@ -2,6 +2,94 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "field:yeastar.pbx,transcription_is_stt:"
+msgid "Specialized Transcription"
+msgstr "Transcripció especialitzada"
+
+msgctxt "field:yeastar.pbx,transcription_diarize:"
+msgid "Distinguish Speakers"
+msgstr "Distingir interlocutors"
+
+msgctxt "field:yeastar.pbx,transcription_options:"
+msgid "Advanced Transcription Options (JSON)"
+msgstr "Opcions avançades de transcripció (JSON)"
+
+msgctxt "field:yeastar.recording.run,transcription_is_stt:"
+msgid "Specialized Transcription"
+msgstr "Transcripció especialitzada"
+
+msgctxt "field:yeastar.recording.run,transcription_diarize:"
+msgid "Distinguish Speakers"
+msgstr "Distingir interlocutors"
+
+msgctxt "field:yeastar.recording.run,transcription_options:"
+msgid "Advanced Transcription Options (JSON)"
+msgstr "Opcions avançades de transcripció (JSON)"
+
+msgctxt "field:yeastar.recording.run,transcription_api:"
+msgid "OpenRouter API"
+msgstr "API d'OpenRouter"
+
+msgctxt "field:yeastar.recording.run,request_options:"
+msgid "Submitted Transcription Options (JSON)"
+msgstr "Opcions de transcripció enviades (JSON)"
+
+msgctxt "field:yeastar.recording.experiment.start,transcription_is_stt:"
+msgid "Specialized Transcription"
+msgstr "Transcripció especialitzada"
+
+msgctxt "field:yeastar.recording.experiment.start,transcription_diarize:"
+msgid "Distinguish Speakers"
+msgstr "Distingir interlocutors"
+
+msgctxt "field:yeastar.recording.experiment.start,transcription_options:"
+msgid "Advanced Transcription Options (JSON)"
+msgstr "Opcions avançades de transcripció (JSON)"
+
+msgctxt "field:yeastar.recording.summary,transcript_metadata:"
+msgid "Transcript Languages and Translations (JSON)"
+msgstr "Idiomes i traduccions de la transcripció (JSON)"
+
+msgctxt "help:yeastar.pbx,transcription_diarize:"
+msgid "Request speaker labels when all available endpoints support them. The number of speakers is detected automatically."
+msgstr "Sol·licitar etiquetes d'interlocutor quan tots els punts d'accés disponibles ho admetin. El nombre d'interlocutors es detecta automàticament."
+
+msgctxt "help:yeastar.recording.run,transcription_diarize:"
+msgid "Request speaker labels when all available endpoints support them. The number of speakers is detected automatically."
+msgstr "Sol·licitar etiquetes d'interlocutor quan tots els punts d'accés disponibles ho admetin. El nombre d'interlocutors es detecta automàticament."
+
+msgctxt "help:yeastar.recording.experiment.start,transcription_diarize:"
+msgid "Request speaker labels when all available endpoints support them. The number of speakers is detected automatically."
+msgstr "Sol·licitar etiquetes d'interlocutor quan tots els punts d'accés disponibles ho admetin. El nombre d'interlocutors es detecta automàticament."
+
+msgctxt "help:yeastar.pbx,transcription_options:"
+msgid "OpenRouter transcription request options for the selected model. These override automatic options and are cleared when the model changes."
+msgstr "Opcions de la petició de transcripció d'OpenRouter per al model seleccionat. Substitueixen les opcions automàtiques i s'esborren en canviar de model."
+
+msgctxt "help:yeastar.recording.run,transcription_options:"
+msgid "OpenRouter transcription request options for the selected model. These override automatic options and are cleared when the model changes."
+msgstr "Opcions de la petició de transcripció d'OpenRouter per al model seleccionat. Substitueixen les opcions automàtiques i s'esborren en canviar de model."
+
+msgctxt "help:yeastar.recording.experiment.start,transcription_options:"
+msgid "OpenRouter transcription request options for the selected model. These override automatic options and are cleared when the model changes."
+msgstr "Opcions de la petició de transcripció d'OpenRouter per al model seleccionat. Substitueixen les opcions automàtiques i s'esborren en canviar de model."
+
+msgctxt "selection:yeastar.recording.run,transcription_api:"
+msgid "Chat Completions"
+msgstr "Completament de xat"
+
+msgctxt "selection:yeastar.recording.run,transcription_api:"
+msgid "Speech-to-Text"
+msgstr "Transcripció de veu a text"
+
+msgctxt "model:ir.message,text:msg_stt_invalid_catalog"
+msgid "OpenRouter returned an invalid transcription catalog or endpoint list."
+msgstr "OpenRouter ha retornat un catàleg de transcripció o una llista de punts d'accés no vàlids."
+
+msgctxt "model:ir.message,text:msg_stt_invalid_options"
+msgid "Enter a JSON object with valid OpenRouter transcription options. Model and audio cannot be overridden. The response format must be json or verbose_json."
+msgstr "Introduïu un objecte JSON amb opcions de transcripció vàlides d'OpenRouter. No es poden substituir el model ni l'àudio. El format de resposta ha de ser json o verbose_json."
+
 msgctxt "field:yeastar.pbx,summary_model:"
 msgid "Summary Model"
 msgstr "Model de resum"

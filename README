@@ -51,6 +51,43 @@ localized summaries remain available in Catalan, Spanish and English.
 OpenRouter models do not supply measured language durations in this workflow;
 language percentages are left empty instead of estimating them.
 
+Specialized OpenRouter speech-to-text models
+-------------------------------------------
+
+Yeastar extends ai.model.openrouter through PoolMeta. Catalog synchronization
+combines the standard catalog with output_modalities=transcription, retaining
+both sets of models and deduplicating by ID. Synchronize the catalog after
+upgrading yeastar_api. No changes to ai_model are required.
+
+Models with transcription output use /audio/transcriptions. Chat models with
+audio input continue to use /chat/completions. Speech-to-text models do not use
+the chat transcription prompt. Their original response, segments and word
+timestamps are saved before the summary stage. The selected summary LLM
+produces the localized summaries, translations and ISO language codes. These
+are saved with each summary version; the source transcript is never rewritten.
+
+Distinguish Speakers defaults to enabled. It requests diarization only when
+all available endpoints advertise support; the number of speakers is never
+set automatically. ElevenLabs uses provider.options.elevenlabs.diarize and
+Microsoft Azure uses provider.options.azure.diarization.enabled. Other
+advertised providers use the common diarize parameter. Scribe v2,
+MAI-Transcribe 2 and Voxtral Small Transcribe 3 request verbose_json by default.
+Voxtral diarization is not enabled automatically while its endpoints report
+supports_diarization=false.
+
+Advanced Transcription Options accepts a JSON object merged into the default
+request options. It can override response_format, timestamp_granularities,
+provider, temperature, language, keyterms and diarize. It cannot replace the
+model or audio. For example, to enable ElevenLabs audio event tagging::
+
+    {"provider": {"options": {"elevenlabs": {"tag_audio_events": true}}}}
+
+Advanced options are cleared when the selected model/provider changes. Each
+run snapshots its configuration and the actual submitted options (without the
+audio data). Speaker turns are supplied to the summary model when present and
+published with the original transcript on selection. Transcription-only
+retries reuse saved responses; summary retries never resend the recording.
+
 Webhook capture
 ---------------
 
