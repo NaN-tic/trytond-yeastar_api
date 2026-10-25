@@ -12,6 +12,7 @@ from . import webhook
 from . import webhook_processing
 from . import transcription
 from . import recording_ai
+from . import openrouter_stt
 from . import routes
 
 __all__ = ['register', 'routes']
@@ -49,6 +50,7 @@ def register():
         recording_ai.RecordingRun,
         recording_ai.RecordingSummary,
         recording_ai.ExperimentStart,
+        openrouter_stt.OpenRouterModel,
         module='yeastar_api', type_='model')
     Pool.register(
         api.CreateFromProgressCall,

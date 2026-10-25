@@ -12,6 +12,7 @@
         <page name="result"><field name="result" colspan="4"/></page>
         <page name="prompt"><field name="prompt" colspan="4"/></page>
         <page name="raw_result"><field name="raw_result" colspan="4"/></page>
+        <page name="transcript_metadata"><field name="transcript_metadata" colspan="4"/></page>
         <page name="error"><field name="error" colspan="4"/></page>
     </notebook>
     <group id="buttons" colspan="4" col="2">
