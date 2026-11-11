@@ -382,4 +382,14 @@ this repository contains the full copyright notices and license terms. -->
             <field name="action" ref="act_get_calls_details"/>
         </record>
     </data>
+    <data>
+        <record model="ir.action-res.group" id="create_from_progress_call_group_yeastar">
+            <field name="action" ref="act_create_from_progress_call"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.action-res.group" id="get_calls_details_group_yeastar_admin">
+            <field name="action" ref="act_get_calls_details"/>
+            <field name="group" ref="group_yeastar_admin"/>
+        </record>
+    </data>
 </tryton>
