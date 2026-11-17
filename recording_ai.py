@@ -419,9 +419,11 @@ class RecordingRun(Settings, ModelSQL, ModelView):
 
 
 def complete(payload, origin):
-    from trytond.modules.ai_model.completion import register_cost
+    from trytond.modules.ai_model.completion import (
+        register_cost, validate_cost_origins)
 
     model = Pool().get('ai.model')(payload['model'])
+    validate_cost_origins(origin, model)
     client = model.get_client()
     if not client:
         raise ValueError(gettext('yeastar_api.msg_ai_not_configured'))
@@ -440,7 +442,7 @@ def complete(payload, origin):
         raise ValueError(gettext('yeastar_api.msg_ai_openrouter_failed',
             error=type(error).__name__)) from error
     register_cost(response, model, origin,
-        timedelta(seconds=time.monotonic() - started))
+        timedelta(seconds=time.monotonic() - started), fallback_origin=model)
     return response if isinstance(response, dict) else response.model_dump(mode='json')
 
 
