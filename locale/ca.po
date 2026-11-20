@@ -2,6 +2,46 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "model:ir.action,name:act_manage_recording"
+msgid "Manage Call Recording"
+msgstr "Gestiona l’enregistrament de la trucada"
+
+msgctxt "model:ir.model.button,string:activity_manage_recording_button"
+msgid "Manage Call Recording"
+msgstr "Gestiona l’enregistrament de la trucada"
+
+msgctxt "field:yeastar.recording.manage.start,activity:"
+msgid "Activity"
+msgstr "Activitat"
+
+msgctxt "field:yeastar.recording.manage.start,job:"
+msgid "Recording"
+msgstr "Enregistrament"
+
+msgctxt "wizard_button:yeastar.recording.manage,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "wizard_button:yeastar.recording.manage,start,open:"
+msgid "Open Recording"
+msgstr "Obre l’enregistrament"
+
+msgctxt "wizard_button:yeastar.recording.manage,start,reprocess:"
+msgid "Reprocess Recording"
+msgstr "Torna a processar l’enregistrament"
+
+msgctxt "wizard_button:yeastar.recording.manage,start,download:"
+msgid "Download Audio Again"
+msgstr "Torna a baixar l’àudio"
+
+msgctxt "model:ir.message,text:msg_select_call_recording"
+msgid "Select a recording belonging to this activity."
+msgstr "Selecciona un enregistrament d’aquesta activitat."
+
+msgctxt "model:ir.message,text:msg_recording_in_progress"
+msgid "Open the recording to check its status. Processing is already queued or the submission status is unknown."
+msgstr "Obre l’enregistrament per consultar-ne l’estat. El processament ja és a la cua o no se sap si l’enviament s’ha completat."
+
 msgctxt "field:yeastar.pbx,transcription_is_stt:"
 msgid "Specialized Transcription"
 msgstr "Transcripció especialitzada"

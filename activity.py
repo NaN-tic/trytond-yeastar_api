@@ -87,7 +87,9 @@ class Activity(metaclass=PoolMeta):
     @classmethod
     def __setup__(cls):
         super().__setup__()
-        cls._buttons.update({'get_call_transcription': {}})
+        cls._buttons.update({'get_call_transcription': {},
+                'manage_recording': {'invisible': ~Bool(Eval('transcription_jobs'))},
+                })
 
     @classmethod
     def get_translation_languages(cls):
@@ -101,6 +103,11 @@ class Activity(metaclass=PoolMeta):
         """Queue recordings; downloading and transcription run in the cron."""
         Job = Pool().get('yeastar.transcription.job')
         Job.enqueue(activities, discover=True)
+
+    @classmethod
+    @ModelView.button_action('yeastar_api.act_manage_recording')
+    def manage_recording(cls, activities):
+        pass
 
     @classmethod
     def copy(cls, activities, default=None):

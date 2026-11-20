@@ -44,6 +44,7 @@ def register():
         webhook_processing.WebhookLeg,
         webhook_processing.WebhookEvent,
         webhook_processing.Cron,
+        transcription.ManageRecordingStart,
         transcription.TranscriptionJob,
         transcription.Cron,
         recording_ai.PBX,
@@ -56,6 +57,7 @@ def register():
         api.CreateFromProgressCall,
         api.YeastarGetCallsDetails,
         voice.VoicePromptTranslateText,
+        transcription.ManageRecording,
         recording_ai.Experiment,
         recording_ai.SummaryExperiment,
         module='yeastar_api', type_='wizard')

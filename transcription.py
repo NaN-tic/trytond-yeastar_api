@@ -10,7 +10,9 @@ from trytond.i18n import gettext
 from trytond.model import Index, ModelSQL, ModelView, Unique, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Bool, Eval
-from trytond.transaction import Transaction, TransactionError
+from trytond.transaction import (
+    Transaction, TransactionError, check_access, without_check_access)
+from trytond.wizard import Button, StateAction, StateTransition, StateView, Wizard
 
 from . import gladia_api
 
@@ -54,6 +56,120 @@ def decode_activity_texts(text):
         if remaining != '}':
             raise error
         return localized
+
+
+class ManageRecordingStart(ModelView):
+    'Manage Call Recording'
+    __name__ = 'yeastar.recording.manage.start'
+
+    activity = fields.Many2One('activity.activity', 'Activity', readonly=True)
+    job = fields.Many2One('yeastar.transcription.job', 'Recording',
+        required=True, domain=[('activity', '=', Eval('activity'))])
+
+
+class ManageRecording(Wizard):
+    'Manage Call Recording'
+    __name__ = 'yeastar.recording.manage'
+
+    start = StateView('yeastar.recording.manage.start',
+        'yeastar_api.manage_recording_form', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Download Audio Again', 'download', 'tryton-save'),
+            Button('Reprocess Recording', 'reprocess', 'tryton-launch'),
+            Button('Open Recording', 'open', 'tryton-open', default=True),
+            ])
+    open = StateAction('yeastar_api.act_transcription_job')
+    choose_summary = StateAction('yeastar_api.act_recording_experiment')
+    download = StateTransition()
+    reprocess = StateTransition()
+
+    def default_start(self, fields):
+        with check_access():
+            jobs = self.record.transcription_jobs
+        return {'activity': self.record.id,
+            'job': jobs[0].id if len(jobs) == 1 else None}
+
+    def _selected_job(self):
+        Job = Pool().get('yeastar.transcription.job')
+        if self.model.__name__ != 'activity.activity' or not self.start.job:
+            raise UserError(gettext('yeastar_api.msg_select_call_recording'))
+        with check_access():
+            jobs = Job.search([('id', '=', self.start.job.id),
+                    ('activity', '=', self.record.id)])
+        if not jobs:
+            raise UserError(gettext('yeastar_api.msg_select_call_recording'))
+        return jobs[0]
+
+    def do_open(self, action):
+        job = self._selected_job()
+        action['views'] = [view for view in action['views'] if view[1] == 'form']
+        action['res_id'] = job.id
+        return action, {}
+
+    def do_choose_summary(self, action):
+        run = self._selected_job().runs[0]
+        return action, {'model': 'yeastar.recording.run', 'id': run.id,
+            'ids': [run.id]}
+
+    def transition_download(self):
+        job = self._selected_job()
+        Job = job.__class__
+        Job.lock([job])
+        with without_check_access():
+            try:
+                with Transaction().set_context(company=job.pbx.company.id):
+                    attachment = job._download_audio(force=True)
+            except requests.RequestException as error:
+                # PBX transport exceptions can contain a token in the URL.
+                raise UserError(gettext('yeastar_api.msg_ai_request_failed',
+                        error=type(error).__name__)) from None
+            values = {'attachment': attachment.id}
+            if job.state == 'pending' or (
+                    job.state == 'error' and job.error_stage == 'pending'):
+                values.update(state='ready', attempts=0, next_attempt=None,
+                    error_stage=None, error_message=None)
+            Job.write([job], values)
+        return 'end'
+
+    def transition_reprocess(self):
+        job = self._selected_job()
+        Job = job.__class__
+        Run = Pool().get('yeastar.recording.run')
+        Summary = Pool().get('yeastar.recording.summary')
+        Job.lock([job])
+        with without_check_access():
+            runs = job.runs
+            run = runs[0] if runs else None
+            if run and run.state == 'error':
+                Run.retry([run])
+            elif run and run.state == 'done' and run.summaries and (
+                    run.summaries[0].state == 'error'):
+                summary = run.summaries[0]
+                if summary.provider == 'gladia':
+                    # Gladia cannot regenerate just the summary. Let the user
+                    # choose a summary model for the saved transcript instead.
+                    return 'choose_summary'
+                if summary.raw_result:
+                    Summary.create([{'run': run.id, 'provider': summary.provider,
+                                'model': summary.model.id, 'prompt': summary.prompt}])
+                else:
+                    Summary.retry([summary])
+            elif job.state == 'error' and not run:
+                Job.retry([job])
+            elif ((run and run.state in {'done', 'empty'} and all(
+                            s.state in {'done', 'error'} for s in run.summaries))
+                    or (not run and job.state in {
+                            'done', 'empty', 'failed', 'processing'})):
+                if not job.attachment:
+                    raise UserError(gettext('yeastar_api.msg_ai_missing_recording'))
+                job.pbx.check_settings()
+                job.archive_legacy_result()
+                Run.create([{'job': job.id, **job.pbx.settings()}])
+                Job.write([job], {'state': 'processing', 'error_message': None,
+                        'error_stage': None, 'next_attempt': None})
+            else:
+                raise UserError(gettext('yeastar_api.msg_recording_in_progress'))
+        return 'end'
 
 
 class TranscriptionJob(ModelSQL, ModelView):
@@ -274,6 +390,33 @@ class TranscriptionJob(ModelSQL, ModelView):
             except TransactionError as exception:
                 exception.fix(extras)
 
+    def _download_audio(self, force=False):
+        Attachment = Pool().get('ir.attachment')
+        with Transaction().set_context(yeastar_wo_employee=True):
+            token = self.pbx.get_token(commit=False)
+        if not token:
+            raise UserError(gettext('yeastar_api.msg_recording_not_ready'))
+        info = self.pbx.download_record(file=self.recording, token=token)
+        if not info or not info.get('download_resource_url'):
+            raise UserError(gettext('yeastar_api.msg_recording_not_ready'))
+        audio = self.pbx._requests('GET',
+            args=info['download_resource_url'], token=token)
+        if not isinstance(audio, bytes) or not audio:
+            raise UserError(gettext('yeastar_api.msg_recording_not_ready'))
+        filename = info.get('file_name') or self.recording
+        if not force:
+            attachments = Attachment.search([
+                    ('resource', '=', str(self.activity)),
+                    ('name', '=', filename),
+                    ], limit=1)
+            if attachments:
+                return attachments[0]
+        attachment, = Attachment.create([{
+                    'name': filename, 'type': 'data', 'data': audio,
+                    'resource': str(self.activity),
+                    }])
+        return attachment
+
     def _advance(self):
         cls = self.__class__
         if not self.activity or (self.next_attempt
@@ -285,30 +428,7 @@ class TranscriptionJob(ModelSQL, ModelView):
                         'Submission interrupted. Recover the Gladia job ID.'})
             return
         if self.state == 'pending':
-            Attachment = Pool().get('ir.attachment')
-            with Transaction().set_context(yeastar_wo_employee=True):
-                token = self.pbx.get_token(commit=False)
-            if not token:
-                raise ValueError('The PBX did not return an access token.')
-            info = self.pbx.download_record(file=self.recording, token=token)
-            if not info or not info.get('download_resource_url'):
-                raise UserError(gettext('yeastar_api.msg_recording_not_ready'))
-            audio = self.pbx._requests('GET',
-                args=info['download_resource_url'], token=token)
-            if not isinstance(audio, bytes) or not audio:
-                raise UserError(gettext('yeastar_api.msg_recording_not_ready'))
-            filename = info.get('file_name') or self.recording
-            attachments = Attachment.search([
-                    ('resource', '=', str(self.activity)),
-                    ('name', '=', filename),
-                    ], limit=1)
-            if attachments:
-                attachment, = attachments
-            else:
-                attachment, = Attachment.create([{
-                            'name': filename, 'type': 'data', 'data': audio,
-                            'resource': str(self.activity),
-                            }])
+            attachment = self._download_audio()
             cls.write([self], {'attachment': attachment.id, 'state': 'ready',
                     'attempts': 0, 'next_attempt': None,
                     'error_message': None})

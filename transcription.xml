@@ -24,6 +24,45 @@
             <field name="name">Call Recordings</field>
             <field name="res_model">yeastar.transcription.job</field>
         </record>
+        <record model="ir.action.act_window.view" id="act_transcription_job_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="transcription_job_view_tree"/>
+            <field name="act_window" ref="act_transcription_job"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_transcription_job_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="transcription_job_view_form"/>
+            <field name="act_window" ref="act_transcription_job"/>
+        </record>
+        <record model="ir.ui.view" id="manage_recording_form">
+            <field name="model">yeastar.recording.manage.start</field>
+            <field name="type">form</field>
+            <field name="name">manage_recording_form</field>
+        </record>
+        <record model="ir.action.wizard" id="act_manage_recording">
+            <field name="name">Manage Call Recording</field>
+            <field name="wiz_name">yeastar.recording.manage</field>
+            <field name="model">activity.activity</field>
+        </record>
+        <record model="ir.action-res.group" id="act_manage_recording_group">
+            <field name="action" ref="act_manage_recording"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.model.button" id="activity_manage_recording_button">
+            <field name="model">activity.activity</field>
+            <field name="name">manage_recording</field>
+            <field name="string">Manage Call Recording</field>
+        </record>
+        <record model="ir.model.button-res.group" id="activity_manage_recording_group">
+            <field name="button" ref="activity_manage_recording_button"/>
+            <field name="group" ref="group_yeastar"/>
+        </record>
+        <record model="ir.message" id="msg_select_call_recording">
+            <field name="text">Select a recording belonging to this activity.</field>
+        </record>
+        <record model="ir.message" id="msg_recording_in_progress">
+            <field name="text">Open the recording to check its status. Processing is already queued or the submission status is unknown.</field>
+        </record>
         <menuitem id="menu_transcription_jobs" parent="menu_yeastar_admin"
             action="act_transcription_job" sequence="30"/>
         <record model="ir.model.access" id="access_transcription_job">

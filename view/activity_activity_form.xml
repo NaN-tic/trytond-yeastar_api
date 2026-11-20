@@ -13,6 +13,7 @@
       <label name="call_language_percentages"/>
       <field name="call_language_percentages" colspan="3"/>
       <field name="transcription_jobs" colspan="4"/>
+      <button name="manage_recording" colspan="4"/>
       <field name="transcriptions" colspan="4"/>
       <field name="summarization_result" colspan="4" height="400"/>
       <button name="get_call_transcription" colspan="4"/>
