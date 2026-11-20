@@ -10,6 +10,7 @@ import requests
 from proteus import Model, Wizard
 from werkzeug.test import Client
 
+from trytond.exceptions import UserError
 from trytond.modules.company.tests.tools import create_company, get_company
 from trytond.modules.yeastar_api import gladia_api, recording_ai
 from trytond.pool import Pool
@@ -318,6 +319,10 @@ class TestGladiaRecordings(unittest.TestCase):
             first.reload()
             run = first.runs[0]
             self.assertEqual(run.state, 'uncertain')
+            manage = activity.click('manage_recording')
+            manage.form.job = first
+            with self.assertRaises(UserError):
+                manage.execute('reprocess')
             self.assertEqual(self.submissions, 3)
             self.tick()
             self.assertEqual(self.submissions, 3)
@@ -328,7 +333,14 @@ class TestGladiaRecordings(unittest.TestCase):
             self.tick()
             run.reload()
             self.assertEqual(run.state, 'error')
-            run.click('retry')
+            manage = activity.click('manage_recording')
+            self.assertIsNone(manage.form.job)  # Two recordings on this call.
+            manage.form.job = first
+            manage.execute('open')
+            self.assertEqual(manage.actions, [[first]])
+            manage = activity.click('manage_recording')
+            manage.form.job = first
+            manage.execute('reprocess')
             for _ in range(4):
                 self.tick()
             first.reload()
@@ -504,6 +516,16 @@ class TestGladiaRecordings(unittest.TestCase):
                 failed_summary.click('retry')
                 self.tick()
                 request.assert_not_called()
+            manage = copied.click('manage_recording')
+            self.assertEqual(manage.form.job, auto_job)
+            manage.execute('reprocess')
+            with patch.object(recording_ai, 'complete', side_effect=completion) as request:
+                for _ in range(3):
+                    self.tick()
+                self.assertEqual(request.call_count, 1)
+            auto_job.reload()
+            self.assertEqual(len(auto_job.runs), 1)
+            self.assertEqual(auto_job.runs[0].summaries[0].state, 'done')
             # A malformed Gladia summary must not hide a valid transcription.
             wizard = Wizard('yeastar.recording.experiment', [auto_job])
             wizard.form.transcription_provider = 'gladia'
@@ -520,3 +542,18 @@ class TestGladiaRecordings(unittest.TestCase):
             self.assertEqual(run.transcript, 'Original mixed conversation')
             self.assertEqual(run.summaries[0].state, 'error')
             self.assertEqual(auto_job.selected_summary, previous_summary)
+            with patch.object(PBXModel, '_requests', return_value=b''):
+                manage = copied.click('manage_recording')
+                with self.assertRaises(UserError):
+                    manage.execute('download')
+            auto_job.reload()
+            self.assertEqual(auto_job.attachment.id, attachment_id)
+            with patch.object(PBXModel, '_requests', return_value=b'new audio'):
+                manage = copied.click('manage_recording')
+                manage.execute('download')
+            auto_job.reload()
+            self.assertEqual(auto_job.attachment.data, b'new audio')
+            self.assertNotEqual(auto_job.attachment.id, attachment_id)
+            self.assertEqual(Attachment(attachment_id).data, b'original audio')
+            self.assertEqual(auto_job.selected_summary, previous_summary)
+            self.assertEqual(self.submissions, 5)
