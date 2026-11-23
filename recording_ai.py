@@ -442,7 +442,7 @@ def complete(payload, origin):
         raise ValueError(gettext('yeastar_api.msg_ai_openrouter_failed',
             error=type(error).__name__)) from error
     register_cost(response, model, origin,
-        timedelta(seconds=time.monotonic() - started), fallback_origin=model)
+        timedelta(seconds=time.monotonic() - started), parent_origin=model)
     return response if isinstance(response, dict) else response.model_dump(mode='json')
 
 
